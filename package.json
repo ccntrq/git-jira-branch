@@ -1,0 +1,32 @@
+{
+  "name": "git-create-jira-branch",
+  "version": "0.1.0",
+  "description": "Create git branches for your Jira tickets",
+  "license": "MIT",
+  "repository": "ccntrq/git-create-jira-branch",
+  "author": {
+    "name": "Alexander 'ccntrq' Pankoff",
+    "email": "ccntrq@screenri.de"
+  },
+  "keywords": [
+    "git",
+    "jira",
+    "productivity"
+  ],
+  "bin": {
+    "git-create-jira-branch": "dist/cli.js"
+  },
+  "scripts": {
+    "start": "npm run build && node dist/cli.js",
+    "build": "tsc --build src"
+  },
+  "devDependencies": {
+    "@types/node": "^20.4.9",
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "@effect/cli": "0.16.0",
+    "@effect/platform": "0.21.0",
+    "effect": "2.0.0-next.48"
+  }
+}
