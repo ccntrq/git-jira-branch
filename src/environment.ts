@@ -21,41 +21,53 @@ export const EnvironmentLive = Layer.succeed(
   Environment,
   Environment.of({
     getEnv: () =>
-      Effect.all([
-        Effect.config(Config.string("JIRA_PAT")),
-        Effect.config(Config.string("JIRA_API_URL")),
-        Effect.config(Config.option(Config.string("JIRA_KEY_PREFIX"))),
-      ]).pipe(
+      Effect.all(
+        [
+          Effect.config(Config.string("JIRA_PAT")),
+          Effect.config(Config.string("JIRA_API_URL")),
+          Effect.config(Config.option(Config.string("JIRA_KEY_PREFIX"))),
+        ],
+        { concurrency: "unbounded", mode: "validate" }
+      ).pipe(
         Effect.map(([jiraPat, jiraApiUrl, defaultJiraKeyPrefix]) => ({
           jiraPat: JiraPat(jiraPat),
           jiraApiUrl: JiraApiUrl(jiraApiUrl),
           defaultJiraKeyPrefix: Option.map(defaultJiraKeyPrefix, JiraKeyPrefix),
         })),
-        Effect.catchAll((e) => {
+        Effect.catchAll((maybeErrors) => {
           return Effect.fail(
-            ConfigError.reduceWithContext(
-              e,
-              void 0,
-              mkConfigErrorToAppConfigErrorReducer()
-            )
+            AppConfigError({
+              message: Option.reduceCompact<ConfigError.ConfigError, string[]>(
+                maybeErrors,
+                [],
+                (acc, e) =>
+                  acc.concat(
+                    ConfigError.reduceWithContext(
+                      e,
+                      void 0,
+                      mkCollectConfigErrorMessagesReducer()
+                    )
+                  )
+              ).join("\n"),
+            })
           );
         })
       ),
   })
 );
 
-const mkConfigErrorToAppConfigErrorReducer = (): ConfigError.ConfigErrorReducer<
+const mkCollectConfigErrorMessagesReducer = (): ConfigError.ConfigErrorReducer<
   unknown,
-  AppConfigError
+  string[]
 > => {
-  const collectMessage = (_: unknown, _path: string[], message: string) =>
-    AppConfigError({ message });
+  const collectMessage = (_: unknown, _path: string[], message: string) => [
+    message,
+  ];
 
-  const mergeErrors = (
-    _: unknown,
-    left: AppConfigError,
-    right: AppConfigError
-  ) => AppConfigError({ message: `${left.message}\n${right.message}` });
+  const mergeErrors = (_: unknown, left: string[], right: string[]) => [
+    ...left,
+    ...right,
+  ];
 
   return {
     andCase: mergeErrors,
