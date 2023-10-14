@@ -18,11 +18,14 @@
   },
   "scripts": {
     "start": "npm run build && node dist/cli.js",
-    "build": "tsc --build src"
+    "build": "tsc --build src",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "devDependencies": {
     "@types/node": "^20.4.9",
-    "typescript": "^5.1.6"
+    "typescript": "^5.1.6",
+    "vitest": "^0.34.6"
   },
   "dependencies": {
     "@effect/cli": "0.16.0",
