@@ -9,6 +9,7 @@ import * as Options from "@effect/cli/Options";
 import * as Span from "@effect/cli/HelpDoc/Span";
 import * as HelpDoc from "@effect/cli/HelpDoc";
 import * as ValidationError from "@effect/cli/ValidationError";
+import * as Http from "@effect/platform/HttpClient";
 
 import { Environment, EnvironmentLive } from "./environment";
 import { GitClient, GitClientLive } from "./git-client";
@@ -62,7 +63,10 @@ const cli = CliApp.make({
   summary: Span.text("Create a git branch from a Jira ticket"),
 });
 
-const baseLayer = Layer.merge(GitClientLive, EnvironmentLive);
+const baseLayer = Layer.merge(
+  Http.client.layer,
+  Layer.merge(GitClientLive, EnvironmentLive)
+);
 const mainLive = Layer.merge(
   baseLayer,
   baseLayer.pipe(Layer.provide(JiraClientLive))

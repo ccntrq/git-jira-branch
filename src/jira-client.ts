@@ -21,8 +21,8 @@ export const JiraClient = Context.Tag<JiraClient>();
 
 export const JiraClientLive = Layer.effect(
   JiraClient,
-  Environment.pipe(
-    Effect.map((env) =>
+  Effect.all([Environment, Http.client.Client]).pipe(
+    Effect.map(([env, httpClient]) =>
       JiraClient.of({
         getJiraIssue: (issueId: string) => {
           const endPoint = `/rest/api/latest/issue/${issueId}`;
@@ -36,7 +36,7 @@ export const JiraClientLive = Layer.effect(
                     Accept: "application/json",
                   },
                 })
-                .pipe(Http.client.fetchOk())
+                .pipe(Http.client.filterStatusOk(httpClient))
             ),
             Effect.flatMap(Http.response.schemaBodyJson(JiraIssueSchema)),
             handleJiraClientErrors
