@@ -13,9 +13,9 @@ import * as ValidationError from "@effect/cli/ValidationError";
 import { Environment, EnvironmentLive } from "./environment";
 import { GitClient, GitClientLive } from "./git-client";
 import { JiraClient, JiraClientLive } from "./jira-client";
-import { program } from "./core";
+import { gitCreateJiraBranch } from "./core";
+import { GitCreateJiraBranchError } from "./types";
 import * as packageJson from "./package.json";
-import { AppConfigError, JiraApiError, GitExecError } from "./types";
 
 export interface GitCreateJiraBranch extends Data.Case {
   readonly version: boolean;
@@ -80,16 +80,16 @@ Effect.runPromise(
             command
           ): Effect.Effect<
             GitClient | Environment | JiraClient,
-            | AppConfigError
-            | JiraApiError
-            | GitExecError
-            | ValidationError.ValidationError,
+            GitCreateJiraBranchError | ValidationError.ValidationError,
             void
           > =>
             command.version
               ? Console.log(`${cli.name} v${cli.version}`)
               : isSome(command.jiraKey)
-              ? program(command.jiraKey.value, command.baseBranch).pipe(
+              ? gitCreateJiraBranch(
+                  command.jiraKey.value,
+                  command.baseBranch
+                ).pipe(
                   Effect.flatMap((branch) =>
                     Console.log(`Successfully created branch: '${branch}`)
                   )

@@ -24,7 +24,11 @@ export const JiraIssueSchema = Schema.struct({
 
 export type JiraIssue = Schema.Schema.To<typeof JiraIssueSchema>;
 
-export type GitCreateJiraBranchError = GitExecError;
+export type GitCreateJiraBranchError =
+  | AppConfigError
+  | GitExecError
+  | JiraApiError;
+
 export declare namespace GitCreateJiraBranchError {
   export interface Proto {
     readonly _tag: string;

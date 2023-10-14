@@ -1,10 +1,15 @@
-import { Console, Effect } from "effect";
+import { Effect } from "effect";
 import { isNone, isSome, type Option } from "effect/Option";
 
 import { GitClient } from "./git-client";
 import { JiraClient } from "./jira-client";
-import { JiraIssue, JiraIssuetype, JiraKeyPrefix } from "./types";
 import { Environment } from "./environment";
+import {
+  GitCreateJiraBranchError,
+  JiraIssue,
+  JiraIssuetype,
+  JiraKeyPrefix,
+} from "./types";
 
 const slugify = (str: string): string =>
   str
@@ -37,7 +42,14 @@ const buildJiraKey = (
     ? jiraKey
     : `${defaultJiraKeyPrefix.value}-${jiraKey}`;
 
-export const program = (jiraKey: string, baseBranch: Option<string>) =>
+export const gitCreateJiraBranch = (
+  jiraKey: string,
+  baseBranch: Option<string>
+): Effect.Effect<
+  Environment | GitClient | JiraClient,
+  GitCreateJiraBranchError,
+  void
+> =>
   Effect.all([Environment, GitClient, JiraClient]).pipe(
     Effect.flatMap(([env, gitClient, jiraClient]) =>
       env.getEnv().pipe(
