@@ -95,7 +95,7 @@ Effect.runPromise(
                   command.baseBranch
                 ).pipe(
                   Effect.flatMap((branch) =>
-                    Console.log(`Successfully created branch: '${branch}`)
+                    Console.log(`Successfully created branch: '${branch}'`)
                   )
                 )
               : Effect.fail(
