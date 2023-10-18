@@ -48,7 +48,7 @@ export const gitCreateJiraBranch = (
 ): Effect.Effect<
   Environment | GitClient | JiraClient,
   GitCreateJiraBranchError,
-  void
+  string
 > =>
   Effect.all([Environment, GitClient, JiraClient]).pipe(
     Effect.flatMap(([env, gitClient, jiraClient]) =>
