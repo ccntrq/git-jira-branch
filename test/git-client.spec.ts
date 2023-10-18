@@ -7,18 +7,22 @@ import * as CommandExecutor from "@effect/platform/CommandExecutor";
 import { GitClient, GitClientLive } from "../src/git-client";
 import { itEffect } from "./util";
 import { GitExecError } from "../src/types";
+import { TextEncoder } from "util";
 
 const testProg = Effect.gen(function* ($) {
   const gitClient = yield* $(GitClient);
   yield* $(gitClient.createGitBranch("feat/dummy-branch"));
 });
 
-const mkTestProcess = (exitCode: number): CommandExecutor.Process => ({
+const mkTestProcess = (
+  exitCode: number,
+  stderr?: Uint8Array
+): CommandExecutor.Process => ({
   [CommandExecutor.ProcessTypeId]: CommandExecutor.ProcessTypeId,
   pid: CommandExecutor.ProcessId(1),
   exitCode: Effect.succeed(CommandExecutor.ExitCode(exitCode)),
   isRunning: Effect.succeed(false),
-  stderr: Stream.empty,
+  stderr: stderr ? Stream.make(stderr) : Stream.empty,
   stdout: Stream.empty,
   stdin: Sink.drain,
   kill: () => Effect.unit,
@@ -59,10 +63,41 @@ describe("GitClient", () => {
     })
   );
 
-  itEffect("should handle git errors", () =>
+  itEffect("should run git command with given basebranch", () =>
     Effect.gen(function* ($) {
       executorMock.mockImplementation((cmd) =>
-        Effect.succeed(mkTestProcess(128))
+        Effect.succeed(mkTestProcess(0))
+      );
+
+      yield* $(
+        Effect.provide(
+          Effect.gen(function* ($) {
+            const gitClient = yield* $(GitClient);
+            yield* $(
+              gitClient.createGitBranchFrom("master")("feat/dummy-branch")
+            );
+          }),
+          testLayer
+        )
+      );
+
+      expect(executorMock).toHaveBeenCalledTimes(1);
+      expect(executorMock.mock.calls[0][0]).toMatchObject({
+        _tag: "StandardCommand",
+        args: ["checkout", "-b", "feat/dummy-branch", "master"],
+        command: "git",
+      });
+    })
+  );
+
+  itEffect("should handle git command not found errors", () =>
+    Effect.gen(function* ($) {
+      const errorMessage = "fatal: Dummy git error";
+      const encoder = new TextEncoder();
+      executorMock.mockImplementation((cmd) =>
+        Effect.succeed(
+          mkTestProcess(128, encoder.encode("fatal: Dummy git error"))
+        )
       );
 
       const res = yield* $(Effect.either(Effect.provide(testProg, testLayer)));
@@ -70,7 +105,59 @@ describe("GitClient", () => {
       Either.match(res, {
         onLeft: (e) =>
           expect(e).toMatchObject(
-            GitExecError({ message: "Git command failed with: []" })
+            GitExecError({
+              message: `Git command failed with: [${errorMessage}]`,
+            })
+          ),
+        onRight: () =>
+          expect.unreachable("Should have returned a GitExecError"),
+      });
+    })
+  );
+
+  itEffect("should handle git errors", () =>
+    Effect.gen(function* ($) {
+      executorMock.mockImplementation((cmd) => {
+        return Effect.fail(
+          Error.SystemError({
+            message: "git command not found",
+            reason: "NotFound",
+          } as Error.SystemError)
+        );
+      });
+
+      const res = yield* $(Effect.either(Effect.provide(testProg, testLayer)));
+      Either.match(res, {
+        onLeft: (e) =>
+          expect(e).toMatchObject(
+            GitExecError({
+              message:
+                "Failed executing `git` command because `git` was not found. Please install `git` and make sure it's on your `$PATH`.",
+            })
+          ),
+        onRight: () =>
+          expect.unreachable("Should have returned a GitExecError"),
+      });
+    })
+  );
+
+  itEffect("should handle BadArgument errors", () =>
+    Effect.gen(function* ($) {
+      executorMock.mockImplementation((cmd) => {
+        return Effect.fail(
+          Error.BadArgument({
+            message: "Dummy Message",
+          } as Error.SystemError)
+        );
+      });
+
+      const res = yield* $(Effect.either(Effect.provide(testProg, testLayer)));
+      Either.match(res, {
+        onLeft: (e) =>
+          expect(e).toMatchObject(
+            GitExecError({
+              message: "Unexpected error during git execution: [Dummy Message]",
+            })
           ),
         onRight: () =>
           expect.unreachable("Should have returned a GitExecError"),
