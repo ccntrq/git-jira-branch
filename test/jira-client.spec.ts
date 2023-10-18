@@ -67,6 +67,36 @@ describe("JiraClient", () => {
     })
   );
 
+  itEffect("should handle BadRequest errors", () =>
+    Effect.gen(function* ($) {
+      const testIssue: Partial<JiraIssue> = {
+        fields: {
+          summary: "Dummy isssue summary",
+          issuetype: {
+            name: "Feature",
+          },
+        },
+      };
+
+      const res = yield* $(
+        Effect.either(
+          Effect.provide(testProg, mkTestLayer(Response.json(testIssue)))
+        )
+      );
+
+      Either.match(res, {
+        onLeft: (e) =>
+          expect(e).toEqual(
+            JiraApiError({
+              message:
+                "Failed to parse ticket response from Jira:\n'key': 'Missing key or index'",
+            })
+          ),
+        onRight: (_) => expect.unreachable(`Should have returned an error.`),
+      });
+    })
+  );
+
   itEffect("should return ParseError for invalid response", () =>
     Effect.gen(function* ($) {
       const testIssue: Partial<JiraIssue> = {
@@ -90,6 +120,26 @@ describe("JiraClient", () => {
             JiraApiError({
               message:
                 "Failed to parse ticket response from Jira:\n'key': 'Missing key or index'",
+            })
+          ),
+        onRight: (_) => expect.unreachable(`Should have returned an error.`),
+      });
+    })
+  );
+
+  itEffect("should handle 404 NOT_FOUND errors", () =>
+    Effect.gen(function* ($) {
+      const failedResponse = new Response(null, { status: 404 });
+
+      const res = yield* $(
+        Effect.either(Effect.provide(testProg, mkTestLayer(failedResponse)))
+      );
+
+      Either.match(res, {
+        onLeft: (e) =>
+          expect(e).toEqual(
+            JiraApiError({
+              message: "Jira returned status 404. Make sure the ticket exists.",
             })
           ),
         onRight: (_) => expect.unreachable(`Should have returned an error.`),

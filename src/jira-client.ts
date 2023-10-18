@@ -77,9 +77,12 @@ const handleJiraClientErrors = (
     Effect.catchTag("ResponseError", (e) =>
       Effect.fail(
         JiraApiError({
-          message: `Jira Ticket request returned failure. Reason: ${e.reason}${
-            typeof e.error === "string" ? ` (${e.error})` : ""
-          } StatusCode: ${e.response.status}`,
+          message:
+            e.response.status === 404
+              ? `Jira returned status 404. Make sure the ticket exists.`
+              : `Jira Ticket request returned failure. Reason: ${e.reason}${
+                  typeof e.error === "string" ? ` (${e.error})` : ""
+                } StatusCode: ${e.response.status}`,
         })
       )
     )
