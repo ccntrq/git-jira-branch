@@ -1,5 +1,5 @@
-import { Effect } from "effect";
-import { isNone, isSome, type Option } from "effect/Option";
+import { Effect, Option } from "effect";
+import { isNone } from "effect/Option";
 
 import { GitClient } from "./git-client";
 import { JiraClient } from "./jira-client";
@@ -10,6 +10,35 @@ import {
   JiraIssuetype,
   JiraKeyPrefix,
 } from "./types";
+
+export const gitCreateJiraBranch = (
+  jiraKey: string,
+  baseBranch: Option.Option<string>
+): Effect.Effect<
+  Environment | GitClient | JiraClient,
+  GitCreateJiraBranchError,
+  string
+> =>
+  Effect.gen(function* ($) {
+    const [envProvider, gitClient, jiraClient] = yield* $(
+      Effect.all([Environment, GitClient, JiraClient])
+    );
+
+    const { defaultJiraKeyPrefix } = yield* $(envProvider.getEnv());
+    const fullKey = buildJiraKey(defaultJiraKeyPrefix, jiraKey);
+
+    const issue = yield* $(jiraClient.getJiraIssue(fullKey));
+    const branchName = jiraIssueToBranchName(issue);
+
+    yield* $(
+      Option.match(baseBranch, {
+        onNone: () => gitClient.createGitBranch,
+        onSome: gitClient.createGitBranchFrom,
+      })(branchName)
+    );
+
+    return branchName;
+  });
 
 const slugify = (str: string): string =>
   str
@@ -35,34 +64,9 @@ const jiraIssuetypeBranchtype = (issuetype: JiraIssuetype): string => {
 };
 
 const buildJiraKey = (
-  defaultJiraKeyPrefix: Option<JiraKeyPrefix>,
+  defaultJiraKeyPrefix: Option.Option<JiraKeyPrefix>,
   jiraKey: string
 ): string =>
   jiraKey.match(/^([a-z]+)-(\d+)$/i) || isNone(defaultJiraKeyPrefix)
     ? jiraKey
     : `${defaultJiraKeyPrefix.value}-${jiraKey}`;
-
-export const gitCreateJiraBranch = (
-  jiraKey: string,
-  baseBranch: Option<string>
-): Effect.Effect<
-  Environment | GitClient | JiraClient,
-  GitCreateJiraBranchError,
-  string
-> =>
-  Effect.all([Environment, GitClient, JiraClient]).pipe(
-    Effect.flatMap(([env, gitClient, jiraClient]) =>
-      env.getEnv().pipe(
-        Effect.map(({ defaultJiraKeyPrefix }) =>
-          buildJiraKey(defaultJiraKeyPrefix, jiraKey)
-        ),
-        Effect.flatMap(jiraClient.getJiraIssue),
-        Effect.map(jiraIssueToBranchName),
-        Effect.tap(
-          isSome(baseBranch)
-            ? gitClient.createGitBranchFrom(baseBranch.value)
-            : gitClient.createGitBranch
-        )
-      )
-    )
-  );
