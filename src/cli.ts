@@ -1,7 +1,6 @@
 #!/usr/bin/env node
-import { Console, Data, Effect, Layer, pipe } from "effect";
+import { Console, Option, Data, Effect, Layer, pipe } from "effect";
 import { get } from "effect/Chunk";
-import { isSome, type Option } from "effect/Option";
 import * as Args from "@effect/cli/Args";
 import * as CliApp from "@effect/cli/CliApp";
 import * as Command from "@effect/cli/Command";
@@ -22,8 +21,8 @@ import * as packageJson from "./package.json";
 
 export interface GitCreateJiraBranch extends Data.Case {
   readonly version: boolean;
-  readonly jiraKey: Option<string>;
-  readonly baseBranch: Option<string>;
+  readonly jiraKey: Option.Option<string>;
+  readonly baseBranch: Option.Option<string>;
 }
 
 export const GitCreateJiraBranch = Data.case<GitCreateJiraBranch>();
@@ -80,39 +79,27 @@ const mainLive = Layer.merge(
   baseLayer.pipe(Layer.provide(JiraClientLive))
 );
 
+const cliEffect = (args: string[]) =>
+  CliApp.run(cli, args, (command) => {
+    if (command.version) {
+      return Console.log(`${cli.name} v${cli.version}`);
+    }
+
+    return Option.match(command.jiraKey, {
+      onSome: (jiraKey) =>
+        Effect.flatMap(
+          gitCreateJiraBranch(jiraKey, command.baseBranch),
+          (branch) => Console.log(`Successfully created branch: '${branch}'`)
+        ),
+      onNone: () => printDocs(HelpDoc.p(Span.error("No Jira Key provided"))),
+    });
+  });
+
 Effect.runPromise(
   Effect.provide(
     pipe(
       Effect.sync(() => process.argv.slice(2)),
-      Effect.flatMap((args) =>
-        CliApp.run(
-          cli,
-          args,
-          (
-            command
-          ): Effect.Effect<
-            GitClient | Environment | JiraClient,
-            GitCreateJiraBranchError | ValidationError.ValidationError,
-            void
-          > =>
-            command.version
-              ? Console.log(`${cli.name} v${cli.version}`)
-              : isSome(command.jiraKey)
-              ? gitCreateJiraBranch(
-                  command.jiraKey.value,
-                  command.baseBranch
-                ).pipe(
-                  Effect.flatMap((branch) =>
-                    Console.log(`Successfully created branch: '${branch}'`)
-                  )
-                )
-              : Effect.fail(
-                  ValidationError.missingValue(
-                    HelpDoc.p(Span.error("No Jira Key provided"))
-                  )
-                ).pipe(Effect.catchAll((e) => printDocs(e.error)))
-        )
-      ),
+      Effect.flatMap(cliEffect),
       Effect.catchIf(ValidationError.isValidationError, (e) =>
         // Validation errors are already handled by the CLI
         Effect.succeed(undefined)
