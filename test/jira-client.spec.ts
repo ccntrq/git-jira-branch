@@ -1,11 +1,12 @@
-import { ConfigProvider, Effect, Layer } from "effect";
+import { ConfigProvider, Effect, Either, Layer } from "effect";
 import * as Http from "@effect/platform/HttpClient";
 
 import { EnvironmentLive } from "../src/environment";
 import { JiraClient, JiraClientLive } from "../src/jira-client";
-import { JiraIssue } from "../src/types";
+import { JiraApiError, JiraIssue } from "../src/types";
 
-import { it, describe, expect, assert } from "vitest";
+import { describe, expect } from "vitest";
+import { itEffect } from "./util";
 
 const environmentTest = Layer.setConfigProvider(
   ConfigProvider.fromMap(
@@ -40,86 +41,80 @@ const testProg = Effect.gen(function* ($) {
 });
 
 describe("JiraClient", () => {
-  it("should make ticket request", async () => {
-    const testIssue: JiraIssue = {
-      key: "DUMMYAPP-123",
-      fields: {
-        summary: "Dummy isssue summary",
-        issuetype: {
-          name: "Feature",
+  itEffect("should make ticket request", () =>
+    Effect.gen(function* ($) {
+      const testIssue: JiraIssue = {
+        key: "DUMMYAPP-123",
+        fields: {
+          summary: "Dummy isssue summary",
+          issuetype: {
+            name: "Feature",
+          },
         },
-      },
-    };
+      };
 
-    await Effect.runPromise(
-      Effect.provide(
-        testProg.pipe(
-          Effect.tap((ticket) =>
-            Effect.succeed(expect(ticket).toEqual(testIssue))
-          ),
-          Effect.catchAll((e) =>
-            Effect.succeed(assert.fail(`Unexpected error: ${e}`))
-          )
-        ),
-        mkTestLayer(Response.json(testIssue))
-      )
-    );
-  });
-  it("should return ParseError for invalid response", async () => {
-    const testIssue: Partial<JiraIssue> = {
-      fields: {
-        summary: "Dummy isssue summary",
-        issuetype: {
-          name: "Feature",
+      const res = yield* $(
+        Effect.either(
+          Effect.provide(testProg, mkTestLayer(Response.json(testIssue)))
+        )
+      );
+
+      Either.match(res, {
+        onLeft: (e) =>
+          expect.unreachable(`Should have returned a ticket: ${e}`),
+        onRight: (ticket) => expect(ticket).toEqual(testIssue),
+      });
+    })
+  );
+
+  itEffect("should return ParseError for invalid response", () =>
+    Effect.gen(function* ($) {
+      const testIssue: Partial<JiraIssue> = {
+        fields: {
+          summary: "Dummy isssue summary",
+          issuetype: {
+            name: "Feature",
+          },
         },
-      },
-    };
+      };
 
-    await Effect.runPromise(
-      Effect.provide(
-        testProg.pipe(
-          Effect.tap((ticket) =>
-            Effect.succeed(assert.fail("Should have failed"))
+      const res = yield* $(
+        Effect.either(
+          Effect.provide(testProg, mkTestLayer(Response.json(testIssue)))
+        )
+      );
+
+      Either.match(res, {
+        onLeft: (e) =>
+          expect(e).toEqual(
+            JiraApiError({
+              message:
+                "Failed to parse ticket response from Jira:\n'key': 'Missing key or index'",
+            })
           ),
-          Effect.catchAll((e) =>
-            Effect.succeed(
-              expect(e).toMatchInlineSnapshot(`
-              {
-                "_tag": "JiraApiError",
-                "message": "Failed to parse ticket response from Jira:
-              'key': 'Missing key or index'",
-              }
-            `)
-            )
-          )
-        ),
-        mkTestLayer(Response.json(testIssue))
-      )
-    );
-  });
+        onRight: (_) => expect.unreachable(`Should have returned an error.`),
+      });
+    })
+  );
 
-  it("should return error for response with non 200 status", async () => {
-    const failedResponse = new Response(null, { status: 404 });
+  itEffect("should return error for response with non 200 status", () =>
+    Effect.gen(function* ($) {
+      const failedResponse = new Response(null, { status: 500 });
 
-    await Effect.runPromise(
-      Effect.provide(
-        testProg.pipe(
-          Effect.tap((ticket) =>
-            Effect.succeed(assert.fail("Should have failed"))
+      const res = yield* $(
+        Effect.either(Effect.provide(testProg, mkTestLayer(failedResponse)))
+      );
+
+      Either.match(res, {
+        onLeft: (e) =>
+          expect(e).toEqual(
+            JiraApiError({
+              message:
+                "Jira Ticket request returned failure. Reason: StatusCode (non 2xx status code) StatusCode: 500",
+            })
           ),
-          Effect.catchAll((e) =>
-            Effect.succeed(
-              expect(e).toMatchInlineSnapshot(`
-                {
-                  "_tag": "JiraApiError",
-                  "message": "Jira Ticket request returned failure. Reason: StatusCode (non 2xx status code) StatusCode: 404",
-                }
-              `)
-            )
-          )
-        ),
-        mkTestLayer(failedResponse)
-      )
-    );
-  });
+        onRight: (_) => expect.unreachable(`Should have returned an error.`),
+      });
+    })
+  );
 });
