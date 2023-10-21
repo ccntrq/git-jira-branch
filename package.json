@@ -14,10 +14,10 @@
     "productivity"
   ],
   "bin": {
-    "git-create-jira-branch": "dist/cli.js"
+    "git-create-jira-branch": "dist/main.js"
   },
   "scripts": {
-    "start": "npm run build && node dist/cli.js",
+    "start": "npm run build && node dist/main.js",
     "build": "tsc --build src",
     "test": "vitest run",
     "test:watch": "vitest"

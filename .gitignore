@@ -1,3 +1,5 @@
 node_modules/
 dist/
+coverage/
 tsconfig.tsbuildinfo
+git-create-jira-branch-*.tgz
