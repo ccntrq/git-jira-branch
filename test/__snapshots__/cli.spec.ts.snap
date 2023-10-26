@@ -1,0 +1,77 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`cli > cliEffect > should create branch with single argument 1`] = `
+[
+  [
+    "Successfully created branch: 'feat/FOOX-1234-description'",
+  ],
+]
+`;
+
+exports[`cli > cliEffect > should handle basebranch argument (-b) 1`] = `
+[
+  [
+    "Successfully created branch: 'feat/FOOX-1234-description'",
+  ],
+]
+`;
+
+exports[`cli > cliEffect > should print help (--help) 1`] = `
+[
+  [
+    "[0;1m[0;97;1mgit-create-jira-branch[0;1m[0m
+
+git-create-jira-branch v0.1.0 -- Create a git branch from a Jira ticket
+
+[0;1mUSAGE[0m
+
+$ git-create-jira-branch [(-b, --baseBranch text)] [(-v, --version)] [(-h, --help)] <jira-key>...
+
+[0;1mARGUMENTS[0m
+
+[0;1m[0;30;1m<jira-key>[0;1m 0 - 1[0m
+
+  A user-defined piece of text.
+
+  The Jira ticket key to create a branch for (e.g. FOOX-1234)
+
+  This argument must be repeated at least 0 times and may be repeated up to 1 times.
+
+[0;1mOPTIONS[0m
+
+[0;1m(-b, --baseBranch text)[0m
+
+  A user-defined piece of text.
+
+  Base branch to create the new branch from
+
+  This setting is optional.
+
+[0;1m(-v, --version)[0m
+
+  A true or false value.
+
+  Show version information
+
+  This setting is optional. (Defaults to: 'false')
+
+[0;1m(-h, --help)[0m
+
+  A true or false value.
+
+  Show this help text
+
+  This setting is optional. (Defaults to: 'false')
+",
+  ],
+]
+`;
+
+exports[`cli > cliEffect > should report missing jirakey 1`] = `
+[
+  [
+    "[0;91mNo Jira Key provided[0m
+",
+  ],
+]
+`;
