@@ -4,9 +4,16 @@
   "description": "Setup feature branches for your Jira tickets with one command",
   "license": "MIT",
   "repository": "ccntrq/git-create-jira-branch",
+  "bugs": "https://github.com/ccntrq/git-create-jira-branch/issues",
   "author": {
     "name": "Alexander 'ccntrq' Pankoff",
     "email": "ccntrq@screenri.de"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "volta": {
+    "node": "20.9.0"
   },
   "keywords": [
     "git",
