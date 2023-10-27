@@ -1,0 +1,36 @@
+name: Lint, Build and Test
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - develop
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - id: setup-node-and-npm
+        uses: ./.github/actions/setup-node-and-npm-dependencies
+      - name: Lint
+        run: npm run lint
+
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        version: [16, 18, 20]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - id: setup-node-and-npm
+        uses: ./.github/actions/setup-node-and-npm-dependencies
+        with:
+          node-version: ${{ matrix.version }}
+          runner-os: ${{ matrix.os }}
+      - name: Run tests (Runs build before)
+        run: npm run test
