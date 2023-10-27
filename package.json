@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "Setup feature branches for your Jira tickets with one command",
   "license": "MIT",
-  "repository": "ccntrq/git-create-jira-branch",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ccntrq/git-create-jira-branch.git"
+  },
   "bugs": "https://github.com/ccntrq/git-create-jira-branch/issues",
   "author": {
     "name": "Alexander 'ccntrq' Pankoff",
@@ -23,9 +26,14 @@
   "bin": {
     "git-create-jira-branch": "dist/main.js"
   },
+  "files": [
+    "/dist"
+  ],
   "scripts": {
     "start": "npm run build && node dist/main.js",
     "build": "tsc --build src",
+    "clean": "rimraf dist/ coverage/",
+    "prepack": "npm run clean && npm run build",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint .",
@@ -45,6 +53,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^5.0.1",
     "prettier": "^3.0.3",
+    "rimraf": "^5.0.5",
     "typescript": "^5.1.6",
     "vitest": "^0.34.6"
   },
