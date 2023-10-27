@@ -1,18 +1,18 @@
-import { Console, Option, Data, Effect, pipe } from "effect";
-import { get } from "effect/Chunk";
-import * as Args from "@effect/cli/Args";
-import * as CliApp from "@effect/cli/CliApp";
-import * as Command from "@effect/cli/Command";
-import * as Options from "@effect/cli/Options";
-import * as Span from "@effect/cli/HelpDoc/Span";
-import * as HelpDoc from "@effect/cli/HelpDoc";
-import * as ValidationError from "@effect/cli/ValidationError";
+import {Console, Option, Data, Effect, pipe} from 'effect';
+import {get} from 'effect/Chunk';
+import * as Args from '@effect/cli/Args';
+import * as CliApp from '@effect/cli/CliApp';
+import * as Command from '@effect/cli/Command';
+import * as Options from '@effect/cli/Options';
+import * as Span from '@effect/cli/HelpDoc/Span';
+import * as HelpDoc from '@effect/cli/HelpDoc';
+import * as ValidationError from '@effect/cli/ValidationError';
 
-import { Environment } from "./environment";
-import { GitClient } from "./git-client";
-import { JiraClient } from "./jira-client";
-import { gitCreateJiraBranch } from "./core";
-import * as packageJson from "./package.json";
+import {Environment} from './environment';
+import {GitClient} from './git-client';
+import {JiraClient} from './jira-client';
+import {gitCreateJiraBranch} from './core';
+import * as packageJson from './package.json';
 
 interface GitCreateJiraBranch extends Data.Case {
   readonly version: boolean;
@@ -23,24 +23,24 @@ interface GitCreateJiraBranch extends Data.Case {
 const GitCreateJiraBranch = Data.case<GitCreateJiraBranch>();
 
 const mainCommand = pipe(
-  Command.make("git-create-jira-branch", {
+  Command.make('git-create-jira-branch', {
     options: Options.all({
       baseBranch: Options.withDescription(
-        Options.optional(Options.alias(Options.text("baseBranch"), "b")),
-        "Base branch to create the new branch from"
+        Options.optional(Options.alias(Options.text('baseBranch'), 'b')),
+        'Base branch to create the new branch from',
       ),
       version: Options.withDescription(
-        Options.alias(Options.boolean("version"), "v"),
-        "Show version information"
+        Options.alias(Options.boolean('version'), 'v'),
+        'Show version information',
       ),
       help: Options.withDescription(
-        Options.alias(Options.boolean("help"), "h"),
-        "Show this help text"
+        Options.alias(Options.boolean('help'), 'h'),
+        'Show this help text',
       ),
     }),
     args: Args.addDescription(
-      Args.atMost(Args.text({ name: "jira-key" }), 1),
-      "The Jira ticket key to create a branch for (e.g. FOOX-1234)"
+      Args.atMost(Args.text({name: 'jira-key'}), 1),
+      'The Jira ticket key to create a branch for (e.g. FOOX-1234)',
     ),
   }),
   Command.map((args) => {
@@ -49,18 +49,18 @@ const mainCommand = pipe(
       baseBranch: args.options.baseBranch,
       jiraKey: get(args.args, 0),
     });
-  })
+  }),
 );
 
 const cli = CliApp.make({
   name: packageJson.name,
   version: packageJson.version,
   command: mainCommand,
-  summary: Span.text("Create a git branch from a Jira ticket"),
+  summary: Span.text('Create a git branch from a Jira ticket'),
 });
 
 export const cliEffect = (
-  args: string[]
+  args: string[],
 ): Effect.Effect<GitClient | Environment | JiraClient, never, void> =>
   CliApp.run(cli, args, (command) => {
     if (command.version) {
@@ -71,17 +71,17 @@ export const cliEffect = (
       onSome: (jiraKey) =>
         Effect.flatMap(
           gitCreateJiraBranch(jiraKey, command.baseBranch),
-          (branch) => Console.log(`Successfully created branch: '${branch}'`)
+          (branch) => Console.log(`Successfully created branch: '${branch}'`),
         ),
-      onNone: () => printDocs(HelpDoc.p(Span.error("No Jira Key provided"))),
+      onNone: () => printDocs(HelpDoc.p(Span.error('No Jira Key provided'))),
     });
   }).pipe(
     Effect.catchIf(ValidationError.isValidationError, (_) =>
       // Validation errors are already handled by the CLI
-      Effect.succeed(undefined)
+      Effect.succeed(undefined),
     ),
-    Effect.catchAll((e) => printDocs(HelpDoc.p(Span.error(e.message))))
+    Effect.catchAll((e) => printDocs(HelpDoc.p(Span.error(e.message)))),
   );
 
-const printDocs = (doc: HelpDoc.HelpDoc) =>
+const printDocs = (doc: HelpDoc.HelpDoc): Effect.Effect<never, never, void> =>
   Console.log(HelpDoc.toAnsiText(doc));

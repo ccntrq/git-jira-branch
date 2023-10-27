@@ -1,19 +1,19 @@
-import { Effect, Option } from "effect";
-import { isNone } from "effect/Option";
+import {Effect, Option} from 'effect';
+import {isNone} from 'effect/Option';
 
-import { GitClient } from "./git-client";
-import { JiraClient } from "./jira-client";
-import { Environment } from "./environment";
+import {GitClient} from './git-client';
+import {JiraClient} from './jira-client';
+import {Environment} from './environment';
 import {
   GitCreateJiraBranchError,
   JiraIssue,
   JiraIssuetype,
   JiraKeyPrefix,
-} from "./types";
+} from './types';
 
 export const gitCreateJiraBranch = (
   jiraKey: string,
-  baseBranch: Option.Option<string>
+  baseBranch: Option.Option<string>,
 ): Effect.Effect<
   Environment | GitClient | JiraClient,
   GitCreateJiraBranchError,
@@ -21,10 +21,10 @@ export const gitCreateJiraBranch = (
 > =>
   Effect.gen(function* ($) {
     const [envProvider, gitClient, jiraClient] = yield* $(
-      Effect.all([Environment, GitClient, JiraClient])
+      Effect.all([Environment, GitClient, JiraClient]),
     );
 
-    const { defaultJiraKeyPrefix } = yield* $(envProvider.getEnv());
+    const {defaultJiraKeyPrefix} = yield* $(envProvider.getEnv());
     const fullKey = buildJiraKey(defaultJiraKeyPrefix, jiraKey);
 
     const issue = yield* $(jiraClient.getJiraIssue(fullKey));
@@ -34,7 +34,7 @@ export const gitCreateJiraBranch = (
       Option.match(baseBranch, {
         onNone: () => gitClient.createGitBranch,
         onSome: gitClient.createGitBranchFrom,
-      })(branchName)
+      })(branchName),
     );
 
     return branchName;
@@ -43,13 +43,13 @@ export const gitCreateJiraBranch = (
 const slugify = (str: string): string =>
   str
     .toLowerCase()
-    .replace(/ä/g, "ae")
-    .replace(/ö/g, "oe")
-    .replace(/ü/g, "ue")
-    .replace(/ß/g, "ss")
-    .replace(/[^a-zA-Z0-9]/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "");
+    .replace(/ä/g, 'ae')
+    .replace(/ö/g, 'oe')
+    .replace(/ü/g, 'ue')
+    .replace(/ß/g, 'ss')
+    .replace(/[^a-zA-Z0-9]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
 
 const jiraIssueToBranchName = (issue: JiraIssue): string => {
   const branchtype = jiraIssuetypeBranchtype(issue.fields.issuetype);
@@ -58,15 +58,15 @@ const jiraIssueToBranchName = (issue: JiraIssue): string => {
 
 const jiraIssuetypeBranchtype = (issuetype: JiraIssuetype): string => {
   if (issuetype.name.match(/bug/i)) {
-    return "fix";
+    return 'fix';
   }
 
-  return "feat";
+  return 'feat';
 };
 
 const buildJiraKey = (
   defaultJiraKeyPrefix: Option.Option<JiraKeyPrefix>,
-  jiraKey: string
+  jiraKey: string,
 ): string =>
   jiraKey.match(/^([a-z]+)-(\d+)$/i) || isNone(defaultJiraKeyPrefix)
     ? jiraKey

@@ -1,40 +1,42 @@
-import { Effect, pipe } from "effect";
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {Effect, pipe} from 'effect';
 
-import { Mock, it, vi } from "vitest";
+import {Mock, it, vi} from 'vitest';
 
 export const itEffect = (() => {
   const f = <E, A>(
     name: string,
     self: () => Effect.Effect<never, E, A>,
-    timeout = 5_000
+    timeout = 5_000,
   ) => {
     return it(
       name,
       () => pipe(Effect.suspend(self), Effect.runPromise),
-      timeout
+      timeout,
     );
   };
   return Object.assign(f, {
     skip: <E, A>(
       name: string,
       self: () => Effect.Effect<never, E, A>,
-      timeout = 5_000
+      timeout = 5_000,
     ) => {
       return it.skip(
         name,
         () => pipe(Effect.suspend(self), Effect.runPromise),
-        timeout
+        timeout,
       );
     },
     only: <E, A>(
       name: string,
       self: () => Effect.Effect<never, E, A>,
-      timeout = 5_000
+      timeout = 5_000,
     ) => {
       return it.only(
         name,
         () => pipe(Effect.suspend(self), Effect.runPromise),
-        timeout
+        timeout,
       );
     },
   });
@@ -48,11 +50,9 @@ export interface EffectMock<T extends any[], E = any, R = any>
   mockFailValueOnce: (e: E) => this;
 }
 
-export const toEffectMock = <T extends any[], E = any, R = any>(fn: Mock<T, Effect.Effect<never, E, R>>): EffectMock<
-  T,
-  E,
-  R
-> => {
+export const toEffectMock = <T extends any[], E = any, R = any>(
+  fn: Mock<T, Effect.Effect<never, E, R>>,
+): EffectMock<T, E, R> => {
   const mock = Object.assign(fn, {
     mockSuccessValue: (obj: R) => fn.mockReturnValue(Effect.succeed(obj)),
     mockSuccessValueOnce: (obj: R) =>
@@ -64,4 +64,5 @@ export const toEffectMock = <T extends any[], E = any, R = any>(fn: Mock<T, Effe
   return mock;
 };
 
-export const effectMock = <T extends any[], E, R>() => toEffectMock<T, E, R>(vi.fn())
+export const effectMock = <T extends any[], E, R>() =>
+  toEffectMock<T, E, R>(vi.fn());

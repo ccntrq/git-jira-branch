@@ -1,11 +1,12 @@
-import * as Schema from "@effect/schema/Schema";
-import { Brand, Data } from "effect";
+// eslint-disable-next-line node/no-extraneous-import
+import * as Schema from '@effect/schema/Schema';
+import {Brand, Data} from 'effect';
 
-export type JiraApiUrl = string & Brand.Brand<"JiraApiUrl">;
+export type JiraApiUrl = string & Brand.Brand<'JiraApiUrl'>;
 export const JiraApiUrl = Brand.nominal<JiraApiUrl>();
-export type JiraPat = string & Brand.Brand<"JiraPat">;
+export type JiraPat = string & Brand.Brand<'JiraPat'>;
 export const JiraPat = Brand.nominal<JiraPat>();
-export type JiraKeyPrefix = string & Brand.Brand<"JiraKeyPrefix">;
+export type JiraKeyPrefix = string & Brand.Brand<'JiraKeyPrefix'>;
 export const JiraKeyPrefix = Brand.nominal<JiraKeyPrefix>();
 
 export const JiraIssuetypeSchema = Schema.struct({
@@ -35,11 +36,11 @@ export declare namespace GitCreateJiraBranchError {
     readonly message: string;
   }
 
-  export type ProvidedFields = "_tag";
+  export type ProvidedFields = '_tag';
 }
 
 const makeError =
-  <E extends GitCreateJiraBranchError.Proto>(tag: E["_tag"]) =>
+  <E extends GitCreateJiraBranchError.Proto>(tag: E['_tag']) =>
   (args: Omit<E, GitCreateJiraBranchError.ProvidedFields>): E =>
     Data.struct({
       _tag: tag,
@@ -47,17 +48,17 @@ const makeError =
     } as E);
 
 export interface GitExecError extends GitCreateJiraBranchError.Proto {
-  readonly _tag: "GitExecError";
+  readonly _tag: 'GitExecError';
 }
 
-export const GitExecError = makeError<GitExecError>("GitExecError");
+export const GitExecError = makeError<GitExecError>('GitExecError');
 
 export interface AppConfigError extends GitCreateJiraBranchError.Proto {
-  readonly _tag: "AppConfigError";
+  readonly _tag: 'AppConfigError';
 }
-export const AppConfigError = makeError<AppConfigError>("AppConfigError");
+export const AppConfigError = makeError<AppConfigError>('AppConfigError');
 
 export interface JiraApiError extends GitCreateJiraBranchError.Proto {
-  readonly _tag: "JiraApiError";
+  readonly _tag: 'JiraApiError';
 }
-export const JiraApiError = makeError<JiraApiError>("JiraApiError");
+export const JiraApiError = makeError<JiraApiError>('JiraApiError');
