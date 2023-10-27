@@ -23,16 +23,16 @@
     "test:watch": "vitest"
   },
   "devDependencies": {
-    "@types/node": "^20.4.9",
+    "@types/node": "^20.8.9",
     "@vitest/coverage-v8": "^0.34.6",
     "@vitest/ui": "^0.34.6",
     "typescript": "^5.1.6",
     "vitest": "^0.34.6"
   },
   "dependencies": {
-    "@effect/cli": "0.16.0",
-    "@effect/platform": "0.22.1",
-    "@effect/platform-node": "0.23.2",
-    "effect": "2.0.0-next.48"
+    "@effect/cli": "0.19.0",
+    "@effect/platform": "0.25.1",
+    "@effect/platform-node": "0.26.1",
+    "effect": "2.0.0-next.52"
   }
 }
