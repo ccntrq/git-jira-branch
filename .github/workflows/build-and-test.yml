@@ -22,7 +22,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        version: [16, 18, 20]
+        version: [18, 20]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
