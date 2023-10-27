@@ -1,7 +1,7 @@
 {
   "name": "git-create-jira-branch",
   "version": "0.1.0",
-  "description": "Create git branches for your Jira tickets",
+  "description": "Setup feature branches for your Jira tickets with one command",
   "license": "MIT",
   "repository": "ccntrq/git-create-jira-branch",
   "author": {
