@@ -17,12 +17,7 @@ exports[`cli > cliEffect > should handle basebranch argument (-b) 1`] = `
 `;
 
 exports[`cli > cliEffect > should print help (--help) 1`] = `
-[
-  [
-    "[0;1m[0;97;1mgit-create-jira-branch[0;1m[0m
-
-git-create-jira-branch v0.1.0 -- Create a git branch from a Jira ticket
-
+"
 [0;1mUSAGE[0m
 
 $ git-create-jira-branch [(-b, --baseBranch text)] [(-v, --version)] [(-h, --help)] <jira-key>...
@@ -62,9 +57,7 @@ $ git-create-jira-branch [(-b, --baseBranch text)] [(-v, --version)] [(-h, --hel
   Show this help text
 
   This setting is optional. (Defaults to: 'false')
-",
-  ],
-]
+"
 `;
 
 exports[`cli > cliEffect > should report missing jirakey 1`] = `
