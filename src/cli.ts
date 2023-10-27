@@ -76,7 +76,7 @@ export const cliEffect = (
       onNone: () => printDocs(HelpDoc.p(Span.error("No Jira Key provided"))),
     });
   }).pipe(
-    Effect.catchIf(ValidationError.isValidationError, (e) =>
+    Effect.catchIf(ValidationError.isValidationError, (_) =>
       // Validation errors are already handled by the CLI
       Effect.succeed(undefined)
     ),

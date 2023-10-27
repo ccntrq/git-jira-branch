@@ -1,4 +1,4 @@
-import { Layer, Context, Effect, pipe } from "effect";
+import { Layer, Context, Effect } from "effect";
 import * as Http from "@effect/platform/HttpClient";
 import * as ArrayFormatter from "@effect/schema/ArrayFormatter";
 import * as ParseResult from "@effect/schema/ParseResult";
