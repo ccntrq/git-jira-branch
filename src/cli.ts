@@ -43,6 +43,13 @@ const mainCommand = pipe(
       'The Jira ticket key to create a branch for (e.g. FOOX-1234)',
     ),
   }),
+  Command.withHelp(
+    HelpDoc.p(
+      `Fetches the given Jira ticket and creates an aproriately named branch for it.
+The branch type (bug or feat) is determined by the ticket type. The branch name
+is based on the ticket summary.`,
+    ),
+  ),
   Command.map((args) => {
     return GitCreateJiraBranch({
       version: args.options.version,
@@ -56,7 +63,7 @@ const cli = CliApp.make({
   name: packageJson.name,
   version: packageJson.version,
   command: mainCommand,
-  summary: Span.text('Create a git branch from a Jira ticket'),
+  summary: Span.text(packageJson.description),
 });
 
 export const cliEffect = (

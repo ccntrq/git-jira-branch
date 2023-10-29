@@ -22,6 +22,12 @@ exports[`cli > cliEffect > should print help (--help) 1`] = `
 
 $ git-create-jira-branch [(-b, --baseBranch text)] [(-v, --version)] [(-h, --help)] <jira-key>...
 
+[0;1mDESCRIPTION[0m
+
+Fetches the given Jira ticket and creates an aproriately named branch for it.
+The branch type (bug or feat) is determined by the ticket type. The branch name
+is based on the ticket summary.
+
 [0;1mARGUMENTS[0m
 
 [0;1m[0;30;1m<jira-key>[0;1m 0 - 1[0m
