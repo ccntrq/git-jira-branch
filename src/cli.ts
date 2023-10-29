@@ -12,7 +12,7 @@ import {Environment} from './environment';
 import {GitClient} from './git-client';
 import {JiraClient} from './jira-client';
 import {gitCreateJiraBranch} from './core';
-import * as packageJson from './package.json';
+import * as packageJson from '../package.json';
 
 interface GitCreateJiraBranch extends Data.Case {
   readonly version: boolean;
