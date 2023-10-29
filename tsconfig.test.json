@@ -1,16 +1,18 @@
 {
   "extends": [
-    "@tsconfig/strictest/tsconfig",
-    "@tsconfig/node20/tsconfig"
+    "./tsconfig.json",
   ],
   "compilerOptions": {
     "rootDir": ".",
-    "outDir": ".",
-    "target": "es2016",
-    "composite": true,
+    "composite": false,
+    "noEmit": true,
     "resolveJsonModule": true
   },
   "files": [
     "package.json"
+  ],
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.ts"
   ]
 }

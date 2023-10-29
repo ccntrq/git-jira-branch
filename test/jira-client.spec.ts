@@ -23,7 +23,7 @@ const mkHttpMock = (
 ): Layer.Layer<never, never, Http.client.Client.Default> =>
   Layer.succeed(
     Http.client.Client,
-    Http.client.make((req) =>
+    Http.client.makeDefault((req) =>
       Effect.succeed(Http.response.fromWeb(req, response)),
     ),
   );

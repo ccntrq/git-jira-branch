@@ -36,6 +36,8 @@
     "prepack": "npm run clean && npm run build",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:type-check": "tsc -p tsconfig.test.json",
+    "pretest": "npm run test:type-check",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix"
   },
@@ -59,8 +61,8 @@
   },
   "dependencies": {
     "@effect/cli": "0.19.0",
-    "@effect/platform": "0.25.1",
-    "@effect/platform-node": "0.26.1",
+    "@effect/platform": "0.26.2",
+    "@effect/platform-node": "0.27.4",
     "effect": "2.0.0-next.52"
   }
 }
