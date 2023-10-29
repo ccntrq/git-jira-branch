@@ -29,5 +29,7 @@ jobs:
         with:
           node-version: ${{ matrix.version }}
           runner-os: ${{ matrix.os }}
-      - name: Run tests (Runs build before)
+      - name: Build
+        run: npm run build
+      - name: Run tests
         run: npm run test
