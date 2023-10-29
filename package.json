@@ -34,6 +34,7 @@
     "build": "tsc --build src",
     "clean": "rimraf dist/ coverage/",
     "prepack": "npm run clean && npm run build",
+    "prepare": "husky install",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:type-check": "tsc -p tsconfig.test.json",
@@ -42,6 +43,8 @@
     "lint:fix": "npm run lint -- --fix"
   },
   "devDependencies": {
+    "@commitlint/cli": "^18.2.0",
+    "@commitlint/config-conventional": "^18.1.0",
     "@tsconfig/node20": "^20.1.2",
     "@tsconfig/strictest": "^2.0.2",
     "@types/node": "^20.8.9",
@@ -54,6 +57,7 @@
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^5.0.1",
+    "husky": "^8.0.3",
     "prettier": "^3.0.3",
     "rimraf": "^5.0.5",
     "typescript": "^5.1.6",
