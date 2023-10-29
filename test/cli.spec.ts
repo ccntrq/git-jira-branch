@@ -121,7 +121,10 @@ describe('cli', () => {
 
         expect(mockGitCreateJiraBranch).not.toHaveBeenCalled();
         expect(
-          mockLog.mock.calls[0][0].split(/\n/).slice(3).join('\n'),
+          (mockLog.mock.calls[0]?.[0] as string)
+            .split(/\n/)
+            .slice(3)
+            .join('\n'),
         ).toMatchSnapshot();
       }),
     );

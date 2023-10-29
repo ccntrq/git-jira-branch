@@ -58,7 +58,7 @@ describe('GitClient', () => {
       yield* $(Effect.provide(testProg, testLayer));
 
       expect(executorMock).toHaveBeenCalledTimes(1);
-      expect(executorMock.mock.calls[0][0]).toMatchObject({
+      expect(executorMock.mock.calls[0]?.[0]).toMatchObject({
         _tag: 'StandardCommand',
         args: ['checkout', '-b', 'feat/dummy-branch'],
         command: 'git',
@@ -83,7 +83,7 @@ describe('GitClient', () => {
       );
 
       expect(executorMock).toHaveBeenCalledTimes(1);
-      expect(executorMock.mock.calls[0][0]).toMatchObject({
+      expect(executorMock.mock.calls[0]?.[0]).toMatchObject({
         _tag: 'StandardCommand',
         args: ['checkout', '-b', 'feat/dummy-branch', 'master'],
         command: 'git',

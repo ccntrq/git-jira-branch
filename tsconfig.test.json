@@ -1,0 +1,18 @@
+{
+  "extends": [
+    "./tsconfig.json",
+  ],
+  "compilerOptions": {
+    "rootDir": ".",
+    "composite": false,
+    "noEmit": true,
+    "resolveJsonModule": true
+  },
+  "files": [
+    "package.json"
+  ],
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.ts"
+  ]
+}

@@ -36,6 +36,8 @@
     "prepack": "npm run clean && npm run build",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:type-check": "tsc -p tsconfig.test.json",
+    "pretest": "npm run test:type-check",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix"
   },
