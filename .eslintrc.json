@@ -17,6 +17,7 @@
     "eol-last": "error",
     "prefer-arrow-callback": "error",
     "no-trailing-spaces": "error",
+    "no-console": "error",
     "quotes": [
       "warn",
       "single",
