@@ -3,22 +3,35 @@ name: 🚧 Build, Lint and Test
 on:
   pull_request:
   push:
-    branches:
-      - master
-      - develop
 
 jobs:
-  lint:
+  lint-code:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - id: setup-node-and-npm
         uses: ./.github/actions/setup-node-and-npm-dependencies
-      - name: Lint
+      - name: Lint code
         run: npm run lint
 
-  test:
+  lint-commits:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # for commitlint
+      - id: setup-node-and-npm
+        uses: ./.github/actions/setup-node-and-npm-dependencies
+      - name: Lint commits (last commit)
+        if: github.event_name == 'push'
+        run: npx commitlint --from HEAD~1 --to HEAD --verbose
+      - name: Lint commits (pr)
+        if: github.event_name == 'pull_request'
+        run: npx commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
+
+  build-and-test:
     strategy:
       matrix:
         os: [ubuntu-latest]
@@ -32,5 +45,7 @@ jobs:
         with:
           node-version: ${{ matrix.version }}
           runner-os: ${{ matrix.os }}
-      - name: Run tests (Runs build before)
+      - name: Build
+        run: npm run build
+      - name: Run tests
         run: npm run test
