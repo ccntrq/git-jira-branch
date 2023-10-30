@@ -1,0 +1,25 @@
+name: 🧪 Test released packages
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  test-release-packages:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        version: [18, 20]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.node-version }}
+          registry-url: 'https://registry.npmjs.org'
+      - name: Install
+        run: npm i -g git-create-jira-branch
+      - name: Run
+        run: git-create-jira-branch --help
