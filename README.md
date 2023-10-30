@@ -3,7 +3,7 @@
 Creates feature branches based on your Jira tickets type and description.
 
 ```bash
-$ git create-ticket-branch MYAPP-1234 -b master
+$ git create-jira-branch MYAPP-1234 -b master
 > Successfully created branch: 'feat/MYAPP-1234-sluggified-description-used-as-branchname'
 ```
 
@@ -38,13 +38,13 @@ npm i -g git-create-jira-branch
 Using the default JIRA_KEY_PREFIX
 
 ```bash
-git-create-ticket-branch 1324
+git-create-jira-branch 1324
 ```
 
 Or fully specified:
 
 ```
-git-create-ticket-branch MYAPP-1234
+git-create-jira-branch MYAPP-1234
 ```
 
 #### Create a new branch based on some other revision
@@ -52,7 +52,7 @@ git-create-ticket-branch MYAPP-1234
 To create a new branch based on your `master` branch:
 
 ```bash
-git-create-ticket-branch MYAPP-1234 -b master
+git-create-jira-branch MYAPP-1234 -b master
 ```
 
 ## Technologies used
