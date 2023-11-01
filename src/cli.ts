@@ -13,6 +13,7 @@ import {GitClient} from './git-client';
 import {JiraClient} from './jira-client';
 import {gitCreateJiraBranch} from './core';
 import * as packageJson from '../package.json';
+import {matchGitCreateJiraBranchResult} from './types';
 
 interface GitCreateJiraBranch extends Data.Case {
   readonly version: boolean;
@@ -78,7 +79,15 @@ export const cliEffect = (
       onSome: (jiraKey) =>
         Effect.flatMap(
           gitCreateJiraBranch(jiraKey, command.baseBranch),
-          (branch) => Console.log(`Successfully created branch: '${branch}'`),
+          (result) =>
+            Console.log(
+              matchGitCreateJiraBranchResult(result, {
+                onCreatedBranch: (branch) =>
+                  `Successfully created branch: '${branch}'`,
+                onSwitchedBranch: (branch) =>
+                  `Switched to already existing branch: '${branch}'`,
+              }),
+            ),
         ),
       onNone: () => printDocs(HelpDoc.p(Span.error('No Jira Key provided'))),
     });
