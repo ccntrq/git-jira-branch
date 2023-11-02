@@ -1,4 +1,4 @@
-import {Layer, Context, Effect} from 'effect';
+import {Layer, Context, Effect, flow} from 'effect';
 import * as Http from '@effect/platform/HttpClient';
 // eslint-disable-next-line node/no-extraneous-import
 import * as ArrayFormatter from '@effect/schema/ArrayFormatter';
@@ -49,14 +49,14 @@ export const JiraClientLive = Layer.effect(
   ),
 );
 
-const handleJiraClientErrors = (
+const handleJiraClientErrors: (
   eff: Effect.Effect<
     Environment,
     AppConfigError | ParseResult.ParseError | Http.error.HttpClientError,
     JiraIssue
   >,
-): Effect.Effect<Environment, AppConfigError | JiraApiError, JiraIssue> =>
-  eff.pipe(
+) => Effect.Effect<Environment, AppConfigError | JiraApiError, JiraIssue> =
+  flow(
     Effect.catchTag('ParseError', (e) =>
       Effect.fail(
         JiraApiError({

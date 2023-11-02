@@ -1,6 +1,7 @@
 // eslint-disable-next-line node/no-extraneous-import
 import * as Schema from '@effect/schema/Schema';
 import {Brand, Data, Match, pipe} from 'effect';
+import {dual} from 'effect/Function';
 
 export type JiraApiUrl = string & Brand.Brand<'JiraApiUrl'>;
 export const JiraApiUrl = Brand.nominal<JiraApiUrl>();
@@ -25,19 +26,36 @@ export const JiraIssueSchema = Schema.struct({
 
 export type GitCreateJiraBranchResult = CreatedBranch | SwitchedBranch;
 
-export const matchGitCreateJiraBranchResult = <A>(
-  result: GitCreateJiraBranchResult,
-  matcher: {
+export const matchGitCreateJiraBranchResult: {
+  <A>(
+    result: GitCreateJiraBranchResult,
+    matcher: {
+      onCreatedBranch: (branch: string) => A;
+      onSwitchedBranch: (branch: string) => A;
+    },
+  ): A;
+  <A>(matcher: {
     onCreatedBranch: (branch: string) => A;
     onSwitchedBranch: (branch: string) => A;
-  },
-): A =>
-  pipe(
-    Match.type<GitCreateJiraBranchResult>(),
-    Match.tag('CreatedBranch', ({branch}) => matcher.onCreatedBranch(branch)),
-    Match.tag('SwitchedBranch', ({branch}) => matcher.onSwitchedBranch(branch)),
-    Match.exhaustive,
-  )(result) as A;
+  }): (result: GitCreateJiraBranchResult) => A;
+} = dual(
+  2,
+  <A>(
+    result: GitCreateJiraBranchResult,
+    matcher: {
+      onCreatedBranch: (branch: string) => A;
+      onSwitchedBranch: (branch: string) => A;
+    },
+  ): A =>
+    pipe(
+      Match.type<GitCreateJiraBranchResult>(),
+      Match.tag('CreatedBranch', ({branch}) => matcher.onCreatedBranch(branch)),
+      Match.tag('SwitchedBranch', ({branch}) =>
+        matcher.onSwitchedBranch(branch),
+      ),
+      Match.exhaustive,
+    )(result) as A,
+);
 
 export interface CreatedBranch extends Data.Case {
   readonly _tag: 'CreatedBranch';

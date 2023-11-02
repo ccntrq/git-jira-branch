@@ -14,6 +14,7 @@ import {JiraClient} from './jira-client';
 import {gitCreateJiraBranch} from './core';
 import * as packageJson from '../package.json';
 import {matchGitCreateJiraBranchResult} from './types';
+import {compose} from 'effect/Function';
 
 interface GitCreateJiraBranch extends Data.Case {
   readonly version: boolean;
@@ -79,15 +80,15 @@ export const cliEffect = (
       onSome: (jiraKey) =>
         Effect.flatMap(
           gitCreateJiraBranch(jiraKey, command.baseBranch),
-          (result) =>
-            Console.log(
-              matchGitCreateJiraBranchResult(result, {
-                onCreatedBranch: (branch) =>
-                  `Successfully created branch: '${branch}'`,
-                onSwitchedBranch: (branch) =>
-                  `Switched to already existing branch: '${branch}'`,
-              }),
-            ),
+          compose(
+            matchGitCreateJiraBranchResult({
+              onCreatedBranch: (branch) =>
+                `Successfully created branch: '${branch}'`,
+              onSwitchedBranch: (branch) =>
+                `Switched to already existing branch: '${branch}'`,
+            }),
+            Console.log,
+          ),
         ),
       onNone: () => printDocs(HelpDoc.p(Span.error('No Jira Key provided'))),
     });
