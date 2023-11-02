@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {Effect, pipe} from 'effect';
 
@@ -9,7 +8,7 @@ export const itEffect = (() => {
     name: string,
     self: () => Effect.Effect<never, E, A>,
     timeout = 5_000,
-  ) => {
+  ): void => {
     return it(
       name,
       () => pipe(Effect.suspend(self), Effect.runPromise),
@@ -21,7 +20,7 @@ export const itEffect = (() => {
       name: string,
       self: () => Effect.Effect<never, E, A>,
       timeout = 5_000,
-    ) => {
+    ): void => {
       return it.skip(
         name,
         () => pipe(Effect.suspend(self), Effect.runPromise),
@@ -32,7 +31,7 @@ export const itEffect = (() => {
       name: string,
       self: () => Effect.Effect<never, E, A>,
       timeout = 5_000,
-    ) => {
+    ): void => {
       return it.only(
         name,
         () => pipe(Effect.suspend(self), Effect.runPromise),
@@ -60,9 +59,38 @@ export const toEffectMock = <T extends any[], E = any, R = any>(
     mockFailValue: (e: E) => fn.mockReturnValue(Effect.fail(e)),
     mockFailValueOnce: (e: E) => fn.mockReturnValueOnce(Effect.fail(e)),
   }) as EffectMock<T, E, R>;
-  mock.mockSuccessValue(undefined as any);
+  if (!mock.getMockImplementation()) {
+    mock.mockImplementation(
+      () => Effect.succeed(undefined) as unknown as Effect.Effect<never, E, R>,
+    );
+  }
   return mock;
 };
 
-export const effectMock = <T extends any[], E, R>() =>
-  toEffectMock<T, E, R>(vi.fn());
+export const effectMock = <T extends any[], E = any, R = any>(
+  implementation?: (...args: T) => Effect.Effect<never, E, R>,
+): EffectMock<T, E, R> =>
+  toEffectMock<T, E, R>(
+    implementation
+      ? vi.fn(implementation)
+      : vi.fn(
+          (..._: T) =>
+            Effect.succeed(undefined) as unknown as Effect.Effect<never, E, R>,
+        ),
+  );
+
+export const curriedEffectMock2 = <
+  T1 extends any[],
+  T2 extends any[],
+  E = any,
+  R = any,
+>(
+  implementation?: (...args: T2) => Effect.Effect<never, E, R>,
+): Mock<T1, EffectMock<T2, E, R>> & {innerMock: EffectMock<T2, E, R>} => {
+  const mock = effectMock(implementation);
+  return Object.assign(
+    vi.fn<T1, EffectMock<T2, E, R>>(() => mock),
+
+    {innerMock: mock},
+  );
+};

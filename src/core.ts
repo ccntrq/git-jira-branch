@@ -1,14 +1,17 @@
-import {Effect, Option} from 'effect';
+import {Chunk, Effect, Option} from 'effect';
 import {isNone} from 'effect/Option';
 
 import {GitClient} from './git-client';
 import {JiraClient} from './jira-client';
 import {Environment} from './environment';
 import {
+  CreatedBranch,
   GitCreateJiraBranchError,
+  GitCreateJiraBranchResult,
   JiraIssue,
   JiraIssuetype,
   JiraKeyPrefix,
+  SwitchedBranch,
 } from './types';
 
 export const gitCreateJiraBranch = (
@@ -17,7 +20,7 @@ export const gitCreateJiraBranch = (
 ): Effect.Effect<
   Environment | GitClient | JiraClient,
   GitCreateJiraBranchError,
-  string
+  GitCreateJiraBranchResult
 > =>
   Effect.gen(function* ($) {
     const [envProvider, gitClient, jiraClient] = yield* $(
@@ -30,6 +33,15 @@ export const gitCreateJiraBranch = (
     const issue = yield* $(jiraClient.getJiraIssue(fullKey));
     const branchName = jiraIssueToBranchName(issue);
 
+    const branchExists = yield* $(
+      Effect.map(gitClient.listBranches(), Chunk.contains(branchName)),
+    );
+
+    if (branchExists) {
+      yield* $(gitClient.switchBranch(branchName));
+      return SwitchedBranch(branchName);
+    }
+
     yield* $(
       Option.match(baseBranch, {
         onNone: () => gitClient.createGitBranch,
@@ -37,7 +49,7 @@ export const gitCreateJiraBranch = (
       })(branchName),
     );
 
-    return branchName;
+    return CreatedBranch(branchName);
   });
 
 const slugify = (str: string): string =>

@@ -1,4 +1,4 @@
-import {Chunk, Context, Effect, Layer, Sink, Stream} from 'effect';
+import {Chunk, Context, Effect, Layer, Sink, Stream, pipe} from 'effect';
 import * as Command from '@effect/platform/Command';
 import * as CommandExecutor from '@effect/platform/CommandExecutor';
 
@@ -7,31 +7,32 @@ import {GitExecError} from './types';
 type GitClientEffect<A> = Effect.Effect<never, GitExecError, A>;
 
 export interface GitClient {
+  readonly listBranches: () => GitClientEffect<Chunk.Chunk<string>>;
   readonly createGitBranch: (branchName: string) => GitClientEffect<void>;
   readonly createGitBranchFrom: (
     baseBranch: string,
   ) => (branchName: string) => GitClientEffect<void>;
+  readonly switchBranch: (branchName: string) => GitClientEffect<void>;
 }
 
 export const GitClient = Context.Tag<GitClient>();
 
-const createGitBranchFrom =
+const runGitCommand =
   (commandExecutor: CommandExecutor.CommandExecutor) =>
-  (baseBranch: string) =>
-  (branchName: string): GitClientEffect<void> => {
-    const cmd = baseBranch
-      ? Command.make('git', 'checkout', '-b', branchName, baseBranch)
-      : Command.make('git', 'checkout', '-b', branchName);
-    return commandExecutor.start(cmd).pipe(
+  (cmd: Command.Command) =>
+    pipe(
+      cmd,
+      commandExecutor.start,
       Effect.flatMap((process) =>
         Effect.all({
+          stdout: toString(process.stdout),
           stderr: toString(process.stderr),
           exitCode: process.exitCode,
         }),
       ),
-      Effect.flatMap(({stderr, exitCode}) =>
+      Effect.flatMap(({stderr, exitCode, stdout}) =>
         exitCode === 0
-          ? Effect.succeed(void 0)
+          ? Effect.succeed(stdout)
           : Effect.fail(
               GitExecError({
                 message: `Git command failed with: [${stderr.trimEnd()}]`,
@@ -56,17 +57,61 @@ const createGitBranchFrom =
         ),
       ),
     );
-  };
+
+const listBranches =
+  (commandExecutor: CommandExecutor.CommandExecutor) =>
+  (): GitClientEffect<Chunk.Chunk<string>> =>
+    pipe(
+      Command.make('git', 'branch'),
+      runGitCommand(commandExecutor),
+      Effect.map((stdout) =>
+        Chunk.fromIterable(
+          stdout
+            .trim()
+            .split('\n')
+            .map((x) => x.trim())
+            .map((x) => x.replace(/^\*\s+/, '')),
+        ),
+      ),
+    );
+
+const createGitBranchFrom =
+  (commandExecutor: CommandExecutor.CommandExecutor) =>
+  (baseBranch: string) =>
+  (branchName: string): GitClientEffect<void> =>
+    pipe(
+      Command.make('git', 'checkout', '-b', branchName, baseBranch),
+      runGitCommand(commandExecutor),
+      Effect.flatMap(() => Effect.unit),
+    );
+
+const createGitBranch =
+  (commandExecutor: CommandExecutor.CommandExecutor) =>
+  (branchName: string): GitClientEffect<void> =>
+    pipe(
+      Command.make('git', 'checkout', '-b', branchName),
+      runGitCommand(commandExecutor),
+      Effect.flatMap(() => Effect.unit),
+    );
+
+const switchBranch =
+  (commandExecutor: CommandExecutor.CommandExecutor) =>
+  (branchName: string): GitClientEffect<void> =>
+    pipe(
+      Command.make('git', 'checkout', branchName),
+      runGitCommand(commandExecutor),
+      Effect.flatMap(() => Effect.unit),
+    );
 
 export const GitClientLive = Layer.effect(
   GitClient,
-  CommandExecutor.CommandExecutor.pipe(
-    Effect.map((commandExecutor) =>
-      GitClient.of({
-        createGitBranchFrom: createGitBranchFrom(commandExecutor),
-        createGitBranch: createGitBranchFrom(commandExecutor)(''),
-      }),
-    ),
+  Effect.map(CommandExecutor.CommandExecutor, (commandExecutor) =>
+    GitClient.of({
+      listBranches: listBranches(commandExecutor),
+      createGitBranchFrom: createGitBranchFrom(commandExecutor),
+      createGitBranch: createGitBranch(commandExecutor),
+      switchBranch: switchBranch(commandExecutor),
+    }),
   ),
 );
 

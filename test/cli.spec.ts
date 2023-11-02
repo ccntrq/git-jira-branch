@@ -1,37 +1,27 @@
-import {Effect, Layer, pipe, Option} from 'effect';
+import {Effect, pipe, Option} from 'effect';
+import {Effect as EffectNs} from 'effect/Effect';
 import {log} from 'effect/Console';
 
-import {Environment} from '../src/environment';
-import {GitClient} from '../src/git-client';
-import {JiraClient} from '../src/jira-client';
 import {cliEffect} from '../src/cli';
 import {gitCreateJiraBranch} from '../src/core';
 
 import {vi, describe, afterEach, expect, Mock} from 'vitest';
 import {itEffect, toEffectMock} from './util';
-import {GitCreateJiraBranchError} from '../src/types';
-
-const mockGitClient = {
-  createGitBranch: vi.fn(),
-  createGitBranchFrom: vi.fn(),
-};
-const mockEnvironment = {getEnv: vi.fn()};
-const mockJiraClient = {getJiraIssue: vi.fn()};
-
-const testLayer = Layer.mergeAll(
-  Layer.succeed(GitClient, GitClient.of(mockGitClient)),
-  Layer.succeed(Environment, Environment.of(mockEnvironment)),
-  Layer.succeed(JiraClient, JiraClient.of(mockJiraClient)),
-);
+import {CreatedBranch, SwitchedBranch} from '../src/types';
+import {testLayer} from './mock-implementations';
 
 vi.mock('../src/core');
 
 vi.mock('effect/Console');
 
 const mockGitCreateJiraBranch = toEffectMock(
-  gitCreateJiraBranch as Mock<
+  gitCreateJiraBranch as unknown as Mock<
     Parameters<typeof gitCreateJiraBranch>,
-    Effect.Effect<never, GitCreateJiraBranchError, string>
+    Effect.Effect<
+      never,
+      EffectNs.Error<ReturnType<typeof gitCreateJiraBranch>>,
+      EffectNs.Success<ReturnType<typeof gitCreateJiraBranch>>
+    >
   >,
 );
 const mockLog = toEffectMock(
@@ -41,14 +31,40 @@ const mockLog = toEffectMock(
 describe('cli', () => {
   describe('cliEffect', () => {
     afterEach(() => {
-      vi.restoreAllMocks();
+      vi.clearAllMocks();
       mockLog.mockSuccessValue(undefined);
-      mockGitCreateJiraBranch.mockSuccessValue('XXX/NO-BRANCH');
     });
 
     itEffect('should create branch with single argument', () =>
       Effect.gen(function* ($) {
-        mockGitCreateJiraBranch.mockSuccessValue('feat/FOOX-1234-description');
+        mockGitCreateJiraBranch.mockSuccessValue(
+          CreatedBranch('feat/FOOX-1234-description'),
+        );
+        mockLog.mockSuccessValue(undefined);
+        yield* $(
+          Effect.provide(
+            pipe(
+              Effect.sync(() => ['FOOX-1234']),
+              Effect.flatMap(cliEffect),
+            ),
+            testLayer,
+          ),
+        );
+
+        expect(mockGitCreateJiraBranch).toHaveBeenCalledWith(
+          'FOOX-1234',
+          Option.none(),
+        );
+        expect(mockLog.mock.calls).toMatchSnapshot();
+      }),
+    );
+
+    itEffect('should inform about branch switch', () =>
+      Effect.gen(function* ($) {
+        mockGitCreateJiraBranch.mockSuccessValue(
+          SwitchedBranch('feat/FOOX-1234-description'),
+        );
+        mockLog.mockSuccessValue(undefined);
         yield* $(
           Effect.provide(
             pipe(
@@ -69,7 +85,9 @@ describe('cli', () => {
 
     itEffect('should handle basebranch argument (-b)', () =>
       Effect.gen(function* ($) {
-        mockGitCreateJiraBranch.mockSuccessValue('feat/FOOX-1234-description');
+        mockGitCreateJiraBranch.mockSuccessValue(
+          CreatedBranch('feat/FOOX-1234-description'),
+        );
         yield* $(
           Effect.provide(
             pipe(
@@ -90,7 +108,6 @@ describe('cli', () => {
 
     itEffect('should report missing jirakey', () =>
       Effect.gen(function* ($) {
-        mockGitCreateJiraBranch.mockSuccessValue('feat/FOOX-1234-description');
         yield* $(
           Effect.provide(
             pipe(
@@ -108,7 +125,6 @@ describe('cli', () => {
 
     itEffect('should print help (--help)', () =>
       Effect.gen(function* ($) {
-        mockGitCreateJiraBranch.mockSuccessValue('feat/FOOX-1234-description');
         yield* $(
           Effect.provide(
             pipe(

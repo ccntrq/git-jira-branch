@@ -1,25 +1,15 @@
-import {Effect, Either, Layer, Option} from 'effect';
+import {Chunk, Effect, Either, Option} from 'effect';
 import {itEffect} from './util';
 
 import {gitCreateJiraBranch} from '../src/core';
-import {GitClient} from '../src/git-client';
-import {JiraClient} from '../src/jira-client';
-import {Environment} from '../src/environment';
 import {vi, describe, expect, afterEach} from 'vitest';
 import {JiraIssue} from '../src/types';
-
-const mockGitClient = {
-  createGitBranch: vi.fn(),
-  createGitBranchFrom: vi.fn(),
-};
-const mockEnvironment = {getEnv: vi.fn()};
-const mockJiraClient = {getJiraIssue: vi.fn()};
-
-const testLayer = Layer.mergeAll(
-  Layer.succeed(GitClient, GitClient.of(mockGitClient)),
-  Layer.succeed(Environment, Environment.of(mockEnvironment)),
-  Layer.succeed(JiraClient, JiraClient.of(mockJiraClient)),
-);
+import {
+  mockEnvironment,
+  mockGitClient,
+  mockJiraClient,
+  testLayer,
+} from './mock-implementations';
 
 const testIssue: JiraIssue = {
   key: 'DUMMYAPP-123',
@@ -61,10 +51,13 @@ describe('core', () => {
             expect.unreachable(
               `Should have created branch. Got error instead: ${e}`,
             ),
-          onRight: (branchName) =>
-            expect(branchName).toEqual(
-              'feat/DUMMYAPP-123-dummy-isssue-summary',
-            ),
+          onRight: (result) =>
+            expect(result).toMatchInlineSnapshot(`
+            {
+              "_tag": "CreatedBranch",
+              "branch": "feat/DUMMYAPP-123-dummy-isssue-summary",
+            }
+          `),
         });
 
         expect(mockEnvironment.getEnv).toHaveBeenCalledTimes(1);
@@ -76,7 +69,6 @@ describe('core', () => {
         expect(mockGitClient.createGitBranch).toHaveBeenCalledWith(
           'feat/DUMMYAPP-123-dummy-isssue-summary',
         );
-        expect(mockGitClient.createGitBranchFrom).not.toHaveBeenCalled();
       }),
     );
 
@@ -114,8 +106,13 @@ describe('core', () => {
             expect.unreachable(
               `Should have created branch. Got error instead: ${e}`,
             ),
-          onRight: (branchName) =>
-            expect(branchName).toEqual('fix/DUMMYAPP-123-dummy-isssue-summary'),
+          onRight: (result) =>
+            expect(result).toMatchInlineSnapshot(`
+            {
+              "_tag": "CreatedBranch",
+              "branch": "fix/DUMMYAPP-123-dummy-isssue-summary",
+            }
+          `),
         });
 
         expect(mockEnvironment.getEnv).toHaveBeenCalledTimes(1);
@@ -136,8 +133,7 @@ describe('core', () => {
         mockEnvironment.getEnv.mockReturnValue(
           Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
         );
-        const curriedMock = vi.fn().mockReturnValue(Effect.succeed(undefined));
-        mockGitClient.createGitBranchFrom.mockReturnValue(curriedMock);
+        mockGitClient.createGitBranchFrom.innerMock.mockSuccessValue(undefined);
         mockJiraClient.getJiraIssue.mockReturnValue(Effect.succeed(testIssue));
 
         const result = yield* $(
@@ -154,9 +150,14 @@ describe('core', () => {
             expect.unreachable(
               `Should have created branch. Got error instead: ${e}`,
             ),
-          onRight: (branchName) =>
-            expect(branchName).toEqual(
-              'feat/DUMMYAPP-123-dummy-isssue-summary',
+          onRight: (result) =>
+            expect(result).toMatchInlineSnapshot(
+              `
+              {
+                "_tag": "CreatedBranch",
+                "branch": "feat/DUMMYAPP-123-dummy-isssue-summary",
+              }
+            `,
             ),
         });
         expect(mockEnvironment.getEnv).toHaveBeenCalledTimes(1);
@@ -168,11 +169,51 @@ describe('core', () => {
         expect(mockGitClient.createGitBranchFrom).toHaveBeenCalledWith(
           'master',
         );
-        expect(curriedMock).toHaveBeenCalledTimes(1);
-        expect(curriedMock).toHaveBeenCalledWith(
+        expect(mockGitClient.createGitBranchFrom()).toHaveBeenCalledTimes(1);
+        expect(mockGitClient.createGitBranchFrom()).toHaveBeenCalledWith(
           'feat/DUMMYAPP-123-dummy-isssue-summary',
         );
         expect(mockGitClient.createGitBranch).not.toHaveBeenCalled();
+      }),
+    );
+
+    itEffect('should switch to existing branch', () =>
+      Effect.gen(function* ($) {
+        mockEnvironment.getEnv.mockSuccessValue({
+          defaultJiraKeyPrefix: Option.none(),
+        });
+        mockJiraClient.getJiraIssue.mockSuccessValue(testIssue);
+        mockGitClient.listBranches.mockSuccessValue(
+          Chunk.fromIterable([
+            'feat/DUMMYAPP-123-dummy-isssue-summary',
+            'master',
+          ]),
+        );
+
+        const result = yield* $(
+          Effect.provide(
+            gitCreateJiraBranch('DUMMYAPP-123', Option.none()),
+            testLayer,
+          ),
+        );
+
+        expect(result).toMatchInlineSnapshot(`
+          {
+            "_tag": "SwitchedBranch",
+            "branch": "feat/DUMMYAPP-123-dummy-isssue-summary",
+          }
+        `);
+
+        expect(mockEnvironment.getEnv).toHaveBeenCalledTimes(1);
+        expect(mockJiraClient.getJiraIssue).toHaveBeenCalledTimes(1);
+        expect(mockJiraClient.getJiraIssue).toHaveBeenCalledWith(
+          'DUMMYAPP-123',
+        );
+        expect(mockGitClient.listBranches).toHaveBeenCalledTimes(1);
+        expect(mockGitClient.switchBranch).toHaveBeenCalledTimes(1);
+        expect(mockGitClient.switchBranch).toHaveBeenCalledWith(
+          'feat/DUMMYAPP-123-dummy-isssue-summary',
+        );
       }),
     );
 
@@ -200,9 +241,14 @@ describe('core', () => {
             expect.unreachable(
               `Should have created branch. Got error instead: ${e}`,
             ),
-          onRight: (branchName) =>
-            expect(branchName).toEqual(
-              'feat/DUMMYAPP-123-dummy-isssue-summary',
+          onRight: (result) =>
+            expect(result).toMatchInlineSnapshot(
+              `
+              {
+                "_tag": "CreatedBranch",
+                "branch": "feat/DUMMYAPP-123-dummy-isssue-summary",
+              }
+            `,
             ),
         });
 
@@ -243,10 +289,13 @@ describe('core', () => {
             expect.unreachable(
               `Should have created branch. Got error instead: ${e}`,
             ),
-          onRight: (branchName) =>
-            expect(branchName).toEqual(
-              'feat/DUMMYAPP-123-dummy-isssue-summary',
-            ),
+          onRight: (result) =>
+            expect(result).toMatchInlineSnapshot(`
+              {
+                "_tag": "CreatedBranch",
+                "branch": "feat/DUMMYAPP-123-dummy-isssue-summary",
+              }
+            `),
         });
 
         expect(mockEnvironment.getEnv).toHaveBeenCalledTimes(1);
@@ -294,10 +343,13 @@ describe('core', () => {
             expect.unreachable(
               `Should have created branch. Got error instead: ${e}`,
             ),
-          onRight: (branchName) =>
-            expect(branchName).toEqual(
-              'feat/DUMMYAPP-123-oether-duemm-issue-summaery',
-            ),
+          onRight: (result) =>
+            expect(result).toMatchInlineSnapshot(`
+            {
+              "_tag": "CreatedBranch",
+              "branch": "feat/DUMMYAPP-123-oether-duemm-issue-summaery",
+            }
+          `),
         });
 
         expect(mockEnvironment.getEnv).toHaveBeenCalledTimes(1);

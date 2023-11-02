@@ -1,6 +1,6 @@
 // eslint-disable-next-line node/no-extraneous-import
 import * as Schema from '@effect/schema/Schema';
-import {Brand, Data} from 'effect';
+import {Brand, Data, Match, pipe} from 'effect';
 
 export type JiraApiUrl = string & Brand.Brand<'JiraApiUrl'>;
 export const JiraApiUrl = Brand.nominal<JiraApiUrl>();
@@ -22,6 +22,38 @@ export const JiraIssueSchema = Schema.struct({
     issuetype: JiraIssuetypeSchema,
   }),
 });
+
+export type GitCreateJiraBranchResult = CreatedBranch | SwitchedBranch;
+
+export const matchGitCreateJiraBranchResult = <A>(
+  result: GitCreateJiraBranchResult,
+  matcher: {
+    onCreatedBranch: (branch: string) => A;
+    onSwitchedBranch: (branch: string) => A;
+  },
+): A =>
+  pipe(
+    Match.type<GitCreateJiraBranchResult>(),
+    Match.tag('CreatedBranch', ({branch}) => matcher.onCreatedBranch(branch)),
+    Match.tag('SwitchedBranch', ({branch}) => matcher.onSwitchedBranch(branch)),
+    Match.exhaustive,
+  )(result) as A;
+
+export interface CreatedBranch extends Data.Case {
+  readonly _tag: 'CreatedBranch';
+  readonly branch: string;
+}
+
+export const CreatedBranch = (branch: string): CreatedBranch =>
+  Data.tagged<CreatedBranch>('CreatedBranch')({branch});
+
+export interface SwitchedBranch extends Data.Case {
+  readonly _tag: 'SwitchedBranch';
+  readonly branch: string;
+}
+
+export const SwitchedBranch = (branch: string): SwitchedBranch =>
+  Data.tagged<SwitchedBranch>('SwitchedBranch')({branch});
 
 export type JiraIssue = Schema.Schema.To<typeof JiraIssueSchema>;
 

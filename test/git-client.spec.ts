@@ -17,17 +17,21 @@ const testProg = Effect.gen(function* ($) {
 
 const mkTestProcess = (
   exitCode: number,
-  stderr?: Uint8Array,
-): CommandExecutor.Process => ({
-  [CommandExecutor.ProcessTypeId]: CommandExecutor.ProcessTypeId,
-  pid: CommandExecutor.ProcessId(1),
-  exitCode: Effect.succeed(CommandExecutor.ExitCode(exitCode)),
-  isRunning: Effect.succeed(false),
-  stderr: stderr ? Stream.make(stderr) : Stream.empty,
-  stdout: Stream.empty,
-  stdin: Sink.drain,
-  kill: () => Effect.unit,
-});
+  stdout?: string,
+  stderr?: string,
+): CommandExecutor.Process => {
+  const encoder = new TextEncoder();
+  return {
+    [CommandExecutor.ProcessTypeId]: CommandExecutor.ProcessTypeId,
+    pid: CommandExecutor.ProcessId(1),
+    exitCode: Effect.succeed(CommandExecutor.ExitCode(exitCode)),
+    isRunning: Effect.succeed(false),
+    stderr: stderr ? Stream.make(encoder.encode(stderr)) : Stream.empty,
+    stdout: stdout ? Stream.make(encoder.encode(stdout)) : Stream.empty,
+    stdin: Sink.drain,
+    kill: () => Effect.unit,
+  };
+};
 
 describe('GitClient', () => {
   let executorMock: EffectMock<
@@ -51,7 +55,7 @@ describe('GitClient', () => {
     vi.restoreAllMocks();
   });
 
-  itEffect('should run git command', () =>
+  itEffect('createGitBranch should run appropriate git command', () =>
     Effect.gen(function* ($) {
       executorMock.mockSuccessValueOnce(mkTestProcess(0));
 
@@ -66,18 +70,85 @@ describe('GitClient', () => {
     }),
   );
 
-  itEffect('should run git command with given basebranch', () =>
+  itEffect(
+    'createGitBranchFrom should run git command with given basebranch',
+    () =>
+      Effect.gen(function* ($) {
+        executorMock.mockSuccessValueOnce(mkTestProcess(0));
+
+        yield* $(
+          Effect.provide(
+            Effect.gen(function* ($) {
+              const gitClient = yield* $(GitClient);
+              yield* $(
+                gitClient.createGitBranchFrom('master')('feat/dummy-branch'),
+              );
+            }),
+            testLayer,
+          ),
+        );
+
+        expect(executorMock).toHaveBeenCalledTimes(1);
+        expect(executorMock.mock.calls[0]?.[0]).toMatchObject({
+          _tag: 'StandardCommand',
+          args: ['checkout', '-b', 'feat/dummy-branch', 'master'],
+          command: 'git',
+        });
+      }),
+  );
+
+  itEffect(
+    'listBranch should run appropriate git command and parse output',
+    () =>
+      Effect.gen(function* ($) {
+        const commandOutput = `  * 7-switch-to-existing-branches
+  chore/enforce-conventional-commits
+  develop
+  feat/MYAPP-1235-add-some-feature
+  fix/MYAPP-1234-errorhandling
+  master
+    `;
+        executorMock.mockSuccessValueOnce(mkTestProcess(0, commandOutput));
+
+        const result = yield* $(
+          Effect.provide(
+            Effect.flatMap(GitClient, (gc) => gc.listBranches()),
+            testLayer,
+          ),
+        );
+
+        expect(result).toMatchInlineSnapshot(`
+          {
+            "_id": "Chunk",
+            "values": [
+              "7-switch-to-existing-branches",
+              "chore/enforce-conventional-commits",
+              "develop",
+              "feat/MYAPP-1235-add-some-feature",
+              "fix/MYAPP-1234-errorhandling",
+              "master",
+            ],
+          }
+        `);
+
+        expect(executorMock).toHaveBeenCalledTimes(1);
+        expect(executorMock.mock.calls[0]?.[0]).toMatchObject({
+          _tag: 'StandardCommand',
+          args: ['branch'],
+          command: 'git',
+        });
+      }),
+  );
+
+  itEffect('switchBranch should run appropriate git command', () =>
     Effect.gen(function* ($) {
       executorMock.mockSuccessValueOnce(mkTestProcess(0));
 
       yield* $(
         Effect.provide(
-          Effect.gen(function* ($) {
-            const gitClient = yield* $(GitClient);
-            yield* $(
-              gitClient.createGitBranchFrom('master')('feat/dummy-branch'),
-            );
-          }),
+          Effect.flatMap(GitClient, (gc) =>
+            gc.switchBranch('feat/dummy-branch'),
+          ),
           testLayer,
         ),
       );
@@ -85,7 +156,7 @@ describe('GitClient', () => {
       expect(executorMock).toHaveBeenCalledTimes(1);
       expect(executorMock.mock.calls[0]?.[0]).toMatchObject({
         _tag: 'StandardCommand',
-        args: ['checkout', '-b', 'feat/dummy-branch', 'master'],
+        args: ['checkout', 'feat/dummy-branch'],
         command: 'git',
       });
     }),
@@ -94,9 +165,8 @@ describe('GitClient', () => {
   itEffect('should handle git command not found errors', () =>
     Effect.gen(function* ($) {
       const errorMessage = 'fatal: Dummy git error';
-      const encoder = new TextEncoder();
       executorMock.mockSuccessValueOnce(
-        mkTestProcess(128, encoder.encode('fatal: Dummy git error')),
+        mkTestProcess(128, undefined, errorMessage),
       );
 
       const res = yield* $(Effect.either(Effect.provide(testProg, testLayer)));

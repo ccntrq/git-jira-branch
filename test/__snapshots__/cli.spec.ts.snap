@@ -16,6 +16,14 @@ exports[`cli > cliEffect > should handle basebranch argument (-b) 1`] = `
 ]
 `;
 
+exports[`cli > cliEffect > should inform about branch switch 1`] = `
+[
+  [
+    "Switched to already existing branch: 'feat/FOOX-1234-description'",
+  ],
+]
+`;
+
 exports[`cli > cliEffect > should print help (--help) 1`] = `
 "
 [0;1mUSAGE[0m
