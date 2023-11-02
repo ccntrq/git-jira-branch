@@ -48,4 +48,9 @@ jobs:
       - name: Build
         run: npm run build
       - name: Run tests
-        run: npm run test
+        run: npm run test --  --coverage.enabled --coverage.provider=v8 --coverage.reporter=json-summary --coverage.reporter=json
+      - name: Upload coverage
+        if: github.event_name == 'pull_request' && matrix.version == 20
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          file-coverage-mode: 'all'
