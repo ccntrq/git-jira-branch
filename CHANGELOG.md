@@ -7,6 +7,13 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [1.2.0](https://github.com/ccntrq/git-create-jira-branch/compare/v1.1.0...v1.2.0) (2023-11-05)
+
+
+### Features
+
+* add option to reset exisiting branches ([b11fb6b](https://github.com/ccntrq/git-create-jira-branch/commit/b11fb6b410c795a25608233dc6d4a87909a8a83c))
+
 ## [1.1.0](https://github.com/ccntrq/git-create-jira-branch/compare/v1.0.0...v1.1.0) (2023-11-02)
 
 
