@@ -1,4 +1,5 @@
 import {Chunk, Effect, Option} from 'effect';
+import {constant} from 'effect/Function';
 import {isNone} from 'effect/Option';
 
 import {GitClient} from './git-client';
@@ -44,7 +45,7 @@ export const gitCreateJiraBranch = (
 
     yield* $(
       Option.match(baseBranch, {
-        onNone: () => gitClient.createGitBranch,
+        onNone: constant(gitClient.createGitBranch),
         onSome: gitClient.createGitBranchFrom,
       })(branchName),
     );
