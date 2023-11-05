@@ -150,6 +150,25 @@ describe('cli', () => {
       }),
     );
 
+    itEffect('should print version (--version)', () =>
+      Effect.gen(function* ($) {
+        yield* $(
+          Effect.provide(
+            pipe(
+              Effect.sync(() => ['--version']),
+              Effect.flatMap(cliEffect),
+            ),
+            testLayer,
+          ),
+        );
+
+        expect(mockGitCreateJiraBranch).not.toHaveBeenCalled();
+        expect(mockLog.mock.calls[0]?.[0]).toMatch(
+          /git-create-jira-branch v\d+\.\d+\.\d+/,
+        );
+      }),
+    );
+
     itEffect('should print help (--help)', () =>
       Effect.gen(function* ($) {
         yield* $(
