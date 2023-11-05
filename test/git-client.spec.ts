@@ -12,7 +12,7 @@ import {Command} from '@effect/platform';
 
 const testProg = Effect.gen(function* ($) {
   const gitClient = yield* $(GitClient);
-  yield* $(gitClient.createGitBranch('feat/dummy-branch'));
+  yield* $(gitClient.createGitBranch('feat/dummy-branch', false));
 });
 
 const mkTestProcess = (
@@ -71,6 +71,31 @@ describe('GitClient', () => {
   );
 
   itEffect(
+    'createGitBranch should run appropriate git command (with reset)',
+    () =>
+      Effect.gen(function* ($) {
+        executorMock.mockSuccessValueOnce(mkTestProcess(0));
+
+        yield* $(
+          Effect.provide(
+            Effect.gen(function* ($) {
+              const gitClient = yield* $(GitClient);
+              yield* $(gitClient.createGitBranch('feat/dummy-branch', true));
+            }),
+            testLayer,
+          ),
+        );
+
+        expect(executorMock).toHaveBeenCalledTimes(1);
+        expect(executorMock.mock.calls[0]?.[0]).toMatchObject({
+          _tag: 'StandardCommand',
+          args: ['checkout', '-B', 'feat/dummy-branch'],
+          command: 'git',
+        });
+      }),
+  );
+
+  itEffect(
     'createGitBranchFrom should run git command with given basebranch',
     () =>
       Effect.gen(function* ($) {
@@ -81,7 +106,10 @@ describe('GitClient', () => {
             Effect.gen(function* ($) {
               const gitClient = yield* $(GitClient);
               yield* $(
-                gitClient.createGitBranchFrom('master')('feat/dummy-branch'),
+                gitClient.createGitBranchFrom('master')(
+                  'feat/dummy-branch',
+                  false,
+                ),
               );
             }),
             testLayer,
@@ -92,6 +120,36 @@ describe('GitClient', () => {
         expect(executorMock.mock.calls[0]?.[0]).toMatchObject({
           _tag: 'StandardCommand',
           args: ['checkout', '-b', 'feat/dummy-branch', 'master'],
+          command: 'git',
+        });
+      }),
+  );
+
+  itEffect(
+    'createGitBranchFrom should run appropriate git command (with reset)',
+    () =>
+      Effect.gen(function* ($) {
+        executorMock.mockSuccessValueOnce(mkTestProcess(0));
+
+        yield* $(
+          Effect.provide(
+            Effect.gen(function* ($) {
+              const gitClient = yield* $(GitClient);
+              yield* $(
+                gitClient.createGitBranchFrom('master')(
+                  'feat/dummy-branch',
+                  true,
+                ),
+              );
+            }),
+            testLayer,
+          ),
+        );
+
+        expect(executorMock).toHaveBeenCalledTimes(1);
+        expect(executorMock.mock.calls[0]?.[0]).toMatchObject({
+          _tag: 'StandardCommand',
+          args: ['checkout', '-B', 'feat/dummy-branch', 'master'],
           command: 'git',
         });
       }),

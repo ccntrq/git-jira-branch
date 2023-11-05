@@ -24,7 +24,10 @@ export const JiraIssueSchema = Schema.struct({
   }),
 });
 
-export type GitCreateJiraBranchResult = CreatedBranch | SwitchedBranch;
+export type GitCreateJiraBranchResult =
+  | CreatedBranch
+  | SwitchedBranch
+  | ResetBranch;
 
 export const matchGitCreateJiraBranchResult: {
   <A>(
@@ -32,11 +35,13 @@ export const matchGitCreateJiraBranchResult: {
     matcher: {
       onCreatedBranch: (branch: string) => A;
       onSwitchedBranch: (branch: string) => A;
+      onResetBranch: (branch: string) => A;
     },
   ): A;
   <A>(matcher: {
     onCreatedBranch: (branch: string) => A;
     onSwitchedBranch: (branch: string) => A;
+    onResetBranch: (branch: string) => A;
   }): (result: GitCreateJiraBranchResult) => A;
 } = dual(
   2,
@@ -45,6 +50,7 @@ export const matchGitCreateJiraBranchResult: {
     matcher: {
       onCreatedBranch: (branch: string) => A;
       onSwitchedBranch: (branch: string) => A;
+      onResetBranch: (branch: string) => A;
     },
   ): A =>
     pipe(
@@ -53,6 +59,7 @@ export const matchGitCreateJiraBranchResult: {
       Match.tag('SwitchedBranch', ({branch}) =>
         matcher.onSwitchedBranch(branch),
       ),
+      Match.tag('ResetBranch', ({branch}) => matcher.onResetBranch(branch)),
       Match.exhaustive,
     )(result) as A,
 );
@@ -72,6 +79,14 @@ export interface SwitchedBranch extends Data.Case {
 
 export const SwitchedBranch = (branch: string): SwitchedBranch =>
   Data.tagged<SwitchedBranch>('SwitchedBranch')({branch});
+
+export interface ResetBranch extends Data.Case {
+  readonly _tag: 'ResetBranch';
+  readonly branch: string;
+}
+
+export const ResetBranch = (branch: string): ResetBranch =>
+  Data.tagged<ResetBranch>('ResetBranch')({branch});
 
 export type JiraIssue = Schema.Schema.To<typeof JiraIssueSchema>;
 

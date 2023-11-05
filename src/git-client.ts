@@ -8,10 +8,13 @@ type GitClientEffect<A> = Effect.Effect<never, GitExecError, A>;
 
 export interface GitClient {
   readonly listBranches: () => GitClientEffect<Chunk.Chunk<string>>;
-  readonly createGitBranch: (branchName: string) => GitClientEffect<void>;
+  readonly createGitBranch: (
+    branchName: string,
+    reset: boolean,
+  ) => GitClientEffect<void>;
   readonly createGitBranchFrom: (
     baseBranch: string,
-  ) => (branchName: string) => GitClientEffect<void>;
+  ) => (branchName: string, reset: boolean) => GitClientEffect<void>;
   readonly switchBranch: (branchName: string) => GitClientEffect<void>;
 }
 
@@ -78,18 +81,24 @@ const listBranches =
 const createGitBranchFrom =
   (commandExecutor: CommandExecutor.CommandExecutor) =>
   (baseBranch: string) =>
-  (branchName: string): GitClientEffect<void> =>
+  (branchName: string, reset: boolean): GitClientEffect<void> =>
     pipe(
-      Command.make('git', 'checkout', '-b', branchName, baseBranch),
+      Command.make(
+        'git',
+        'checkout',
+        reset ? '-B' : '-b',
+        branchName,
+        baseBranch,
+      ),
       runGitCommand(commandExecutor),
       Effect.flatMap(() => Effect.unit),
     );
 
 const createGitBranch =
   (commandExecutor: CommandExecutor.CommandExecutor) =>
-  (branchName: string): GitClientEffect<void> =>
+  (branchName: string, reset: boolean): GitClientEffect<void> =>
     pipe(
-      Command.make('git', 'checkout', '-b', branchName),
+      Command.make('git', 'checkout', reset ? '-B' : '-b', branchName),
       runGitCommand(commandExecutor),
       Effect.flatMap(() => Effect.unit),
     );
