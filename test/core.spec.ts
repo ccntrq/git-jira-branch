@@ -40,7 +40,7 @@ describe('core', () => {
         const result = yield* $(
           Effect.either(
             Effect.provide(
-              gitCreateJiraBranch('DUMMYAPP-123', Option.none()),
+              gitCreateJiraBranch('DUMMYAPP-123', Option.none(), false),
               testLayer,
             ),
           ),
@@ -68,6 +68,7 @@ describe('core', () => {
         expect(mockGitClient.createGitBranch).toHaveBeenCalledTimes(1);
         expect(mockGitClient.createGitBranch).toHaveBeenCalledWith(
           'feat/DUMMYAPP-123-dummy-isssue-summary',
+          false,
         );
       }),
     );
@@ -95,7 +96,7 @@ describe('core', () => {
         const result = yield* $(
           Effect.either(
             Effect.provide(
-              gitCreateJiraBranch('DUMMYAPP-123', Option.none()),
+              gitCreateJiraBranch('DUMMYAPP-123', Option.none(), false),
               testLayer,
             ),
           ),
@@ -123,6 +124,7 @@ describe('core', () => {
         expect(mockGitClient.createGitBranch).toHaveBeenCalledTimes(1);
         expect(mockGitClient.createGitBranch).toHaveBeenCalledWith(
           'fix/DUMMYAPP-123-dummy-isssue-summary',
+          false,
         );
         expect(mockGitClient.createGitBranchFrom).not.toHaveBeenCalled();
       }),
@@ -139,7 +141,7 @@ describe('core', () => {
         const result = yield* $(
           Effect.either(
             Effect.provide(
-              gitCreateJiraBranch('DUMMYAPP-123', Option.some('master')),
+              gitCreateJiraBranch('DUMMYAPP-123', Option.some('master'), false),
               testLayer,
             ),
           ),
@@ -172,8 +174,92 @@ describe('core', () => {
         expect(mockGitClient.createGitBranchFrom()).toHaveBeenCalledTimes(1);
         expect(mockGitClient.createGitBranchFrom()).toHaveBeenCalledWith(
           'feat/DUMMYAPP-123-dummy-isssue-summary',
+          false,
         );
         expect(mockGitClient.createGitBranch).not.toHaveBeenCalled();
+      }),
+    );
+
+    itEffect('should reset existing branch', () =>
+      Effect.gen(function* ($) {
+        mockEnvironment.getEnv.mockReturnValue(
+          Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
+        );
+        mockGitClient.createGitBranchFrom.innerMock.mockSuccessValue(undefined);
+        mockJiraClient.getJiraIssue.mockReturnValue(Effect.succeed(testIssue));
+        mockGitClient.listBranches.mockSuccessValue(
+          Chunk.fromIterable([
+            'feat/DUMMYAPP-123-dummy-isssue-summary',
+            'master',
+          ]),
+        );
+
+        const result = yield* $(
+          Effect.provide(
+            gitCreateJiraBranch('DUMMYAPP-123', Option.none(), true),
+            testLayer,
+          ),
+        );
+
+        expect(result).toMatchInlineSnapshot(
+          `
+              {
+                "_tag": "ResetBranch",
+                "branch": "feat/DUMMYAPP-123-dummy-isssue-summary",
+              }
+            `,
+        );
+
+        expect(mockEnvironment.getEnv).toHaveBeenCalledTimes(1);
+        expect(mockJiraClient.getJiraIssue).toHaveBeenCalledTimes(1);
+        expect(mockJiraClient.getJiraIssue).toHaveBeenCalledWith(
+          'DUMMYAPP-123',
+        );
+        expect(mockGitClient.createGitBranch).toHaveBeenCalledTimes(1);
+        expect(mockGitClient.createGitBranch).toHaveBeenCalledWith(
+          'feat/DUMMYAPP-123-dummy-isssue-summary',
+          true,
+        );
+      }),
+    );
+
+    itEffect('should create branch with reset for non existing branch', () =>
+      Effect.gen(function* ($) {
+        mockEnvironment.getEnv.mockReturnValue(
+          Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
+        );
+        mockGitClient.createGitBranchFrom.innerMock.mockSuccessValue(undefined);
+        mockJiraClient.getJiraIssue.mockReturnValue(Effect.succeed(testIssue));
+        mockGitClient.listBranches.mockSuccessValue(
+          Chunk.fromIterable(['master']),
+        );
+
+        const result = yield* $(
+          Effect.provide(
+            gitCreateJiraBranch('DUMMYAPP-123', Option.none(), true),
+            testLayer,
+          ),
+        );
+
+        expect(result).toMatchInlineSnapshot(
+          `
+              {
+                "_tag": "CreatedBranch",
+                "branch": "feat/DUMMYAPP-123-dummy-isssue-summary",
+              }
+            `,
+        );
+
+        expect(mockEnvironment.getEnv).toHaveBeenCalledTimes(1);
+        expect(mockJiraClient.getJiraIssue).toHaveBeenCalledTimes(1);
+        expect(mockJiraClient.getJiraIssue).toHaveBeenCalledWith(
+          'DUMMYAPP-123',
+        );
+        expect(mockGitClient.createGitBranch).toHaveBeenCalledTimes(1);
+        expect(mockGitClient.createGitBranch).toHaveBeenCalledWith(
+          'feat/DUMMYAPP-123-dummy-isssue-summary',
+          false,
+        );
       }),
     );
 
@@ -192,7 +278,7 @@ describe('core', () => {
 
         const result = yield* $(
           Effect.provide(
-            gitCreateJiraBranch('DUMMYAPP-123', Option.none()),
+            gitCreateJiraBranch('DUMMYAPP-123', Option.none(), false),
             testLayer,
           ),
         );
@@ -230,7 +316,7 @@ describe('core', () => {
         const result = yield* $(
           Effect.either(
             Effect.provide(
-              gitCreateJiraBranch('123', Option.none()),
+              gitCreateJiraBranch('123', Option.none(), false),
               testLayer,
             ),
           ),
@@ -260,6 +346,7 @@ describe('core', () => {
         expect(mockGitClient.createGitBranch).toHaveBeenCalledTimes(1);
         expect(mockGitClient.createGitBranch).toHaveBeenCalledWith(
           'feat/DUMMYAPP-123-dummy-isssue-summary',
+          false,
         );
         expect(mockGitClient.createGitBranchFrom).not.toHaveBeenCalled();
       }),
@@ -278,7 +365,7 @@ describe('core', () => {
         const result = yield* $(
           Effect.either(
             Effect.provide(
-              gitCreateJiraBranch('DUMMYAPP-123', Option.none()),
+              gitCreateJiraBranch('DUMMYAPP-123', Option.none(), false),
               testLayer,
             ),
           ),
@@ -306,6 +393,7 @@ describe('core', () => {
         expect(mockGitClient.createGitBranch).toHaveBeenCalledTimes(1);
         expect(mockGitClient.createGitBranch).toHaveBeenCalledWith(
           'feat/DUMMYAPP-123-dummy-isssue-summary',
+          false,
         );
         expect(mockGitClient.createGitBranchFrom).not.toHaveBeenCalled();
       }),
@@ -332,7 +420,7 @@ describe('core', () => {
         const result = yield* $(
           Effect.either(
             Effect.provide(
-              gitCreateJiraBranch('DUMMYAPP-123', Option.none()),
+              gitCreateJiraBranch('DUMMYAPP-123', Option.none(), false),
               testLayer,
             ),
           ),
@@ -360,6 +448,7 @@ describe('core', () => {
         expect(mockGitClient.createGitBranch).toHaveBeenCalledTimes(1);
         expect(mockGitClient.createGitBranch).toHaveBeenCalledWith(
           'feat/DUMMYAPP-123-oether-duemm-issue-summaery',
+          false,
         );
         expect(mockGitClient.createGitBranchFrom).not.toHaveBeenCalled();
       }),

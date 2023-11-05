@@ -7,7 +7,7 @@ import {gitCreateJiraBranch} from '../src/core';
 
 import {vi, describe, afterEach, expect, Mock} from 'vitest';
 import {itEffect, toEffectMock} from './util';
-import {CreatedBranch, SwitchedBranch} from '../src/types';
+import {CreatedBranch, ResetBranch, SwitchedBranch} from '../src/types';
 import {testLayer} from './mock-implementations';
 
 vi.mock('../src/core');
@@ -54,6 +54,7 @@ describe('cli', () => {
         expect(mockGitCreateJiraBranch).toHaveBeenCalledWith(
           'FOOX-1234',
           Option.none(),
+          false,
         );
         expect(mockLog.mock.calls).toMatchSnapshot();
       }),
@@ -78,6 +79,7 @@ describe('cli', () => {
         expect(mockGitCreateJiraBranch).toHaveBeenCalledWith(
           'FOOX-1234',
           Option.none(),
+          false,
         );
         expect(mockLog.mock.calls).toMatchSnapshot();
       }),
@@ -101,6 +103,31 @@ describe('cli', () => {
         expect(mockGitCreateJiraBranch).toHaveBeenCalledWith(
           'FOOX-1234',
           Option.some('master'),
+          false,
+        );
+        expect(mockLog.mock.calls).toMatchSnapshot();
+      }),
+    );
+
+    itEffect('should handle reset option (-r)', () =>
+      Effect.gen(function* ($) {
+        mockGitCreateJiraBranch.mockSuccessValue(
+          ResetBranch('feat/FOOX-1234-description'),
+        );
+        yield* $(
+          Effect.provide(
+            pipe(
+              Effect.sync(() => ['FOOX-1234', '-r']),
+              Effect.flatMap(cliEffect),
+            ),
+            testLayer,
+          ),
+        );
+
+        expect(mockGitCreateJiraBranch).toHaveBeenCalledWith(
+          'FOOX-1234',
+          Option.none(),
+          true,
         );
         expect(mockLog.mock.calls).toMatchSnapshot();
       }),

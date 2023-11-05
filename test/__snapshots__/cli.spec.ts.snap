@@ -16,6 +16,14 @@ exports[`cli > cliEffect > should handle basebranch argument (-b) 1`] = `
 ]
 `;
 
+exports[`cli > cliEffect > should handle reset option (-r) 1`] = `
+[
+  [
+    "Reset branch: 'feat/FOOX-1234-description'",
+  ],
+]
+`;
+
 exports[`cli > cliEffect > should inform about branch switch 1`] = `
 [
   [
@@ -28,7 +36,7 @@ exports[`cli > cliEffect > should print help (--help) 1`] = `
 "
 [0;1mUSAGE[0m
 
-$ git-create-jira-branch [(-b, --baseBranch text)] [(-v, --version)] [(-h, --help)] <jira-key>...
+$ git-create-jira-branch [(-b, --baseBranch text)] [(-r, --reset)] [(-v, --version)] [(-h, --help)] <jira-key>...
 
 [0;1mDESCRIPTION[0m
 
@@ -55,6 +63,14 @@ is based on the ticket summary.
   Base branch to create the new branch from
 
   This setting is optional.
+
+[0;1m(-r, --reset)[0m
+
+  A true or false value.
+
+  Reset the branch if it already exists
+
+  This setting is optional. (Defaults to: 'false')
 
 [0;1m(-v, --version)[0m
 

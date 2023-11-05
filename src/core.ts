@@ -12,12 +12,14 @@ import {
   JiraIssue,
   JiraIssuetype,
   JiraKeyPrefix,
+  ResetBranch,
   SwitchedBranch,
 } from './types';
 
 export const gitCreateJiraBranch = (
   jiraKey: string,
   baseBranch: Option.Option<string>,
+  reset: boolean,
 ): Effect.Effect<
   Environment | GitClient | JiraClient,
   GitCreateJiraBranchError,
@@ -38,19 +40,21 @@ export const gitCreateJiraBranch = (
       Effect.map(gitClient.listBranches(), Chunk.contains(branchName)),
     );
 
-    if (branchExists) {
+    if (!reset && branchExists) {
       yield* $(gitClient.switchBranch(branchName));
       return SwitchedBranch(branchName);
     }
+
+    const resetBranch = branchExists && reset;
 
     yield* $(
       Option.match(baseBranch, {
         onNone: constant(gitClient.createGitBranch),
         onSome: gitClient.createGitBranchFrom,
-      })(branchName),
+      })(branchName, resetBranch),
     );
 
-    return CreatedBranch(branchName);
+    return (resetBranch ? ResetBranch : CreatedBranch)(branchName);
   });
 
 const slugify = (str: string): string =>

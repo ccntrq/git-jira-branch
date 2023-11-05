@@ -20,6 +20,7 @@ interface GitCreateJiraBranch extends Data.Case {
   readonly version: boolean;
   readonly jiraKey: Option.Option<string>;
   readonly baseBranch: Option.Option<string>;
+  readonly reset: boolean;
 }
 
 const GitCreateJiraBranch = Data.case<GitCreateJiraBranch>();
@@ -30,6 +31,10 @@ const mainCommand = pipe(
       baseBranch: Options.withDescription(
         Options.optional(Options.alias(Options.text('baseBranch'), 'b')),
         'Base branch to create the new branch from',
+      ),
+      reset: Options.withDescription(
+        Options.alias(Options.boolean('reset'), 'r'),
+        'Reset the branch if it already exists',
       ),
       version: Options.withDescription(
         Options.alias(Options.boolean('version'), 'v'),
@@ -56,6 +61,7 @@ is based on the ticket summary.`,
     return GitCreateJiraBranch({
       version: args.options.version,
       baseBranch: args.options.baseBranch,
+      reset: args.options.reset,
       jiraKey: get(args.args, 0),
     });
   }),
@@ -79,13 +85,14 @@ export const cliEffect = (
     return Option.match(command.jiraKey, {
       onSome: (jiraKey) =>
         Effect.flatMap(
-          gitCreateJiraBranch(jiraKey, command.baseBranch),
+          gitCreateJiraBranch(jiraKey, command.baseBranch, command.reset),
           compose(
             matchGitCreateJiraBranchResult({
               onCreatedBranch: (branch) =>
                 `Successfully created branch: '${branch}'`,
               onSwitchedBranch: (branch) =>
                 `Switched to already existing branch: '${branch}'`,
+              onResetBranch: (branch) => `Reset branch: '${branch}'`,
             }),
             Console.log,
           ),
