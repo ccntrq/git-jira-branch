@@ -12,14 +12,14 @@ updates:
         dependency-type: "development"
     # Check the npm registry for updates every week
     schedule:     
-      interval: "weekly"
-      time: "12:00"
+      interval: "daily"
+      time: "9:00"
       timezone: "Europe/Berlin"
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       # Check for updates to GitHub Actions every week
-      interval: "weekly"
-      time: "12:00"
+      interval: "daily"
+      time: "9:00"
       timezone: "Europe/Berlin"
