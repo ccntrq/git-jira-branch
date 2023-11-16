@@ -10,7 +10,6 @@ updates:
         dependency-type: "production"
       development-dependencies:
         dependency-type: "development"
-    # Check the npm registry for updates every week
     schedule:     
       interval: "daily"
       time: "09:00"
@@ -19,7 +18,6 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      # Check for updates to GitHub Actions every week
       interval: "daily"
       time: "09:00"
       timezone: "Europe/Berlin"
