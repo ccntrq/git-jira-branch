@@ -1,25 +1,23 @@
 version: 2
 updates:
   # Enable version updates for npm
-  - package-ecosystem: "npm"
+  - package-ecosystem: 'npm'
     # Look for `package.json` and `lock` files in the `root` directory
-    directory: "/"
+    directory: '/'
     versioning-strategy: increase
     groups:
       production-dependencies:
-        dependency-type: "production"
+        dependency-type: 'production'
       development-dependencies:
-        dependency-type: "development"
-    # Check the npm registry for updates every week
-    schedule:     
-      interval: "daily"
-      time: "09:00"
-      timezone: "Europe/Berlin"
-
-  - package-ecosystem: "github-actions"
-    directory: "/"
+        dependency-type: 'development'
     schedule:
-      # Check for updates to GitHub Actions every week
-      interval: "daily"
-      time: "09:00"
-      timezone: "Europe/Berlin"
+      interval: 'daily'
+      time: '09:00'
+      timezone: 'Europe/Berlin'
+
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'daily'
+      time: '09:00'
+      timezone: 'Europe/Berlin'
