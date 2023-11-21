@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "@commitlint/cli": "^18.4.2",
-    "@commitlint/config-conventional": "^18.4.2",
+    "@commitlint/config-conventional": "^18.4.3",
     "@tsconfig/node20": "^20.1.2",
     "@tsconfig/strictest": "^2.0.2",
     "@types/node": "^20.9.0",
