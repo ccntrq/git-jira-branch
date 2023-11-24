@@ -47,7 +47,7 @@
     "@commitlint/config-conventional": "^18.4.3",
     "@tsconfig/node20": "^20.1.2",
     "@tsconfig/strictest": "^2.0.2",
-    "@types/node": "^20.9.4",
+    "@types/node": "^20.9.5",
     "@typescript-eslint/eslint-plugin": "^6.12.0",
     "@typescript-eslint/parser": "^6.12.0",
     "@typescript-eslint/typescript-estree": "^6.9.0",
