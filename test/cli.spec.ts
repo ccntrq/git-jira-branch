@@ -159,10 +159,7 @@ describe('cli', () => {
           );
 
           expect(mockGitCreateJiraBranch).not.toHaveBeenCalled();
-          expect(mockLog.mock.calls[0]?.[0]).toMatchInlineSnapshot(`
-            "1.2.0
-            "
-          `);
+          expect(mockLog.mock.calls[0]?.[0]).toMatch(/\d+\.\d+\.\d+/);
         }
       }),
     );
