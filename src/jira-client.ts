@@ -9,6 +9,7 @@ import {Environment} from './environment';
 import {
   AppConfigError,
   JiraApiError,
+  JiraAuth,
   JiraIssue,
   JiraIssueSchema,
 } from './types';
@@ -26,28 +27,41 @@ export const JiraClientLive = Layer.effect(
   Effect.all([Environment, Http.client.Client]).pipe(
     Effect.map(([env, httpClient]) =>
       JiraClient.of({
-        getJiraIssue: (issueId: string) => {
-          const endPoint = `/rest/api/latest/issue/${issueId}`;
+        getJiraIssue: (issueId: string) =>
+          Effect.gen(function* (_) {
+            const endPoint = `/rest/api/latest/issue/${issueId}`;
+            const {jiraAuth, jiraApiUrl} = yield* _(env.getEnv());
 
-          return env.getEnv().pipe(
-            Effect.flatMap(({jiraPat, jiraApiUrl}) =>
+            return yield* _(
               Http.request
                 .get(jiraApiUrl + endPoint, {
                   headers: {
-                    Authorization: `Bearer ${jiraPat}`,
+                    Authorization: buildJiraAuthorizationHeader(jiraAuth),
                     Accept: 'application/json',
                   },
                 })
-                .pipe(Http.client.filterStatusOk(httpClient)),
-            ),
-            Effect.flatMap(Http.response.schemaBodyJson(JiraIssueSchema)),
-            handleJiraClientErrors,
-          );
-        },
+                .pipe(
+                  Http.client.filterStatusOk(httpClient),
+                  Effect.flatMap(Http.response.schemaBodyJson(JiraIssueSchema)),
+                  handleJiraClientErrors,
+                ),
+            );
+          }),
       }),
     ),
   ),
 );
+
+const buildJiraAuthorizationHeader = (jiraAuth: JiraAuth): string => {
+  switch (jiraAuth._tag) {
+    case 'JiraCloudAuth':
+      return `Basic ${Buffer.from(
+        `${jiraAuth.jiraUserEmail}:${jiraAuth.jiraApiToken}`,
+      ).toString('base64')}`;
+    case 'JiraDataCenterAuth':
+      return `Bearer ${jiraAuth.jiraPat}`;
+  }
+};
 
 const handleJiraClientErrors: (
   eff: Effect.Effect<

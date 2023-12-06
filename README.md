@@ -70,6 +70,22 @@ npm i -g git-create-jira-branch
 
 ### Configuration
 
+#### For Jira Cloud
+
+1. Create a Jira API Token [See Jira
+   Docs](https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/)
+1. Add the created API Token, your login email, the base url of your Jira
+   instance and optionally a default Jira key prefix to your environment.
+   For example in your `.bashrc` or `.zshrc`:
+   ```bash
+   export JIRA_USER_EMAIL="YOUR_JIRA_LOGIN_EMAIL"
+   export JIRA_API_TOKEN="YOUR_API_TOKEN"
+   export JIRA_API_URL="https://jira.mycompany.com"
+   export JIRA_KEY_PREFIX="MYAPP"
+   ```
+
+#### For Jira Data Center
+
 1. Create a Jira PAT (Personal Access Token) [See Jira
    Docs](https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html)
 1. Add the created Jira PAT, the base url of your Jira instance and optionally a

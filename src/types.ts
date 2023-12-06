@@ -1,14 +1,42 @@
 // eslint-disable-next-line node/no-extraneous-import
 import * as Schema from '@effect/schema/Schema';
-import {Brand, Data, Match, pipe} from 'effect';
+import {Brand, Data, Match, Option, pipe} from 'effect';
 import {dual} from 'effect/Function';
 
 export type JiraApiUrl = string & Brand.Brand<'JiraApiUrl'>;
 export const JiraApiUrl = Brand.nominal<JiraApiUrl>();
 export type JiraPat = string & Brand.Brand<'JiraPat'>;
 export const JiraPat = Brand.nominal<JiraPat>();
+export type JiraApiToken = string & Brand.Brand<'JiraApiToken'>;
+export const JiraApiToken = Brand.nominal<JiraApiToken>();
+export type JiraUserEmail = string & Brand.Brand<'JiraUserEmail'>;
+export const JiraUserEmail = Brand.nominal<JiraUserEmail>();
 export type JiraKeyPrefix = string & Brand.Brand<'JiraKeyPrefix'>;
 export const JiraKeyPrefix = Brand.nominal<JiraKeyPrefix>();
+
+export type JiraCloudAuth = Data.Data<{
+  _tag: 'JiraCloudAuth';
+  jiraUserEmail: JiraUserEmail;
+  jiraApiToken: JiraApiToken;
+}>;
+
+export const JiraCloudAuth = Data.tagged<JiraCloudAuth>('JiraCloudAuth');
+
+export type JiraDataCenterAuth = Data.Data<{
+  _tag: 'JiraDataCenterAuth';
+  jiraPat: JiraPat;
+}>;
+
+export const JiraDataCenterAuth =
+  Data.tagged<JiraDataCenterAuth>('JiraDataCenterAuth');
+
+export type JiraAuth = JiraCloudAuth | JiraDataCenterAuth;
+
+export type AppConfig = {
+  jiraApiUrl: JiraApiUrl;
+  defaultJiraKeyPrefix: Option.Option<JiraKeyPrefix>;
+  jiraAuth: JiraAuth;
+};
 
 export const JiraIssuetypeSchema = Schema.struct({
   name: Schema.string,

@@ -3,7 +3,13 @@ import {ConfigProvider, Effect, Either, Layer} from 'effect';
 import * as Option from 'effect/Option';
 import {describe, expect} from 'vitest';
 import {itEffect} from './util';
-import {AppConfigError} from '../src/types';
+import {
+  JiraApiToken,
+  JiraCloudAuth,
+  JiraDataCenterAuth,
+  JiraPat,
+  JiraUserEmail,
+} from '../src/types';
 
 const testProg = Effect.all([Environment]).pipe(
   Effect.flatMap(([env]) => env.getEnv()),
@@ -15,7 +21,7 @@ const mkTestLayer = (
   EnvironmentLive.pipe(Layer.provide(Layer.setConfigProvider(configProvider)));
 
 describe('Environment', () => {
-  itEffect('should provide environment', () =>
+  itEffect('should provide jira data center appconfig', () =>
     Effect.gen(function* ($) {
       const configProvider = ConfigProvider.fromMap(
         new Map([
@@ -32,12 +38,40 @@ describe('Environment', () => {
       expect(env).toEqual({
         defaultJiraKeyPrefix: Option.some('DUMMYAPP'),
         jiraApiUrl: 'https://dummy-jira-instance.com',
-        jiraPat: 'dummy-jira-pat',
+        jiraAuth: JiraDataCenterAuth({
+          jiraPat: JiraPat('dummy-jira-pat'),
+        }),
       });
     }),
   );
 
-  itEffect('should provide environment with missing optional values', () =>
+  itEffect('should provide jira cloud appconfig', () =>
+    Effect.gen(function* ($) {
+      const configProvider = ConfigProvider.fromMap(
+        new Map([
+          ['JIRA_API_TOKEN', 'dummy-jira-api-token'],
+          ['JIRA_USER_EMAIL', 'dummyuser@example.com'],
+          ['JIRA_API_URL', 'https://dummy-jira-instance.com'],
+          ['JIRA_KEY_PREFIX', 'DUMMYAPP'],
+        ]),
+      );
+
+      const env = yield* $(
+        Effect.provide(testProg, mkTestLayer(configProvider)),
+      );
+
+      expect(env).toEqual({
+        defaultJiraKeyPrefix: Option.some('DUMMYAPP'),
+        jiraApiUrl: 'https://dummy-jira-instance.com',
+        jiraAuth: JiraCloudAuth({
+          jiraApiToken: JiraApiToken('dummy-jira-api-token'),
+          jiraUserEmail: JiraUserEmail('dummyuser@example.com'),
+        }),
+      });
+    }),
+  );
+
+  itEffect('should provide appconfig with missing optional values', () =>
     Effect.gen(function* ($) {
       const configProvider = ConfigProvider.fromMap(
         new Map([
@@ -53,7 +87,9 @@ describe('Environment', () => {
       expect(env).toEqual({
         defaultJiraKeyPrefix: Option.none(),
         jiraApiUrl: 'https://dummy-jira-instance.com',
-        jiraPat: 'dummy-jira-pat',
+        jiraAuth: JiraDataCenterAuth({
+          jiraPat: JiraPat('dummy-jira-pat'),
+        }),
       });
     }),
   );
@@ -68,33 +104,7 @@ describe('Environment', () => {
         Effect.either(Effect.provide(testProg, mkTestLayer(configProvider))),
       );
       Either.match(result, {
-        onLeft: (e) =>
-          expect(e).toMatchObject(
-            AppConfigError({
-              message: 'Expected JIRA_PAT to exist in the provided map',
-            }),
-          ),
-        onRight: (_) => expect.unreachable('Should have returned an error'),
-      });
-    }),
-  );
-
-  itEffect('should report multiple missing configuration values', () =>
-    Effect.gen(function* ($) {
-      const configProvider = ConfigProvider.fromMap(new Map());
-
-      const result = yield* $(
-        Effect.either(Effect.provide(testProg, mkTestLayer(configProvider))),
-      );
-
-      Either.match(result, {
-        onLeft: (e) =>
-          expect(e).toMatchObject(
-            AppConfigError({
-              message:
-                'Expected JIRA_PAT to exist in the provided map\nExpected JIRA_API_URL to exist in the provided map',
-            }),
-          ),
+        onLeft: (e) => expect(e).toMatchSnapshot(),
         onRight: (_) => expect.unreachable('Should have returned an error'),
       });
     }),
