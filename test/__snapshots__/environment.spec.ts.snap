@@ -1,0 +1,8 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Environment > should report missing configuration values 1`] = `
+{
+  "_tag": "AppConfigError",
+  "message": "Please provide JIRA_PAT (for Jira Data Center) or JIRA_API_TOKEN and JIRA_USER_EMAIL (for Jira Cloud).",
+}
+`;
