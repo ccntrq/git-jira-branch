@@ -7,6 +7,18 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [2.0.0](https://github.com/ccntrq/git-create-jira-branch/compare/v1.2.0...v2.0.0) (2023-12-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* CLI options now need to be passed before any positional arguments. This is due a limitation in the used cli library
+
+### Features
+
+* add support for jira cloud ([#70](https://github.com/ccntrq/git-create-jira-branch/issues/70)) ([02a1f98](https://github.com/ccntrq/git-create-jira-branch/commit/02a1f988d742f990287080b7f7b053c83d1d0038))
+* add wizard mode and shell completion script generation option ([#71](https://github.com/ccntrq/git-create-jira-branch/issues/71)) ([caa72b2](https://github.com/ccntrq/git-create-jira-branch/commit/caa72b24995a7fbbd4d9f043579b36c2ee9fa973))
+
 ## [1.2.0](https://github.com/ccntrq/git-create-jira-branch/compare/v1.1.0...v1.2.0) (2023-11-05)
 
 
