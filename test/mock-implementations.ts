@@ -1,4 +1,5 @@
 import {Effect, Chunk, Layer} from 'effect';
+import {NodeContext} from '@effect/platform-node';
 
 import {GitClient} from '../src/git-client';
 import {JiraClient} from '../src/jira-client';
@@ -20,3 +21,5 @@ export const testLayer = Layer.mergeAll(
   Layer.succeed(Environment, Environment.of(mockEnvironment)),
   Layer.succeed(JiraClient, JiraClient.of(mockJiraClient)),
 );
+
+export const cliTestLayer = Layer.mergeAll(testLayer, NodeContext.layer);

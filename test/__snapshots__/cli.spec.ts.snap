@@ -70,7 +70,7 @@ is based on the ticket summary.
 
   Reset the branch if it already exists
 
-  This setting is optional. (Defaults to: 'false')
+  This setting is optional.
 
 [0;1m(-v, --version)[0m
 
@@ -78,7 +78,7 @@ is based on the ticket summary.
 
   Show version information
 
-  This setting is optional. (Defaults to: 'false')
+  This setting is optional.
 
 [0;1m(-h, --help)[0m
 
@@ -86,14 +86,14 @@ is based on the ticket summary.
 
   Show this help text
 
-  This setting is optional. (Defaults to: 'false')
+  This setting is optional.
 "
 `;
 
 exports[`cli > cliEffect > should report missing jirakey 1`] = `
 [
   [
-    "[0;91mNo Jira Key provided[0m
+    "[0;31mNo Jira Key provided[0m
 ",
   ],
 ]
