@@ -9,22 +9,29 @@ import {EnvironmentLive} from './environment';
 import {GitClientLive} from './git-client';
 import {JiraClientLive} from './jira-client';
 import {cliEffect} from './cli';
+import {NodeContext} from '@effect/platform-node';
 
-const mainLive = Layer.merge(
-  NodeFileSystem.layer
-    .pipe(Layer.provide(NodeCommandExecutor.layer))
-    .pipe(Layer.provide(GitClientLive)),
+const gitClientLayer = GitClientLive.pipe(
+  Layer.provide(NodeCommandExecutor.layer),
+  Layer.provide(NodeFileSystem.layer),
+);
+
+const jiraClientLayer = JiraClientLive.pipe(
+  Layer.provide(Http.client.layer),
+  Layer.provide(EnvironmentLive),
+);
+
+const mainLive = Layer.mergeAll(
+  gitClientLayer,
   EnvironmentLive,
-).pipe(
-  Layer.provideMerge(Http.client.layer.pipe(Layer.provide(JiraClientLive))),
+  jiraClientLayer,
+  NodeContext.layer,
 );
 
-Effect.runPromise(
-  Effect.provide(
-    pipe(
-      Effect.sync(() => process.argv.slice(2)),
-      Effect.flatMap(cliEffect),
-    ),
-    mainLive,
-  ),
+const mainEffect = pipe(
+  Effect.sync(() => process.argv.slice(2)),
+  Effect.flatMap(cliEffect),
+  Effect.provide(mainLive),
 );
+
+Effect.runPromise(mainEffect);
