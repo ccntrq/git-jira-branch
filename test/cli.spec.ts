@@ -11,8 +11,6 @@ import {cliTestLayer} from './mock-implementations';
 
 vi.mock('../src/core');
 
-vi.mock('effect/Console');
-
 const mockGitCreateJiraBranch = toEffectMock(
   gitCreateJiraBranch as unknown as Mock<
     Parameters<typeof gitCreateJiraBranch>,
