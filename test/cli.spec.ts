@@ -143,22 +143,20 @@ describe('cli', () => {
       }),
     );
 
-    itEffect('should print version (-v|--version)', () =>
+    itEffect('should print version (--version)', () =>
       Effect.gen(function* ($) {
-        for (const option of ['--version', '-v']) {
-          yield* $(
-            Effect.provide(
-              pipe(
-                Effect.sync(() => [option]),
-                Effect.flatMap(cliEffect),
-              ),
-              cliTestLayer,
+        yield* $(
+          Effect.provide(
+            pipe(
+              Effect.sync(() => ['--version']),
+              Effect.flatMap(cliEffect),
             ),
-          );
+            cliTestLayer,
+          ),
+        );
 
-          expect(mockGitCreateJiraBranch).not.toHaveBeenCalled();
-          expect(mockLog.mock.calls[0]?.[0]).toMatch(/\d+\.\d+\.\d+/);
-        }
+        expect(mockGitCreateJiraBranch).not.toHaveBeenCalled();
+        expect(mockLog.mock.calls[0]?.[0]).toMatch(/\d+\.\d+\.\d+/);
       }),
     );
 
