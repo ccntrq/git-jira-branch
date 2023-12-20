@@ -8,7 +8,7 @@ import {GitClient, GitClientLive} from '../src/git-client';
 import {EffectMock, effectMock, itEffect} from './util';
 import {GitExecError} from '../src/types';
 import {TextEncoder} from 'util';
-import {Command} from '@effect/platform';
+import {Command} from '@effect/platform-node';
 
 const testProg = Effect.gen(function* ($) {
   const gitClient = yield* $(GitClient);

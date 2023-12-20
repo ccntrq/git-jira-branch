@@ -25,11 +25,11 @@ export const EnvironmentLive = Layer.succeed(
     getEnv: () =>
       Effect.all(
         [
-          Effect.config(Config.string('JIRA_API_URL')),
-          Effect.config(Config.option(Config.string('JIRA_PAT'))),
-          Effect.config(Config.option(Config.string('JIRA_USER_EMAIL'))),
-          Effect.config(Config.option(Config.string('JIRA_API_TOKEN'))),
-          Effect.config(Config.option(Config.string('JIRA_KEY_PREFIX'))),
+          Config.string('JIRA_API_URL'),
+          Config.option(Config.string('JIRA_PAT')),
+          Config.option(Config.string('JIRA_USER_EMAIL')),
+          Config.option(Config.string('JIRA_API_TOKEN')),
+          Config.option(Config.string('JIRA_KEY_PREFIX')),
         ],
         {concurrency: 'unbounded', mode: 'validate'},
       ).pipe(
