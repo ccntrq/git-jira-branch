@@ -16,7 +16,6 @@ import {GitClient} from './git-client';
 import {JiraClient} from './jira-client';
 
 interface GitCreateJiraBranch extends Data.Case {
-  readonly version: boolean;
   readonly jiraKey: Option.Option<string>;
   readonly baseBranch: Option.Option<string>;
   readonly reset: boolean;
@@ -37,14 +36,6 @@ const mainCommand = pipe(
           Options.withAlias(Options.boolean('reset'), 'r'),
           'Reset the branch if it already exists',
         ),
-        version: Options.withDescription(
-          Options.withAlias(Options.boolean('version'), 'v'),
-          'Show version information',
-        ),
-        help: Options.withDescription(
-          Options.withAlias(Options.boolean('help'), 'h'),
-          'Show this help text',
-        ),
       }),
       args: Args.withDescription(
         Args.atMost(Args.text({name: 'jira-key'}), 1),
@@ -53,15 +44,10 @@ const mainCommand = pipe(
     },
     (args) => {
       const command = GitCreateJiraBranch({
-        version: args.options.version,
         baseBranch: args.options.baseBranch,
         reset: args.options.reset,
         jiraKey: Option.fromNullable(args.args[0]),
       });
-
-      if (command.version) {
-        return Console.log(`${cli.version}`);
-      }
 
       return Option.match(command.jiraKey, {
         onSome: (jiraKey) =>

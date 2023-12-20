@@ -36,7 +36,7 @@ exports[`cli > cliEffect > should print help (--help) 1`] = `
 "
 [0;1mUSAGE[0m
 
-$ git-create-jira-branch [(-b, --baseBranch text)] [(-r, --reset)] [(-v, --version)] [(-h, --help)] <jira-key>...
+$ git-create-jira-branch [(-b, --baseBranch text)] [(-r, --reset)] <jira-key>...
 
 [0;1mDESCRIPTION[0m
 
@@ -72,11 +72,11 @@ is based on the ticket summary.
 
   This setting is optional.
 
-[0;1m(-v, --version)[0m
+[0;1m--completions sh | bash | fish | zsh[0m
 
-  A true or false value.
+  One of the following: sh, bash, fish, zsh
 
-  Show version information
+  Generate a completion script for a specific shell
 
   This setting is optional.
 
@@ -84,7 +84,23 @@ is based on the ticket summary.
 
   A true or false value.
 
-  Show this help text
+  Show the help documentation for a command
+
+  This setting is optional.
+
+[0;1m--wizard[0m
+
+  A true or false value.
+
+  Start wizard mode for a command
+
+  This setting is optional.
+
+[0;1m--version[0m
+
+  A true or false value.
+
+  Show the version of the application
 
   This setting is optional.
 "
