@@ -7,6 +7,17 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [3.0.0](https://github.com/ccntrq/git-create-jira-branch/compare/v2.0.0...v3.0.0) (2023-12-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* The `-v` option has been removed and can't be used to output the version anymore. Use the long option `---version` instead.
+
+### Bug Fixes
+
+* prevent builtin options from being suggested in the wizard ([a051dc7](https://github.com/ccntrq/git-create-jira-branch/commit/a051dc7201b6fffbdafa72c17f3266fd60508ea3))
+
 ## [2.0.0](https://github.com/ccntrq/git-create-jira-branch/compare/v1.2.0...v2.0.0) (2023-12-06)
 
 
