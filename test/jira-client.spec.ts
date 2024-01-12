@@ -97,13 +97,13 @@ describe('JiraClient', () => {
       );
 
       Either.match(res, {
-        onLeft: (e) =>
-          expect(e).toEqual(
-            JiraApiError({
-              message:
-                "Failed to parse ticket response from Jira:\n'key': 'Missing key or index'",
-            }),
-          ),
+        onLeft: (e) => {
+          expect(e._tag).toBe('JiraApiError');
+          expect(e.message).toMatchInlineSnapshot(`
+            "Failed to parse ticket response from Jira:
+            'key': 'is missing'"
+          `);
+        },
         onRight: (_) => expect.unreachable('Should have returned an error.'),
       });
     }),
@@ -127,13 +127,13 @@ describe('JiraClient', () => {
       );
 
       Either.match(res, {
-        onLeft: (e) =>
-          expect(e).toEqual(
-            JiraApiError({
-              message:
-                "Failed to parse ticket response from Jira:\n'key': 'Missing key or index'",
-            }),
-          ),
+        onLeft: (e) => {
+          expect(e._tag).toBe('JiraApiError');
+          expect(e.message).toMatchInlineSnapshot(`
+            "Failed to parse ticket response from Jira:
+            'key': 'is missing'"
+          `);
+        },
         onRight: (_) => expect.unreachable('Should have returned an error.'),
       });
     }),

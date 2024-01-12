@@ -76,7 +76,7 @@ const handleJiraClientErrors: (
         JiraApiError({
           message: [
             'Failed to parse ticket response from Jira:',
-            ...ArrayFormatter.formatErrors(e.errors).map(
+            ...ArrayFormatter.formatError(e).map(
               (issue) => `'${issue.path.join(' ')}': '${issue.message}'`,
             ),
           ].join('\n'),
