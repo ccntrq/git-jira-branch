@@ -1,3 +1,12 @@
+<p align="center">
+  <img
+    width="256px"
+    title="git-create-jira-branch Logo"
+    alt="git-create-jira-branch Logo"
+    src="./assets/logo.webp"
+  >
+</p>
+
 # git-create-jira-branch - Setup feature branches for your Jira tickets with one command.
 
 Creates feature branches based on your Jira tickets type and description.
