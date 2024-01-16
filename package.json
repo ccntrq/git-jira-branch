@@ -64,9 +64,9 @@
     "vitest": "^1.2.0"
   },
   "dependencies": {
-    "@effect/cli": "0.28.7",
-    "@effect/platform": "0.42.1",
-    "@effect/platform-node": "0.41.2",
-    "effect": "2.0.5"
+    "@effect/cli": "0.28.8",
+    "@effect/platform": "0.42.2",
+    "@effect/platform-node": "0.41.3",
+    "effect": "2.1.0"
   }
 }
