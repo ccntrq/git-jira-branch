@@ -29,7 +29,7 @@ const mainLive = Layer.mergeAll(
 );
 
 const mainEffect = pipe(
-  Effect.sync(() => process.argv.slice(2)),
+  Effect.sync(() => process.argv),
   Effect.flatMap(cliEffect),
   Effect.provide(mainLive),
 );
