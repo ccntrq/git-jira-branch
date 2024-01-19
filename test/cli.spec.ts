@@ -24,6 +24,9 @@ const mockGitCreateJiraBranch = toEffectMock(
 
 const mockLog = vi.spyOn(console, 'log').mockImplementation(() => {});
 
+const withBaseArgs = (args: string[]): Effect.Effect<never, never, string[]> =>
+  Effect.sync(() => ['node', 'git-create-jira-branch', ...args]);
+
 describe('cli', () => {
   describe('cliEffect', () => {
     afterEach(() => {
@@ -37,10 +40,7 @@ describe('cli', () => {
         );
         yield* $(
           Effect.provide(
-            pipe(
-              Effect.sync(() => ['FOOX-1234']),
-              Effect.flatMap(cliEffect),
-            ),
+            pipe(withBaseArgs(['FOOX-1234']), Effect.flatMap(cliEffect)),
             cliTestLayer,
           ),
         );
@@ -61,10 +61,7 @@ describe('cli', () => {
         );
         yield* $(
           Effect.provide(
-            pipe(
-              Effect.sync(() => ['FOOX-1234']),
-              Effect.flatMap(cliEffect),
-            ),
+            pipe(withBaseArgs(['FOOX-1234']), Effect.flatMap(cliEffect)),
             cliTestLayer,
           ),
         );
@@ -86,7 +83,7 @@ describe('cli', () => {
         yield* $(
           Effect.provide(
             pipe(
-              Effect.sync(() => ['-b', 'master', 'FOOX-1234']),
+              withBaseArgs(['-b', 'master', 'FOOX-1234']),
               Effect.flatMap(cliEffect),
             ),
             cliTestLayer,
@@ -109,10 +106,7 @@ describe('cli', () => {
         );
         yield* $(
           Effect.provide(
-            pipe(
-              Effect.sync(() => ['-r', 'FOOX-1234']),
-              Effect.flatMap(cliEffect),
-            ),
+            pipe(withBaseArgs(['-r', 'FOOX-1234']), Effect.flatMap(cliEffect)),
             cliTestLayer,
           ),
         );
@@ -147,10 +141,7 @@ describe('cli', () => {
       Effect.gen(function* ($) {
         yield* $(
           Effect.provide(
-            pipe(
-              Effect.sync(() => ['--version']),
-              Effect.flatMap(cliEffect),
-            ),
+            pipe(withBaseArgs(['--version']), Effect.flatMap(cliEffect)),
             cliTestLayer,
           ),
         );
@@ -164,10 +155,7 @@ describe('cli', () => {
       Effect.gen(function* ($) {
         yield* $(
           Effect.provide(
-            pipe(
-              Effect.sync(() => ['--help']),
-              Effect.flatMap(cliEffect),
-            ),
+            pipe(withBaseArgs(['--help']), Effect.flatMap(cliEffect)),
             cliTestLayer,
           ),
         );
