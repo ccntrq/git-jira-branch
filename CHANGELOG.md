@@ -7,6 +7,13 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [3.1.0](https://github.com/ccntrq/git-create-jira-branch/compare/v3.0.5...v3.1.0) (2024-01-24)
+
+
+### Features
+
+* don't set up tracking for branches created from a remote branch ([#143](https://github.com/ccntrq/git-create-jira-branch/issues/143)) ([b3d4a17](https://github.com/ccntrq/git-create-jira-branch/commit/b3d4a172e3d081e27276c002aaca58165bd85df2)), closes [#142](https://github.com/ccntrq/git-create-jira-branch/issues/142)
+
 ## [3.0.5](https://github.com/ccntrq/git-create-jira-branch/compare/v3.0.4...v3.0.5) (2024-01-23)
 
 
