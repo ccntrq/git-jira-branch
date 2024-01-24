@@ -90,6 +90,7 @@ const createGitBranchFrom =
         'checkout',
         reset ? '-B' : '-b',
         branchName,
+        '--no-track',
         baseBranch,
       ),
       runGitCommand(commandExecutor),
