@@ -119,7 +119,7 @@ describe('GitClient', () => {
         expect(executorMock).toHaveBeenCalledTimes(1);
         expect(executorMock.mock.calls[0]?.[0]).toMatchObject({
           _tag: 'StandardCommand',
-          args: ['checkout', '-b', 'feat/dummy-branch', 'master'],
+          args: ['checkout', '-b', 'feat/dummy-branch', '--no-track', 'master'],
           command: 'git',
         });
       }),
@@ -149,7 +149,7 @@ describe('GitClient', () => {
         expect(executorMock).toHaveBeenCalledTimes(1);
         expect(executorMock.mock.calls[0]?.[0]).toMatchObject({
           _tag: 'StandardCommand',
-          args: ['checkout', '-B', 'feat/dummy-branch', 'master'],
+          args: ['checkout', '-B', 'feat/dummy-branch', '--no-track', 'master'],
           command: 'git',
         });
       }),
