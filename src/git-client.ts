@@ -10,6 +10,7 @@ export class GitClient extends Context.Tag('GitClient')<
   GitClient,
   {
     readonly listBranches: () => GitClientEffect<Chunk.Chunk<string>>;
+    readonly getCurrentBranch: () => GitClientEffect<string>;
     readonly createGitBranch: (
       branchName: string,
       reset: boolean,
@@ -81,6 +82,16 @@ const listBranches =
       Effect.scoped,
     );
 
+const getCurrentBranch =
+  (commandExecutor: CommandExecutor.CommandExecutor) =>
+  (): GitClientEffect<string> =>
+    pipe(
+      Command.make('git', 'branch', '--show-current'),
+      runGitCommand(commandExecutor),
+      Effect.map((stdout) => stdout.trim()),
+      Effect.scoped,
+    );
+
 const createGitBranchFrom =
   (commandExecutor: CommandExecutor.CommandExecutor) =>
   (baseBranch: string) =>
@@ -124,6 +135,7 @@ export const GitClientLive = Layer.effect(
   Effect.map(CommandExecutor.CommandExecutor, (commandExecutor) =>
     GitClient.of({
       listBranches: listBranches(commandExecutor),
+      getCurrentBranch: getCurrentBranch(commandExecutor),
       createGitBranchFrom: createGitBranchFrom(commandExecutor),
       createGitBranch: createGitBranch(commandExecutor),
       switchBranch: switchBranch(commandExecutor),

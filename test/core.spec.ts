@@ -1,7 +1,11 @@
 import {Chunk, Effect, Either, Option} from 'effect';
 import {itEffect} from './util';
 
-import {gitCreateJiraBranch} from '../src/core';
+import {
+  gitCreateJiraBranch,
+  ticketUrl,
+  ticketUrlForCurrentBranch,
+} from '../src/core';
 import {vi, describe, expect, afterEach} from 'vitest';
 import {JiraIssue} from '../src/types';
 import {
@@ -452,6 +456,48 @@ describe('core', () => {
         );
         expect(mockGitClient.createGitBranchFrom).not.toHaveBeenCalled();
       }),
+    );
+  });
+
+  describe('ticketUrl', () => {
+    itEffect('should return appropriate url for given ticket key', () =>
+      Effect.gen(function* ($) {
+        mockEnvironment.getEnv.mockSuccessValue({
+          defaultJiraKeyPrefix: Option.some('MYAPP'),
+          jiraApiUrl: 'https://gcjb.atlassian.com',
+        });
+
+        const result = yield* $(Effect.provide(ticketUrl('123'), testLayer));
+
+        expect(result).toMatchInlineSnapshot(
+          '"https://gcjb.atlassian.com/browse/MYAPP-123"',
+        );
+      }),
+    );
+  });
+
+  describe('ticketUrlForCurrentBranch', () => {
+    itEffect(
+      'should extract ticket from branch an return appropriate url',
+      () =>
+        Effect.gen(function* ($) {
+          mockEnvironment.getEnv.mockSuccessValue({
+            defaultJiraKeyPrefix: Option.some('MYAPP'),
+            jiraApiUrl: 'https://gcjb.atlassian.com',
+          });
+
+          mockGitClient.getCurrentBranch.mockSuccessValue(
+            'feat/MYAPP-123-dummy-isssue-summary',
+          );
+
+          const result = yield* $(
+            Effect.provide(ticketUrlForCurrentBranch(), testLayer),
+          );
+
+          expect(result).toMatchInlineSnapshot(
+            '"https://gcjb.atlassian.com/browse/MYAPP-123"',
+          );
+        }),
     );
   });
 });

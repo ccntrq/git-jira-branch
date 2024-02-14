@@ -8,6 +8,7 @@ import {curriedEffectMock2, effectMock} from './util';
 
 export const mockGitClient = {
   listBranches: effectMock(() => Effect.succeed(Chunk.empty<string>())),
+  getCurrentBranch: effectMock(),
   createGitBranch: effectMock(),
   createGitBranchFrom: curriedEffectMock2(),
   switchBranch: effectMock(),

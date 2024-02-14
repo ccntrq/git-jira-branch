@@ -2,7 +2,12 @@ import {Effect, pipe, Option} from 'effect';
 import {Effect as EffectNs} from 'effect/Effect';
 
 import {cliEffect} from '../src/cli';
-import {gitCreateJiraBranch} from '../src/core';
+import {
+  gitCreateJiraBranch,
+  ticketUrl,
+  ticketUrlForCurrentBranch,
+} from '../src/core';
+import {openUrl} from '../src/url-opener';
 
 import {vi, describe, afterEach, expect, Mock} from 'vitest';
 import {itEffect, toEffectMock} from './util';
@@ -10,6 +15,7 @@ import {CreatedBranch, ResetBranch, SwitchedBranch} from '../src/types';
 import {cliTestLayer} from './mock-implementations';
 
 vi.mock('../src/core');
+vi.mock('../src/url-opener');
 
 const mockGitCreateJiraBranch = toEffectMock(
   gitCreateJiraBranch as unknown as Mock<
@@ -17,6 +23,36 @@ const mockGitCreateJiraBranch = toEffectMock(
     Effect.Effect<
       EffectNs.Success<ReturnType<typeof gitCreateJiraBranch>>,
       EffectNs.Error<ReturnType<typeof gitCreateJiraBranch>>
+    >
+  >,
+);
+
+const mockTicketUrl = toEffectMock(
+  ticketUrl as unknown as Mock<
+    Parameters<typeof ticketUrl>,
+    Effect.Effect<
+      EffectNs.Success<ReturnType<typeof ticketUrl>>,
+      EffectNs.Error<ReturnType<typeof ticketUrl>>
+    >
+  >,
+);
+
+const mockTicketUrlForCurrentBranch = toEffectMock(
+  ticketUrlForCurrentBranch as unknown as Mock<
+    Parameters<typeof ticketUrlForCurrentBranch>,
+    Effect.Effect<
+      EffectNs.Success<ReturnType<typeof ticketUrlForCurrentBranch>>,
+      EffectNs.Error<ReturnType<typeof ticketUrlForCurrentBranch>>
+    >
+  >,
+);
+
+const mockOpenUrl = toEffectMock(
+  openUrl as unknown as Mock<
+    Parameters<typeof openUrl>,
+    Effect.Effect<
+      EffectNs.Success<ReturnType<typeof openUrl>>,
+      EffectNs.Error<ReturnType<typeof openUrl>>
     >
   >,
 );
@@ -116,6 +152,44 @@ describe('cli', () => {
           true,
         );
         expect(mockLog.mock.calls).toMatchSnapshot();
+      }),
+    );
+
+    itEffect('should handle open option (--open) without ticket', () =>
+      Effect.gen(function* ($) {
+        mockTicketUrlForCurrentBranch.mockSuccessValue(
+          'https://gcjb.atlassian.net/browse/GCJB-1234',
+        );
+        mockOpenUrl.mockSuccessValue();
+        yield* $(
+          Effect.provide(
+            pipe(withBaseArgs(['--open']), Effect.flatMap(cliEffect)),
+            cliTestLayer,
+          ),
+        );
+
+        expect(mockTicketUrlForCurrentBranch).toHaveBeenCalledWith();
+        expect(mockLog.mock.calls).toMatchSnapshot();
+        expect(mockOpenUrl.mock.calls).toMatchSnapshot();
+      }),
+    );
+
+    itEffect('should handle open option (--open) with given ticket', () =>
+      Effect.gen(function* ($) {
+        mockTicketUrl.mockSuccessValue(
+          'https://gcjb.atlassian.net/browse/GCJB-1234',
+        );
+        mockOpenUrl.mockSuccessValue();
+        yield* $(
+          Effect.provide(
+            pipe(withBaseArgs(['--open', '1234']), Effect.flatMap(cliEffect)),
+            cliTestLayer,
+          ),
+        );
+
+        expect(mockTicketUrl).toHaveBeenCalledWith('1234');
+        expect(mockLog.mock.calls).toMatchSnapshot();
+        expect(mockOpenUrl.mock.calls).toMatchSnapshot();
       }),
     );
 

@@ -11,10 +11,11 @@ import {JiraClientLive} from './jira-client';
 import {cliEffect} from './cli';
 import {NodeContext} from '@effect/platform-node';
 
-const gitClientLayer = GitClientLive.pipe(
-  Layer.provide(NodeCommandExecutor.layer),
+const commandExecutorLayer = NodeCommandExecutor.layer.pipe(
   Layer.provide(NodeFileSystem.layer),
 );
+
+const gitClientLayer = GitClientLive.pipe(Layer.provide(commandExecutorLayer));
 
 const jiraClientLayer = JiraClientLive.pipe(
   Layer.provide(Http.client.layer),
@@ -22,6 +23,7 @@ const jiraClientLayer = JiraClientLive.pipe(
 );
 
 const mainLive = Layer.mergeAll(
+  commandExecutorLayer,
   gitClientLayer,
   EnvironmentLive,
   jiraClientLayer,
