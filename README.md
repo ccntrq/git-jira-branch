@@ -65,7 +65,7 @@ git-create-jira-branch -r MYAPP-1234
    ```
 2. For a given ticket:
    ```bash
-   $ git create-jira-branch --open GCJB0-1234
+   $ git create-jira-branch --open GCJB-1234
    > Opening ticket url 'https://gcjb.atlassian.net/browse/GCJB-1234' in your default browser...
    ```
 
