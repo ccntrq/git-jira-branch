@@ -7,6 +7,13 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [3.2.1](https://github.com/ccntrq/git-create-jira-branch/compare/v3.2.0...v3.2.1) (2024-02-14)
+
+
+### Bug Fixes
+
+* correct a typo in the README ([#178](https://github.com/ccntrq/git-create-jira-branch/issues/178)) ([68dd520](https://github.com/ccntrq/git-create-jira-branch/commit/68dd520e1494b47f10923a710c2d6c07ed211499))
+
 ## [3.2.0](https://github.com/ccntrq/git-create-jira-branch/compare/v3.1.4...v3.2.0) (2024-02-14)
 
 
