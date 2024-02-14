@@ -6,7 +6,7 @@ import {Mock, it, vi} from 'vitest';
 export const itEffect = (() => {
   const f = <E, A>(
     name: string,
-    self: () => Effect.Effect<never, E, A>,
+    self: () => Effect.Effect<A, E>,
     timeout = 5_000,
   ): void => {
     return it(
@@ -18,7 +18,7 @@ export const itEffect = (() => {
   return Object.assign(f, {
     skip: <E, A>(
       name: string,
-      self: () => Effect.Effect<never, E, A>,
+      self: () => Effect.Effect<A, E>,
       timeout = 5_000,
     ): void => {
       return it.skip(
@@ -29,7 +29,7 @@ export const itEffect = (() => {
     },
     only: <E, A>(
       name: string,
-      self: () => Effect.Effect<never, E, A>,
+      self: () => Effect.Effect<A, E>,
       timeout = 5_000,
     ): void => {
       return it.only(
@@ -42,7 +42,7 @@ export const itEffect = (() => {
 })();
 
 export interface EffectMock<T extends any[], E = any, R = any>
-  extends Mock<T, Effect.Effect<never, E, R>> {
+  extends Mock<T, Effect.Effect<R, E>> {
   mockSuccessValue: (obj: R) => this;
   mockSuccessValueOnce: (obj: R) => this;
   mockFailValue: (e: E) => this;
@@ -50,7 +50,7 @@ export interface EffectMock<T extends any[], E = any, R = any>
 }
 
 export const toEffectMock = <T extends any[], E = any, R = any>(
-  fn: Mock<T, Effect.Effect<never, E, R>>,
+  fn: Mock<T, Effect.Effect<R, E>>,
 ): EffectMock<T, E, R> => {
   const mock = Object.assign(fn, {
     mockSuccessValue: (obj: R) => fn.mockReturnValue(Effect.succeed(obj)),
@@ -61,21 +61,21 @@ export const toEffectMock = <T extends any[], E = any, R = any>(
   }) as EffectMock<T, E, R>;
   if (!mock.getMockImplementation()) {
     mock.mockImplementation(
-      () => Effect.succeed(undefined) as unknown as Effect.Effect<never, E, R>,
+      () => Effect.succeed(undefined) as unknown as Effect.Effect<R, E>,
     );
   }
   return mock;
 };
 
 export const effectMock = <T extends any[], E = any, R = any>(
-  implementation?: (...args: T) => Effect.Effect<never, E, R>,
+  implementation?: (...args: T) => Effect.Effect<R, E>,
 ): EffectMock<T, E, R> =>
   toEffectMock<T, E, R>(
     implementation
       ? vi.fn(implementation)
       : vi.fn(
           (..._: T) =>
-            Effect.succeed(undefined) as unknown as Effect.Effect<never, E, R>,
+            Effect.succeed(undefined) as unknown as Effect.Effect<R, E>,
         ),
   );
 
@@ -85,7 +85,7 @@ export const curriedEffectMock2 = <
   E = any,
   R = any,
 >(
-  implementation?: (...args: T2) => Effect.Effect<never, E, R>,
+  implementation?: (...args: T2) => Effect.Effect<R, E>,
 ): Mock<T1, EffectMock<T2, E, R>> & {innerMock: EffectMock<T2, E, R>} => {
   const mock = effectMock(implementation);
   return Object.assign(

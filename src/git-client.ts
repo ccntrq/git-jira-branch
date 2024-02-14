@@ -4,21 +4,22 @@ import * as CommandExecutor from '@effect/platform/CommandExecutor';
 
 import {GitExecError} from './types';
 
-type GitClientEffect<A> = Effect.Effect<never, GitExecError, A>;
+type GitClientEffect<A> = Effect.Effect<A, GitExecError, never>;
 
-export interface GitClient {
-  readonly listBranches: () => GitClientEffect<Chunk.Chunk<string>>;
-  readonly createGitBranch: (
-    branchName: string,
-    reset: boolean,
-  ) => GitClientEffect<void>;
-  readonly createGitBranchFrom: (
-    baseBranch: string,
-  ) => (branchName: string, reset: boolean) => GitClientEffect<void>;
-  readonly switchBranch: (branchName: string) => GitClientEffect<void>;
-}
-
-export const GitClient = Context.Tag<GitClient>();
+export class GitClient extends Context.Tag('GitClient')<
+  GitClient,
+  {
+    readonly listBranches: () => GitClientEffect<Chunk.Chunk<string>>;
+    readonly createGitBranch: (
+      branchName: string,
+      reset: boolean,
+    ) => GitClientEffect<void>;
+    readonly createGitBranchFrom: (
+      baseBranch: string,
+    ) => (branchName: string, reset: boolean) => GitClientEffect<void>;
+    readonly switchBranch: (branchName: string) => GitClientEffect<void>;
+  }
+>() {}
 
 const runGitCommand =
   (commandExecutor: CommandExecutor.CommandExecutor) =>
@@ -131,27 +132,22 @@ export const GitClientLive = Layer.effect(
 );
 
 const toString = <E>(
-  stream: Stream.Stream<never, E, Uint8Array>,
-): Effect.Effect<never, E, string> => {
+  stream: Stream.Stream<Uint8Array, E>,
+): Effect.Effect<string, E> => {
   const decoder = new TextDecoder('utf-8');
   return Effect.map(Stream.run(stream, collectUint8Array), (bytes) =>
     decoder.decode(bytes),
   );
 };
 
-const collectUint8Array: Sink.Sink<
-  never,
-  never,
-  Uint8Array,
-  never,
-  Uint8Array
-> = Sink.foldLeftChunks(
-  new Uint8Array(),
-  (bytes, chunk: Chunk.Chunk<Uint8Array>) =>
-    Chunk.reduce(chunk, bytes, (acc, curr) => {
-      const newArray = new Uint8Array(acc.length + curr.length);
-      newArray.set(acc);
-      newArray.set(curr, acc.length);
-      return newArray;
-    }),
-);
+const collectUint8Array: Sink.Sink<Uint8Array, Uint8Array> =
+  Sink.foldLeftChunks(
+    new Uint8Array(),
+    (bytes, chunk: Chunk.Chunk<Uint8Array>) =>
+      Chunk.reduce(chunk, bytes, (acc, curr) => {
+        const newArray = new Uint8Array(acc.length + curr.length);
+        newArray.set(acc);
+        newArray.set(curr, acc.length);
+        return newArray;
+      }),
+  );

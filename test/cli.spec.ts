@@ -15,16 +15,15 @@ const mockGitCreateJiraBranch = toEffectMock(
   gitCreateJiraBranch as unknown as Mock<
     Parameters<typeof gitCreateJiraBranch>,
     Effect.Effect<
-      never,
-      EffectNs.Error<ReturnType<typeof gitCreateJiraBranch>>,
-      EffectNs.Success<ReturnType<typeof gitCreateJiraBranch>>
+      EffectNs.Success<ReturnType<typeof gitCreateJiraBranch>>,
+      EffectNs.Error<ReturnType<typeof gitCreateJiraBranch>>
     >
   >,
 );
 
 const mockLog = vi.spyOn(console, 'log').mockImplementation(() => {});
 
-const withBaseArgs = (args: string[]): Effect.Effect<never, never, string[]> =>
+const withBaseArgs = (args: string[]): Effect.Effect<string[]> =>
   Effect.sync(() => ['node', 'git-create-jira-branch', ...args]);
 
 describe('cli', () => {
@@ -36,7 +35,7 @@ describe('cli', () => {
     itEffect('should create branch with single argument', () =>
       Effect.gen(function* ($) {
         mockGitCreateJiraBranch.mockSuccessValue(
-          CreatedBranch('feat/FOOX-1234-description'),
+          CreatedBranch({branch: 'feat/FOOX-1234-description'}),
         );
         yield* $(
           Effect.provide(
@@ -57,7 +56,7 @@ describe('cli', () => {
     itEffect('should inform about branch switch', () =>
       Effect.gen(function* ($) {
         mockGitCreateJiraBranch.mockSuccessValue(
-          SwitchedBranch('feat/FOOX-1234-description'),
+          SwitchedBranch({branch: 'feat/FOOX-1234-description'}),
         );
         yield* $(
           Effect.provide(
@@ -78,7 +77,7 @@ describe('cli', () => {
     itEffect('should handle basebranch argument (-b)', () =>
       Effect.gen(function* ($) {
         mockGitCreateJiraBranch.mockSuccessValue(
-          CreatedBranch('feat/FOOX-1234-description'),
+          CreatedBranch({branch: 'feat/FOOX-1234-description'}),
         );
         yield* $(
           Effect.provide(
@@ -102,7 +101,7 @@ describe('cli', () => {
     itEffect('should handle reset option (-r)', () =>
       Effect.gen(function* ($) {
         mockGitCreateJiraBranch.mockSuccessValue(
-          ResetBranch('feat/FOOX-1234-description'),
+          ResetBranch({branch: 'feat/FOOX-1234-description'}),
         );
         yield* $(
           Effect.provide(

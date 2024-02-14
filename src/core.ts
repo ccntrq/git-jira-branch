@@ -21,9 +21,9 @@ export const gitCreateJiraBranch = (
   baseBranch: Option.Option<string>,
   reset: boolean,
 ): Effect.Effect<
-  Environment | GitClient | JiraClient,
+  GitCreateJiraBranchResult,
   GitCreateJiraBranchError,
-  GitCreateJiraBranchResult
+  Environment | GitClient | JiraClient
 > =>
   Effect.gen(function* ($) {
     const [envProvider, gitClient, jiraClient] = yield* $(
@@ -42,7 +42,7 @@ export const gitCreateJiraBranch = (
 
     if (!reset && branchExists) {
       yield* $(gitClient.switchBranch(branchName));
-      return SwitchedBranch(branchName);
+      return SwitchedBranch({branch: branchName});
     }
 
     const resetBranch = branchExists && reset;
@@ -54,7 +54,7 @@ export const gitCreateJiraBranch = (
       })(branchName, resetBranch),
     );
 
-    return (resetBranch ? ResetBranch : CreatedBranch)(branchName);
+    return (resetBranch ? ResetBranch : CreatedBranch)({branch: branchName});
   });
 
 const slugify = (str: string): string =>

@@ -24,7 +24,7 @@ const environmentTest = EnvironmentLive.pipe(
 
 const mkHttpMock = (
   response: Response,
-): Layer.Layer<never, never, Http.client.Client.Default> =>
+): Layer.Layer<Http.client.Client.Default> =>
   Layer.succeed(
     Http.client.Client,
     Http.client.makeDefault((req) =>
@@ -34,11 +34,7 @@ const mkHttpMock = (
 
 const mkTestLayer = (
   response: Response,
-): Layer.Layer<
-  never,
-  never,
-  Environment | Http.client.Client.Default | JiraClient
-> => {
+): Layer.Layer<Environment | Http.client.Client.Default | JiraClient> => {
   const baseTestLayer = Layer.merge(environmentTest, mkHttpMock(response));
   return Layer.merge(
     baseTestLayer,

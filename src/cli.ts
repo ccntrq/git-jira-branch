@@ -15,7 +15,7 @@ import {Environment} from './environment';
 import {GitClient} from './git-client';
 import {JiraClient} from './jira-client';
 
-interface GitCreateJiraBranch extends Data.Case {
+interface GitCreateJiraBranch {
   readonly jiraKey: Option.Option<string>;
   readonly baseBranch: Option.Option<string>;
   readonly reset: boolean;
@@ -86,9 +86,9 @@ const cli = {
 export const cliEffect = (
   args: string[],
 ): Effect.Effect<
-  CliApp.Environment | GitClient | Environment | JiraClient,
+  void,
   never,
-  void
+  CliApp.Environment | GitClient | Environment | JiraClient
 > =>
   Command.run(
     mainCommand,
@@ -100,5 +100,5 @@ export const cliEffect = (
     Effect.catchAll((e) => printDocs(HelpDoc.p(Span.error(e.message)))),
   );
 
-const printDocs = (doc: HelpDoc.HelpDoc): Effect.Effect<never, never, void> =>
+const printDocs = (doc: HelpDoc.HelpDoc): Effect.Effect<void> =>
   Console.log(HelpDoc.toAnsiText(doc));

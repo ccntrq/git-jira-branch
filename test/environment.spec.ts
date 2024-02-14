@@ -17,7 +17,7 @@ const testProg = Effect.all([Environment]).pipe(
 
 const mkTestLayer = (
   configProvider: ConfigProvider.ConfigProvider,
-): Layer.Layer<never, never, Environment> =>
+): Layer.Layer<Environment> =>
   EnvironmentLive.pipe(Layer.provide(Layer.setConfigProvider(configProvider)));
 
 describe('Environment', () => {
