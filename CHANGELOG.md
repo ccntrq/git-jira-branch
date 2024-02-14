@@ -7,6 +7,18 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [3.2.0](https://github.com/ccntrq/git-create-jira-branch/compare/v3.1.4...v3.2.0) (2024-02-14)
+
+
+### Features
+
+* add possibility to open corresponding jira tickets ([#176](https://github.com/ccntrq/git-create-jira-branch/issues/176)) ([8a01043](https://github.com/ccntrq/git-create-jira-branch/commit/8a010431f1959d2dc782bbcb052743a86aa5d33f)), closes [#164](https://github.com/ccntrq/git-create-jira-branch/issues/164)
+
+
+### Bug Fixes
+
+* **deps:** bump the production-dependencies group with 4 updates ([#173](https://github.com/ccntrq/git-create-jira-branch/issues/173)) ([8c93171](https://github.com/ccntrq/git-create-jira-branch/commit/8c931714546578caf6a0f3328c9fc1eebeb3f85d))
+
 ## [3.1.4](https://github.com/ccntrq/git-create-jira-branch/compare/v3.1.3...v3.1.4) (2024-02-06)
 
 
