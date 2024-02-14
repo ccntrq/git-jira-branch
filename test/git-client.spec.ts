@@ -220,6 +220,26 @@ describe('GitClient', () => {
     }),
   );
 
+  itEffect('getCurrentBranch should run appropriate git command', () =>
+    Effect.gen(function* ($) {
+      executorMock.mockSuccessValueOnce(mkTestProcess(0));
+
+      yield* $(
+        Effect.provide(
+          Effect.flatMap(GitClient, (gc) => gc.getCurrentBranch()),
+          testLayer,
+        ),
+      );
+
+      expect(executorMock).toHaveBeenCalledTimes(1);
+      expect(executorMock.mock.calls[0]?.[0]).toMatchObject({
+        _tag: 'StandardCommand',
+        args: ['branch', '--show-current'],
+        command: 'git',
+      });
+    }),
+  );
+
   itEffect('should handle git command not found errors', () =>
     Effect.gen(function* ($) {
       const errorMessage = 'fatal: Dummy git error';

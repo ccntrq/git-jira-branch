@@ -89,6 +89,7 @@ export const matchGitCreateJiraBranchResult: {
 
 export type GitCreateJiraBranchError =
   | AppConfigError
+  | UsageError
   | GitExecError
   | JiraApiError;
 
@@ -114,6 +115,12 @@ export interface GitExecError extends GitCreateJiraBranchError.Proto {
 }
 
 export const GitExecError = makeError<GitExecError>('GitExecError');
+
+export interface UsageError extends GitCreateJiraBranchError.Proto {
+  readonly _tag: 'UsageError';
+}
+
+export const UsageError = makeError<UsageError>('UsageError');
 
 export interface AppConfigError extends GitCreateJiraBranchError.Proto {
   readonly _tag: 'AppConfigError';

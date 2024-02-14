@@ -1,11 +1,12 @@
 import {Chunk, Effect, Option} from 'effect';
-import {constant} from 'effect/Function';
+import {constant, pipe} from 'effect/Function';
 import {isNone} from 'effect/Option';
 
 import {GitClient} from './git-client';
 import {JiraClient} from './jira-client';
 import {Environment} from './environment';
 import {
+  AppConfigError,
   CreatedBranch,
   GitCreateJiraBranchError,
   GitCreateJiraBranchResult,
@@ -14,6 +15,7 @@ import {
   JiraKeyPrefix,
   ResetBranch,
   SwitchedBranch,
+  UsageError,
 } from './types';
 
 export const gitCreateJiraBranch = (
@@ -57,6 +59,44 @@ export const gitCreateJiraBranch = (
     return (resetBranch ? ResetBranch : CreatedBranch)({branch: branchName});
   });
 
+export const ticketUrlForCurrentBranch = (): Effect.Effect<
+  string,
+  GitCreateJiraBranchError,
+  Environment | GitClient
+> =>
+  Effect.gen(function* ($) {
+    const currentBranch = yield* $(
+      GitClient,
+      Effect.flatMap(({getCurrentBranch}) => getCurrentBranch()),
+    );
+
+    const jiraKey = extractJiraKey(currentBranch);
+
+    if (isNone(jiraKey)) {
+      return yield* $(
+        Effect.fail(
+          UsageError({message: 'No Jira Key found in current branch'}),
+        ),
+      );
+    }
+
+    return yield* $(ticketUrl(jiraKey.value));
+  });
+
+export const ticketUrl = (
+  jiraKey: string,
+): Effect.Effect<string, AppConfigError, Environment> =>
+  pipe(
+    Environment,
+    Effect.flatMap(({getEnv}) => getEnv()),
+    Effect.map(({defaultJiraKeyPrefix, jiraApiUrl}) =>
+      pipe(
+        buildJiraKey(defaultJiraKeyPrefix, jiraKey),
+        buildTicketUrl(jiraApiUrl),
+      ),
+    ),
+  );
+
 const slugify = (str: string): string =>
   str
     .toLowerCase()
@@ -81,6 +121,11 @@ const jiraIssuetypeBranchtype = (issuetype: JiraIssuetype): string => {
   return 'feat';
 };
 
+const buildTicketUrl =
+  (jiraApiUrl: string) =>
+  (jiraKey: string): string =>
+    `${jiraApiUrl}/browse/${jiraKey}`;
+
 const buildJiraKey = (
   defaultJiraKeyPrefix: Option.Option<JiraKeyPrefix>,
   jiraKey: string,
@@ -88,3 +133,8 @@ const buildJiraKey = (
   jiraKey.match(/^([a-z]+)-(\d+)$/i) || isNone(defaultJiraKeyPrefix)
     ? jiraKey
     : `${defaultJiraKeyPrefix.value}-${jiraKey}`;
+
+const extractJiraKey = (branchName: string): Option.Option<string> => {
+  const res = branchName.match(/^(?:\w+\/)?((?:[a-z]+-)?\d+)/i);
+  return Option.fromNullable(res?.[1]);
+};

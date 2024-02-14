@@ -56,6 +56,19 @@ Pass the `-r|--reset` flag to reset an already existing branch to the current
 git-create-jira-branch -r MYAPP-1234
 ```
 
+### Open tickets in your browser
+
+1. For the current branch:
+   ```bash
+   $ git create-jira-branch --open
+   > Opening ticket url 'https://gcjb.atlassian.net/browse/GCJB-164' in your default browser...
+   ```
+2. For a given ticket:
+   ```bash
+   $ git create-jira-branch --open GCJB0-1234
+   > Opening ticket url 'https://gcjb.atlassian.net/browse/GCJB-1234' in your default browser...
+   ```
+
 ### `wizard` mode
 
 Use the `--wizard` option to enter `wizard` mode. This will prompt you for the

@@ -16,6 +16,38 @@ exports[`cli > cliEffect > should handle basebranch argument (-b) 1`] = `
 ]
 `;
 
+exports[`cli > cliEffect > should handle open option (--open) with given ticket 1`] = `
+[
+  [
+    "Opening ticket url 'https://gcjb.atlassian.net/browse/GCJB-1234' in your default browser...",
+  ],
+]
+`;
+
+exports[`cli > cliEffect > should handle open option (--open) with given ticket 2`] = `
+[
+  [
+    "https://gcjb.atlassian.net/browse/GCJB-1234",
+  ],
+]
+`;
+
+exports[`cli > cliEffect > should handle open option (--open) without ticket 1`] = `
+[
+  [
+    "Opening ticket url 'https://gcjb.atlassian.net/browse/GCJB-1234' in your default browser...",
+  ],
+]
+`;
+
+exports[`cli > cliEffect > should handle open option (--open) without ticket 2`] = `
+[
+  [
+    "https://gcjb.atlassian.net/browse/GCJB-1234",
+  ],
+]
+`;
+
 exports[`cli > cliEffect > should handle reset option (-r) 1`] = `
 [
   [
@@ -36,7 +68,7 @@ exports[`cli > cliEffect > should print help (--help) 1`] = `
 "
 [0;1mUSAGE[0m
 
-$ git-create-jira-branch [(-b, --baseBranch text)] [(-r, --reset)] <jira-key>...
+$ git-create-jira-branch [(-b, --baseBranch text)] [(-r, --reset)] [(-o, --open)] <jira-key>...
 
 [0;1mDESCRIPTION[0m
 
@@ -69,6 +101,14 @@ is based on the ticket summary.
   A true or false value.
 
   Reset the branch if it already exists
+
+  This setting is optional.
+
+[0;1m(-o, --open)[0m
+
+  A true or false value.
+
+  Open the ticket for the current branch or the given ticket in the browser
 
   This setting is optional.
 
