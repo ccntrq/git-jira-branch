@@ -2,8 +2,8 @@
 
 import {Effect, Layer, pipe} from 'effect';
 import * as Http from '@effect/platform/HttpClient';
-import * as NodeCommandExecutor from '@effect/platform-node/CommandExecutor';
-import * as NodeFileSystem from '@effect/platform-node/FileSystem';
+import * as NodeCommandExecutor from '@effect/platform-node/NodeCommandExecutor';
+import * as NodeFileSystem from '@effect/platform-node/NodeFileSystem';
 
 import {EnvironmentLive} from './environment';
 import {GitClientLive} from './git-client';

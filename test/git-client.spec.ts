@@ -8,7 +8,7 @@ import {GitClient, GitClientLive} from '../src/git-client';
 import {EffectMock, effectMock, itEffect} from './util';
 import {GitExecError} from '../src/types';
 import {TextEncoder} from 'util';
-import {Command} from '@effect/platform-node';
+import {Command} from '@effect/platform';
 
 const testProg = Effect.gen(function* ($) {
   const gitClient = yield* $(GitClient);
@@ -39,8 +39,8 @@ describe('GitClient', () => {
     Error.SystemError | Error.BadArgument,
     CommandExecutor.Process
   >;
-  let testExecutor: Layer.Layer<never, never, CommandExecutor.CommandExecutor>;
-  let testLayer: Layer.Layer<never, never, GitClient>;
+  let testExecutor: Layer.Layer<CommandExecutor.CommandExecutor>;
+  let testLayer: Layer.Layer<GitClient>;
   beforeEach(() => {
     executorMock = effectMock();
     testExecutor = Layer.succeed(

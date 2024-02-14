@@ -14,23 +14,12 @@ export const JiraUserEmail = Brand.nominal<JiraUserEmail>();
 export type JiraKeyPrefix = string & Brand.Brand<'JiraKeyPrefix'>;
 export const JiraKeyPrefix = Brand.nominal<JiraKeyPrefix>();
 
-export type JiraCloudAuth = Data.Data<{
-  _tag: 'JiraCloudAuth';
-  jiraUserEmail: JiraUserEmail;
-  jiraApiToken: JiraApiToken;
+export type JiraAuth = Data.TaggedEnum<{
+  JiraDataCenterAuth: {jiraPat: JiraPat};
+  JiraCloudAuth: {jiraUserEmail: JiraUserEmail; jiraApiToken: JiraApiToken};
 }>;
 
-export const JiraCloudAuth = Data.tagged<JiraCloudAuth>('JiraCloudAuth');
-
-export type JiraDataCenterAuth = Data.Data<{
-  _tag: 'JiraDataCenterAuth';
-  jiraPat: JiraPat;
-}>;
-
-export const JiraDataCenterAuth =
-  Data.tagged<JiraDataCenterAuth>('JiraDataCenterAuth');
-
-export type JiraAuth = JiraCloudAuth | JiraDataCenterAuth;
+export const {JiraDataCenterAuth, JiraCloudAuth} = Data.taggedEnum<JiraAuth>();
 
 export type AppConfig = {
   jiraApiUrl: JiraApiUrl;
@@ -52,10 +41,16 @@ export const JiraIssueSchema = Schema.struct({
   }),
 });
 
-export type GitCreateJiraBranchResult =
-  | CreatedBranch
-  | SwitchedBranch
-  | ResetBranch;
+export type JiraIssue = Schema.Schema.To<typeof JiraIssueSchema>;
+
+export type GitCreateJiraBranchResult = Data.TaggedEnum<{
+  CreatedBranch: {branch: string};
+  SwitchedBranch: {branch: string};
+  ResetBranch: {branch: string};
+}>;
+
+export const {CreatedBranch, SwitchedBranch, ResetBranch} =
+  Data.taggedEnum<GitCreateJiraBranchResult>();
 
 export const matchGitCreateJiraBranchResult: {
   <A>(
@@ -91,32 +86,6 @@ export const matchGitCreateJiraBranchResult: {
       Match.exhaustive,
     )(result) as A,
 );
-
-export interface CreatedBranch extends Data.Case {
-  readonly _tag: 'CreatedBranch';
-  readonly branch: string;
-}
-
-export const CreatedBranch = (branch: string): CreatedBranch =>
-  Data.tagged<CreatedBranch>('CreatedBranch')({branch});
-
-export interface SwitchedBranch extends Data.Case {
-  readonly _tag: 'SwitchedBranch';
-  readonly branch: string;
-}
-
-export const SwitchedBranch = (branch: string): SwitchedBranch =>
-  Data.tagged<SwitchedBranch>('SwitchedBranch')({branch});
-
-export interface ResetBranch extends Data.Case {
-  readonly _tag: 'ResetBranch';
-  readonly branch: string;
-}
-
-export const ResetBranch = (branch: string): ResetBranch =>
-  Data.tagged<ResetBranch>('ResetBranch')({branch});
-
-export type JiraIssue = Schema.Schema.To<typeof JiraIssueSchema>;
 
 export type GitCreateJiraBranchError =
   | AppConfigError

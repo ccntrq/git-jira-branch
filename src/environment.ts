@@ -13,11 +13,12 @@ import {
   JiraUserEmail,
 } from './types';
 
-export interface Environment {
-  readonly getEnv: () => Effect.Effect<never, AppConfigError, AppConfig>;
-}
-
-export const Environment = Context.Tag<Environment>();
+export class Environment extends Context.Tag('Environment')<
+  Environment,
+  {
+    readonly getEnv: () => Effect.Effect<AppConfig, AppConfigError, never>;
+  }
+>() {}
 
 export const EnvironmentLive = Layer.succeed(
   Environment,
