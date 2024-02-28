@@ -1,0 +1,30 @@
+name: 🧪 E2E Test
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  e2e-test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest] # TODO: add macos-latest
+        version: [18, 20]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - id: setup-node-and-npm
+        uses: ./.github/actions/setup-node-and-npm-dependencies
+        with:
+          node-version: ${{ matrix.version }}
+          runner-os: ${{ matrix.os }}
+      - name: Build
+        run: npm run build
+      - name: Run tests
+        env:
+          JIRA_API_TOKEN: ${{ secrets.GCJB_JIRA_API_TOKEN }}
+          JIRA_USER_EMAIL: ${{ secrets.GCJB_USER_EMAIL }}
+          JIRA_API_URL: ${{ vars.GCJB_JIRA_API_URL }}
+          JIRA_KEY_PREFIX: ${{ vars.GCJB_JIRA_KEY_PREFIX }}
+        run: npm run e2e-test
