@@ -51,7 +51,7 @@ describe('git-create-jira-branch', () => {
     const res = runApp(tmpDir, 'NOPROJECT-1');
 
     expect(res).toMatchInlineSnapshot(`
-      "[0;31mJira returned status 404. Make sure the ticket exists.[0m
+      "[0;31mJira returned status 404. Make sure the ticket with id NOPROJECT-1 exists.[0m
 
       "
     `);

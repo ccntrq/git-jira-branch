@@ -145,11 +145,12 @@ describe('JiraClient', () => {
 
       Either.match(res, {
         onLeft: (e) =>
-          expect(e).toEqual(
-            JiraApiError({
-              message: 'Jira returned status 404. Make sure the ticket exists.',
-            }),
-          ),
+          expect(e).toMatchInlineSnapshot(`
+          {
+            "_tag": "JiraApiError",
+            "message": "Jira returned status 404. Make sure the ticket with id DUMMYAPP-123 exists.",
+          }
+        `),
         onRight: (_) => expect.unreachable('Should have returned an error.'),
       });
     }),
