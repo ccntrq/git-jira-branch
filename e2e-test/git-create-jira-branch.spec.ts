@@ -94,12 +94,12 @@ describe('git-create-jira-branch', () => {
     const lastCommitMsg = execSync('git log -1 --pretty=%B', {cwd: tmpDir})
       .toString()
       .trim();
-    expect(lastCommitMsg).toMatchInlineSnapshot(`"add testFile"`);
+    expect(lastCommitMsg).toMatchInlineSnapshot('"add testFile"');
 
     runApp(tmpDir, '--reset', 'GCJB-1');
     const lastCommitMsg2 = execSync('git log -1 --pretty=%B', {cwd: tmpDir})
       .toString()
       .trim();
-    expect(lastCommitMsg2).toMatchInlineSnapshot(`"add testFile"`);
+    expect(lastCommitMsg2).toMatchInlineSnapshot('"add testFile"');
   });
 });
