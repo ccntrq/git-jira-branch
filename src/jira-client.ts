@@ -1,4 +1,4 @@
-import {Layer, Context, Effect, flow} from 'effect';
+import {Layer, Context, Effect} from 'effect';
 import * as Http from '@effect/platform/HttpClient';
 // eslint-disable-next-line node/no-extraneous-import
 import * as ArrayFormatter from '@effect/schema/ArrayFormatter';
@@ -45,7 +45,7 @@ export const JiraClientLive = Layer.effect(
                   Http.client.filterStatusOk(httpClient),
                   Effect.flatMap(Http.response.schemaBodyJson(JiraIssueSchema)),
                   Effect.scoped,
-                  handleJiraClientErrors,
+                  handleJiraClientErrors(issueId),
                 ),
             );
           }),
@@ -65,41 +65,44 @@ const buildJiraAuthorizationHeader = (jiraAuth: JiraAuth): string => {
   }
 };
 
-const handleJiraClientErrors: (
-  eff: Effect.Effect<
-    JiraIssue,
-    AppConfigError | ParseResult.ParseError | Http.error.HttpClientError
-  >,
-) => Effect.Effect<JiraIssue, AppConfigError | JiraApiError> = flow(
-  Effect.catchTag('ParseError', (e) =>
-    Effect.fail(
-      JiraApiError({
-        message: [
-          'Failed to parse ticket response from Jira:',
-          ...ArrayFormatter.formatError(e).map(
-            (issue) => `'${issue.path.join(' ')}': '${issue.message}'`,
-          ),
-        ].join('\n'),
-      }),
-    ),
-  ),
-  Effect.catchTag('RequestError', (e) =>
-    Effect.fail(
-      JiraApiError({
-        message: `Failed to make ticket request to Jira. Reason: ${e.reason}`,
-      }),
-    ),
-  ),
-  Effect.catchTag('ResponseError', (e) =>
-    Effect.fail(
-      JiraApiError({
-        message:
-          e.response.status === 404
-            ? 'Jira returned status 404. Make sure the ticket exists.'
-            : `Jira Ticket request returned failure. Reason: ${e.reason}${
-                typeof e.error === 'string' ? ` (${e.error})` : ''
-              } StatusCode: ${e.response.status}`,
-      }),
-    ),
-  ),
-);
+const handleJiraClientErrors =
+  (issueId: string) =>
+  (
+    eff: Effect.Effect<
+      JiraIssue,
+      AppConfigError | ParseResult.ParseError | Http.error.HttpClientError
+    >,
+  ): Effect.Effect<JiraIssue, AppConfigError | JiraApiError> =>
+    eff.pipe(
+      Effect.catchTag('ParseError', (e) =>
+        Effect.fail(
+          JiraApiError({
+            message: [
+              'Failed to parse ticket response from Jira:',
+              ...ArrayFormatter.formatError(e).map(
+                (issue) => `'${issue.path.join(' ')}': '${issue.message}'`,
+              ),
+            ].join('\n'),
+          }),
+        ),
+      ),
+      Effect.catchTag('RequestError', (e) =>
+        Effect.fail(
+          JiraApiError({
+            message: `Failed to make ticket request to Jira. Reason: ${e.reason}`,
+          }),
+        ),
+      ),
+      Effect.catchTag('ResponseError', (e) =>
+        Effect.fail(
+          JiraApiError({
+            message:
+              e.response.status === 404
+                ? `Jira returned status 404. Make sure the ticket with id ${issueId} exists.`
+                : `Jira Ticket request returned failure. Reason: ${e.reason}${
+                    typeof e.error === 'string' ? ` (${e.error})` : ''
+                  } StatusCode: ${e.response.status}`,
+          }),
+        ),
+      ),
+    );
