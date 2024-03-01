@@ -1,4 +1,4 @@
-import {Environment, EnvironmentLive} from '../src/environment';
+import {AppConfigService} from '../src/app-config';
 import {ConfigProvider, Effect, Either, Layer} from 'effect';
 import * as Option from 'effect/Option';
 import {describe, expect} from 'vitest';
@@ -11,16 +11,16 @@ import {
   JiraUserEmail,
 } from '../src/types';
 
-const testProg = Effect.all([Environment]).pipe(
-  Effect.flatMap(([env]) => env.getEnv()),
-);
+const testProg = AppConfigService.pipe(Effect.flatMap((_) => _.getAppConfig));
 
 const mkTestLayer = (
   configProvider: ConfigProvider.ConfigProvider,
-): Layer.Layer<Environment> =>
-  EnvironmentLive.pipe(Layer.provide(Layer.setConfigProvider(configProvider)));
+): Layer.Layer<AppConfigService> =>
+  AppConfigService.Live.pipe(
+    Layer.provide(Layer.setConfigProvider(configProvider)),
+  );
 
-describe('Environment', () => {
+describe('AppConfigService', () => {
   itEffect('should provide jira data center appconfig', () =>
     Effect.gen(function* ($) {
       const configProvider = ConfigProvider.fromMap(
@@ -107,6 +107,27 @@ describe('Environment', () => {
         onLeft: (e) => expect(e).toMatchSnapshot(),
         onRight: (_) => expect.unreachable('Should have returned an error'),
       });
+    }),
+  );
+
+  itEffect('should validate config values', () =>
+    Effect.gen(function* ($) {
+      const configProvider = ConfigProvider.fromMap(
+        new Map([
+          ['JIRA_API_TOKEN', ''],
+          ['JIRA_USER_EMAIL', ''],
+          ['JIRA_API_URL', ''],
+          ['JIRA_KEY_PREFIX', ''],
+        ]),
+      );
+
+      yield* $(
+        Effect.provide(testProg, mkTestLayer(configProvider)),
+        Effect.match({
+          onSuccess: () => expect.unreachable('Should have returned an error'),
+          onFailure: (e) => expect(e).toMatchSnapshot(),
+        }),
+      );
     }),
   );
 });

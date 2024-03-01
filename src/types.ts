@@ -4,15 +4,33 @@ import {Brand, Data, Match, Option, pipe} from 'effect';
 import {dual} from 'effect/Function';
 
 export type JiraApiUrl = string & Brand.Brand<'JiraApiUrl'>;
-export const JiraApiUrl = Brand.nominal<JiraApiUrl>();
+export const JiraApiUrl = Brand.refined<JiraApiUrl>(
+  (s: string) => s.startsWith('https://') || s.startsWith('http://'),
+  (s: string) => Brand.error(`'${s}' is not a valid Jira API URL`),
+);
 export type JiraPat = string & Brand.Brand<'JiraPat'>;
-export const JiraPat = Brand.nominal<JiraPat>();
+export const JiraPat = Brand.refined<JiraPat>(
+  (s: string) => s.length > 0,
+  () => Brand.error('Provided value is not a valid Jira PAT'),
+);
 export type JiraApiToken = string & Brand.Brand<'JiraApiToken'>;
-export const JiraApiToken = Brand.nominal<JiraApiToken>();
+export const JiraApiToken = Brand.refined<JiraApiToken>(
+  (s: string) => s.length > 0,
+  () => Brand.error('Provided value is not a valid Jira API token'),
+);
 export type JiraUserEmail = string & Brand.Brand<'JiraUserEmail'>;
-export const JiraUserEmail = Brand.nominal<JiraUserEmail>();
+export const JiraUserEmail = Brand.refined<JiraUserEmail>(
+  // NOTE: This validation does not strictly adhere to the email RFC 2822. It is
+  // however sufficient to reject inputs that are obviously not valid email
+  // addresses while allowing potentially valid ones.
+  (s: string) => /^.+@.+\..+$/.test(s),
+  (s: string) => Brand.error(`'${s}' is not a valid email address`),
+);
 export type JiraKeyPrefix = string & Brand.Brand<'JiraKeyPrefix'>;
-export const JiraKeyPrefix = Brand.nominal<JiraKeyPrefix>();
+export const JiraKeyPrefix = Brand.refined<JiraKeyPrefix>(
+  (s: string) => s.length > 0,
+  (s: string) => Brand.error(`'${s}' is not a valid Jira key prefix`),
+);
 
 export type JiraAuth = Data.TaggedEnum<{
   JiraDataCenterAuth: {jiraPat: JiraPat};
@@ -126,6 +144,9 @@ export interface AppConfigError extends GitCreateJiraBranchError.Proto {
   readonly _tag: 'AppConfigError';
 }
 export const AppConfigError = makeError<AppConfigError>('AppConfigError');
+
+export const isAppConfigError = (e: unknown): e is AppConfigError =>
+  e instanceof Object && '_tag' in e && e['_tag'] === 'AppConfigError';
 
 export interface JiraApiError extends GitCreateJiraBranchError.Proto {
   readonly _tag: 'JiraApiError';

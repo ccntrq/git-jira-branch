@@ -1,14 +1,14 @@
 import {ConfigProvider, Effect, Either, Layer} from 'effect';
 import * as Http from '@effect/platform/HttpClient';
 
-import {Environment, EnvironmentLive} from '../src/environment';
+import {AppConfigService} from '../src/app-config';
 import {JiraClient, JiraClientLive} from '../src/jira-client';
 import {JiraApiError, JiraIssue} from '../src/types';
 
 import {describe, expect} from 'vitest';
 import {itEffect} from './util';
 
-const environmentTest = EnvironmentLive.pipe(
+const appConfigTest = AppConfigService.Live.pipe(
   Layer.provide(
     Layer.setConfigProvider(
       ConfigProvider.fromMap(
@@ -34,8 +34,8 @@ const mkHttpMock = (
 
 const mkTestLayer = (
   response: Response,
-): Layer.Layer<Environment | Http.client.Client.Default | JiraClient> => {
-  const baseTestLayer = Layer.merge(environmentTest, mkHttpMock(response));
+): Layer.Layer<AppConfigService | Http.client.Client.Default | JiraClient> => {
+  const baseTestLayer = Layer.merge(appConfigTest, mkHttpMock(response));
   return Layer.merge(
     baseTestLayer,
     JiraClientLive.pipe(Layer.provide(baseTestLayer)),

@@ -1,0 +1,23 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`AppConfigService > should report missing configuration values 1`] = `
+{
+  "_tag": "AppConfigError",
+  "message": "  Expected JIRA_API_TOKEN to exist in the provided map
+  Expected JIRA_USER_EMAIL to exist in the provided map
+or
+  Expected JIRA_PAT to exist in the provided map",
+}
+`;
+
+exports[`AppConfigService > should validate config values 1`] = `
+{
+  "_tag": "AppConfigError",
+  "message": "Expected valid input for JIRA_API_URL ('' is not a valid Jira API URL)
+Expected valid input for JIRA_KEY_PREFIX ('' is not a valid Jira key prefix)
+  Expected valid input for JIRA_API_TOKEN (Provided value is not a valid Jira API token)
+  Expected valid input for JIRA_USER_EMAIL ('' is not a valid email address)
+or
+  Expected JIRA_PAT to exist in the provided map",
+}
+`;

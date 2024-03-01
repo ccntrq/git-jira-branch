@@ -20,7 +20,7 @@ import {
   matchGitCreateJiraBranchResult,
 } from './types';
 import {compose} from 'effect/Function';
-import {Environment} from './environment';
+import {AppConfigService} from './app-config';
 import {GitClient} from './git-client';
 import {JiraClient} from './jira-client';
 import {openUrl} from './url-opener';
@@ -62,7 +62,10 @@ const mainCommand = pipe(
     ): Effect.Effect<
       void,
       GitCreateJiraBranchError,
-      Environment | GitClient | JiraClient | CommandExecutor.CommandExecutor
+      | AppConfigService
+      | GitClient
+      | JiraClient
+      | CommandExecutor.CommandExecutor
     > => {
       const command = GitCreateJiraBranch({
         baseBranch: args.options.baseBranch,
@@ -132,7 +135,7 @@ export const cliEffect = (
   never,
   | CliApp.Environment
   | GitClient
-  | Environment
+  | AppConfigService
   | JiraClient
   | CommandExecutor.CommandExecutor
 > =>

@@ -9,7 +9,7 @@ import {
 import {vi, describe, expect, afterEach} from 'vitest';
 import {JiraIssue} from '../src/types';
 import {
-  mockEnvironment,
+  mockAppConfigService,
   mockGitClient,
   mockJiraClient,
   testLayer,
@@ -33,7 +33,7 @@ describe('core', () => {
 
     itEffect('should create feature branch', () =>
       Effect.gen(function* ($) {
-        mockEnvironment.getEnv.mockReturnValue(
+        mockAppConfigService.getAppConfig.mockReturnValue(
           Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
         );
         mockGitClient.createGitBranch.mockReturnValue(
@@ -64,7 +64,7 @@ describe('core', () => {
           `),
         });
 
-        expect(mockEnvironment.getEnv).toHaveBeenCalledTimes(1);
+        expect(mockAppConfigService.getAppConfig).toHaveBeenCalledTimes(1);
         expect(mockJiraClient.getJiraIssue).toHaveBeenCalledTimes(1);
         expect(mockJiraClient.getJiraIssue).toHaveBeenCalledWith(
           'DUMMYAPP-123',
@@ -79,7 +79,7 @@ describe('core', () => {
 
     itEffect('should create bugfix branch', () =>
       Effect.gen(function* ($) {
-        mockEnvironment.getEnv.mockReturnValue(
+        mockAppConfigService.getAppConfig.mockReturnValue(
           Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
         );
         mockGitClient.createGitBranch.mockReturnValue(
@@ -120,7 +120,7 @@ describe('core', () => {
           `),
         });
 
-        expect(mockEnvironment.getEnv).toHaveBeenCalledTimes(1);
+        expect(mockAppConfigService.getAppConfig).toHaveBeenCalledTimes(1);
         expect(mockJiraClient.getJiraIssue).toHaveBeenCalledTimes(1);
         expect(mockJiraClient.getJiraIssue).toHaveBeenCalledWith(
           'DUMMYAPP-123',
@@ -136,7 +136,7 @@ describe('core', () => {
 
     itEffect('should create feature branch from base branch', () =>
       Effect.gen(function* ($) {
-        mockEnvironment.getEnv.mockReturnValue(
+        mockAppConfigService.getAppConfig.mockReturnValue(
           Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
         );
         mockGitClient.createGitBranchFrom.innerMock.mockSuccessValue(undefined);
@@ -166,7 +166,7 @@ describe('core', () => {
             `,
             ),
         });
-        expect(mockEnvironment.getEnv).toHaveBeenCalledTimes(1);
+        expect(mockAppConfigService.getAppConfig).toHaveBeenCalledTimes(1);
         expect(mockJiraClient.getJiraIssue).toHaveBeenCalledTimes(1);
         expect(mockJiraClient.getJiraIssue).toHaveBeenCalledWith(
           'DUMMYAPP-123',
@@ -186,7 +186,7 @@ describe('core', () => {
 
     itEffect('should reset existing branch', () =>
       Effect.gen(function* ($) {
-        mockEnvironment.getEnv.mockReturnValue(
+        mockAppConfigService.getAppConfig.mockReturnValue(
           Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
         );
         mockGitClient.createGitBranchFrom.innerMock.mockSuccessValue(undefined);
@@ -214,7 +214,7 @@ describe('core', () => {
             `,
         );
 
-        expect(mockEnvironment.getEnv).toHaveBeenCalledTimes(1);
+        expect(mockAppConfigService.getAppConfig).toHaveBeenCalledTimes(1);
         expect(mockJiraClient.getJiraIssue).toHaveBeenCalledTimes(1);
         expect(mockJiraClient.getJiraIssue).toHaveBeenCalledWith(
           'DUMMYAPP-123',
@@ -229,7 +229,7 @@ describe('core', () => {
 
     itEffect('should create branch with reset for non existing branch', () =>
       Effect.gen(function* ($) {
-        mockEnvironment.getEnv.mockReturnValue(
+        mockAppConfigService.getAppConfig.mockReturnValue(
           Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
         );
         mockGitClient.createGitBranchFrom.innerMock.mockSuccessValue(undefined);
@@ -254,7 +254,7 @@ describe('core', () => {
             `,
         );
 
-        expect(mockEnvironment.getEnv).toHaveBeenCalledTimes(1);
+        expect(mockAppConfigService.getAppConfig).toHaveBeenCalledTimes(1);
         expect(mockJiraClient.getJiraIssue).toHaveBeenCalledTimes(1);
         expect(mockJiraClient.getJiraIssue).toHaveBeenCalledWith(
           'DUMMYAPP-123',
@@ -269,7 +269,7 @@ describe('core', () => {
 
     itEffect('should switch to existing branch', () =>
       Effect.gen(function* ($) {
-        mockEnvironment.getEnv.mockSuccessValue({
+        mockAppConfigService.getAppConfig.mockSuccessValue({
           defaultJiraKeyPrefix: Option.none(),
         });
         mockJiraClient.getJiraIssue.mockSuccessValue(testIssue);
@@ -294,7 +294,7 @@ describe('core', () => {
           }
         `);
 
-        expect(mockEnvironment.getEnv).toHaveBeenCalledTimes(1);
+        expect(mockAppConfigService.getAppConfig).toHaveBeenCalledTimes(1);
         expect(mockJiraClient.getJiraIssue).toHaveBeenCalledTimes(1);
         expect(mockJiraClient.getJiraIssue).toHaveBeenCalledWith(
           'DUMMYAPP-123',
@@ -309,7 +309,7 @@ describe('core', () => {
 
     itEffect('should consider defaultJiraKeyPrefix', () =>
       Effect.gen(function* ($) {
-        mockEnvironment.getEnv.mockReturnValue(
+        mockAppConfigService.getAppConfig.mockReturnValue(
           Effect.succeed({defaultJiraKeyPrefix: Option.some('DUMMYAPP')}),
         );
         mockGitClient.createGitBranch.mockReturnValue(
@@ -342,7 +342,7 @@ describe('core', () => {
             ),
         });
 
-        expect(mockEnvironment.getEnv).toHaveBeenCalledTimes(1);
+        expect(mockAppConfigService.getAppConfig).toHaveBeenCalledTimes(1);
         expect(mockJiraClient.getJiraIssue).toHaveBeenCalledTimes(1);
         expect(mockJiraClient.getJiraIssue).toHaveBeenCalledWith(
           'DUMMYAPP-123',
@@ -358,7 +358,7 @@ describe('core', () => {
 
     itEffect('should allow overriding defaultJiraKeyPrefix', () =>
       Effect.gen(function* ($) {
-        mockEnvironment.getEnv.mockReturnValue(
+        mockAppConfigService.getAppConfig.mockReturnValue(
           Effect.succeed({defaultJiraKeyPrefix: Option.some('OTHERAPP')}),
         );
         mockGitClient.createGitBranch.mockReturnValue(
@@ -389,7 +389,7 @@ describe('core', () => {
             `),
         });
 
-        expect(mockEnvironment.getEnv).toHaveBeenCalledTimes(1);
+        expect(mockAppConfigService.getAppConfig).toHaveBeenCalledTimes(1);
         expect(mockJiraClient.getJiraIssue).toHaveBeenCalledTimes(1);
         expect(mockJiraClient.getJiraIssue).toHaveBeenCalledWith(
           'DUMMYAPP-123',
@@ -405,7 +405,7 @@ describe('core', () => {
 
     itEffect('should handle umlauts and other chars in summary', () =>
       Effect.gen(function* ($) {
-        mockEnvironment.getEnv.mockReturnValue(
+        mockAppConfigService.getAppConfig.mockReturnValue(
           Effect.succeed({defaultJiraKeyPrefix: Option.some('OTHERAPP')}),
         );
         mockGitClient.createGitBranch.mockReturnValue(
@@ -444,7 +444,7 @@ describe('core', () => {
           `),
         });
 
-        expect(mockEnvironment.getEnv).toHaveBeenCalledTimes(1);
+        expect(mockAppConfigService.getAppConfig).toHaveBeenCalledTimes(1);
         expect(mockJiraClient.getJiraIssue).toHaveBeenCalledTimes(1);
         expect(mockJiraClient.getJiraIssue).toHaveBeenCalledWith(
           'DUMMYAPP-123',
@@ -462,7 +462,7 @@ describe('core', () => {
   describe('ticketUrl', () => {
     itEffect('should return appropriate url for given ticket key', () =>
       Effect.gen(function* ($) {
-        mockEnvironment.getEnv.mockSuccessValue({
+        mockAppConfigService.getAppConfig.mockSuccessValue({
           defaultJiraKeyPrefix: Option.some('MYAPP'),
           jiraApiUrl: 'https://gcjb.atlassian.com',
         });
@@ -481,7 +481,7 @@ describe('core', () => {
       'should extract ticket from branch an return appropriate url',
       () =>
         Effect.gen(function* ($) {
-          mockEnvironment.getEnv.mockSuccessValue({
+          mockAppConfigService.getAppConfig.mockSuccessValue({
             defaultJiraKeyPrefix: Option.some('MYAPP'),
             jiraApiUrl: 'https://gcjb.atlassian.com',
           });

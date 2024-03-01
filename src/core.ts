@@ -4,7 +4,7 @@ import {isNone} from 'effect/Option';
 
 import {GitClient} from './git-client';
 import {JiraClient} from './jira-client';
-import {Environment} from './environment';
+import {AppConfigService} from './app-config';
 import {
   AppConfigError,
   CreatedBranch,
@@ -25,14 +25,14 @@ export const gitCreateJiraBranch = (
 ): Effect.Effect<
   GitCreateJiraBranchResult,
   GitCreateJiraBranchError,
-  Environment | GitClient | JiraClient
+  AppConfigService | GitClient | JiraClient
 > =>
   Effect.gen(function* ($) {
     const [envProvider, gitClient, jiraClient] = yield* $(
-      Effect.all([Environment, GitClient, JiraClient]),
+      Effect.all([AppConfigService, GitClient, JiraClient]),
     );
 
-    const {defaultJiraKeyPrefix} = yield* $(envProvider.getEnv());
+    const {defaultJiraKeyPrefix} = yield* $(envProvider.getAppConfig);
     const fullKey = buildJiraKey(defaultJiraKeyPrefix, jiraKey);
 
     const issue = yield* $(jiraClient.getJiraIssue(fullKey));
@@ -62,7 +62,7 @@ export const gitCreateJiraBranch = (
 export const ticketUrlForCurrentBranch = (): Effect.Effect<
   string,
   GitCreateJiraBranchError,
-  Environment | GitClient
+  AppConfigService | GitClient
 > =>
   Effect.gen(function* ($) {
     const currentBranch = yield* $(
@@ -85,10 +85,10 @@ export const ticketUrlForCurrentBranch = (): Effect.Effect<
 
 export const ticketUrl = (
   jiraKey: string,
-): Effect.Effect<string, AppConfigError, Environment> =>
+): Effect.Effect<string, AppConfigError, AppConfigService> =>
   pipe(
-    Environment,
-    Effect.flatMap(({getEnv}) => getEnv()),
+    AppConfigService,
+    Effect.flatMap(({getAppConfig}) => getAppConfig),
     Effect.map(({defaultJiraKeyPrefix, jiraApiUrl}) =>
       pipe(
         buildJiraKey(defaultJiraKeyPrefix, jiraKey),
