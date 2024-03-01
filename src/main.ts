@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import {Effect, Layer, pipe} from 'effect';
+import {Cause, Console, Effect, Layer, pipe} from 'effect';
 import * as Http from '@effect/platform/HttpClient';
 import * as NodeCommandExecutor from '@effect/platform-node/NodeCommandExecutor';
 import * as NodeFileSystem from '@effect/platform-node/NodeFileSystem';
@@ -34,6 +34,12 @@ const mainEffect = pipe(
   Effect.sync(() => process.argv),
   Effect.flatMap(cliEffect),
   Effect.provide(mainLive),
+  Effect.catchAllDefect((defect) => {
+    if (Cause.isRuntimeException(defect)) {
+      return Console.log(`RuntimeException defect caught: ${defect.message}`);
+    }
+    return Console.log(`Unknown defect caught: ${JSON.stringify(defect)}`);
+  }),
 );
 
 Effect.runPromise(mainEffect);
