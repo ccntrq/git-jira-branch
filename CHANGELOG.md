@@ -7,6 +7,19 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [3.4.0](https://github.com/ccntrq/git-create-jira-branch/compare/v3.3.0...v3.4.0) (2024-03-01)
+
+
+### Features
+
+* catch and log defects ([f94d8e5](https://github.com/ccntrq/git-create-jira-branch/commit/f94d8e5c84d35a94f688ca735e407b14ce13aa64))
+* improve config error handling ([#202](https://github.com/ccntrq/git-create-jira-branch/issues/202)) ([5c4926f](https://github.com/ccntrq/git-create-jira-branch/commit/5c4926f17270dd8f8881bcd6ba89eb7cf16f9b08))
+
+
+### Bug Fixes
+
+* **deps:** bump the production-dependencies group with 4 updates [#200](https://github.com/ccntrq/git-create-jira-branch/issues/200) ([163bf67](https://github.com/ccntrq/git-create-jira-branch/commit/163bf67bda129a562a86b45ab456525485c617c7))
+
 ## [3.3.0](https://github.com/ccntrq/git-create-jira-branch/compare/v3.2.2...v3.3.0) (2024-02-28)
 
 
