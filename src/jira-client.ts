@@ -5,7 +5,7 @@ import * as ArrayFormatter from '@effect/schema/ArrayFormatter';
 // eslint-disable-next-line node/no-extraneous-import
 import * as ParseResult from '@effect/schema/ParseResult';
 
-import {Environment} from './environment';
+import {AppConfigService} from './app-config';
 import {
   AppConfigError,
   JiraApiError,
@@ -25,13 +25,13 @@ export class JiraClient extends Context.Tag('JiraClient')<
 
 export const JiraClientLive = Layer.effect(
   JiraClient,
-  Effect.all([Environment, Http.client.Client]).pipe(
+  Effect.all([AppConfigService, Http.client.Client]).pipe(
     Effect.map(([env, httpClient]) =>
       JiraClient.of({
         getJiraIssue: (issueId: string) =>
           Effect.gen(function* (_) {
             const endPoint = `/rest/api/latest/issue/${issueId}`;
-            const {jiraAuth, jiraApiUrl} = yield* _(env.getEnv());
+            const {jiraAuth, jiraApiUrl} = yield* _(env.getAppConfig);
 
             return yield* _(
               Http.request

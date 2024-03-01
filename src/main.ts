@@ -5,7 +5,7 @@ import * as Http from '@effect/platform/HttpClient';
 import * as NodeCommandExecutor from '@effect/platform-node/NodeCommandExecutor';
 import * as NodeFileSystem from '@effect/platform-node/NodeFileSystem';
 
-import {EnvironmentLive} from './environment';
+import {AppConfigService} from './app-config';
 import {GitClientLive} from './git-client';
 import {JiraClientLive} from './jira-client';
 import {cliEffect} from './cli';
@@ -19,13 +19,13 @@ const gitClientLayer = GitClientLive.pipe(Layer.provide(commandExecutorLayer));
 
 const jiraClientLayer = JiraClientLive.pipe(
   Layer.provide(Http.client.layer),
-  Layer.provide(EnvironmentLive),
+  Layer.provide(AppConfigService.Live),
 );
 
 const mainLive = Layer.mergeAll(
   commandExecutorLayer,
   gitClientLayer,
-  EnvironmentLive,
+  AppConfigService.Live,
   jiraClientLayer,
   NodeContext.layer,
 );
