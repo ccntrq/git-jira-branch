@@ -14,12 +14,12 @@ runs:
     - run: echo Setting up node and dependencies ${{ inputs.node-version }} and ${{ inputs.runner-os }}
       shell: bash
     - name: Setup node
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
         registry-url: 'https://registry.npmjs.org'
     - name: Setup node cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: node-cache
       with:
         path: node_modules
