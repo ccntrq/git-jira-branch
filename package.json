@@ -46,11 +46,11 @@
     "lint:fix": "npm run lint -- --fix"
   },
   "devDependencies": {
-    "@commitlint/cli": "^19.0.1",
-    "@commitlint/config-conventional": "^19.0.0",
+    "@commitlint/cli": "^19.0.3",
+    "@commitlint/config-conventional": "^19.0.3",
     "@tsconfig/node20": "^20.1.2",
     "@tsconfig/strictest": "^2.0.3",
-    "@types/node": "^20.11.21",
+    "@types/node": "^20.11.24",
     "@typescript-eslint/eslint-plugin": "^7.1.0",
     "@typescript-eslint/parser": "^7.1.0",
     "@typescript-eslint/typescript-estree": "^7.0.1",
