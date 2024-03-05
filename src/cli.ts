@@ -22,7 +22,7 @@ import {JiraClient} from './jira-client';
 import {openUrl} from './url-opener';
 
 // for version and help
-const gitJiraBranch = pipe(Command.make('git-create-jira-branch', {}));
+const gitJiraBranch = pipe(Command.make('git-jira-branch', {}));
 
 const createCommand = pipe(
   Command.make(

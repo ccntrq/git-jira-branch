@@ -3,4 +3,4 @@ dist/
 coverage/
 tsconfig.tsbuildinfo
 .env
-git-create-jira-branch-*.tgz
+git-jira-branch-*.tgz

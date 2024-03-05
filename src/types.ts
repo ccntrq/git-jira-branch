@@ -105,13 +105,13 @@ export const matchGitCreateJiraBranchResult: {
     )(result) as A,
 );
 
-export type GitCreateJiraBranchError =
+export type GitJiraBranchError =
   | AppConfigError
   | UsageError
   | GitExecError
   | JiraApiError;
 
-export declare namespace GitCreateJiraBranchError {
+export declare namespace GitJiraBranchError {
   export interface Proto {
     readonly _tag: string;
     readonly message: string;
@@ -121,26 +121,26 @@ export declare namespace GitCreateJiraBranchError {
 }
 
 const makeError =
-  <E extends GitCreateJiraBranchError.Proto>(tag: E['_tag']) =>
-  (args: Omit<E, GitCreateJiraBranchError.ProvidedFields>): E =>
+  <E extends GitJiraBranchError.Proto>(tag: E['_tag']) =>
+  (args: Omit<E, GitJiraBranchError.ProvidedFields>): E =>
     Data.struct({
       _tag: tag,
       ...args,
     } as E);
 
-export interface GitExecError extends GitCreateJiraBranchError.Proto {
+export interface GitExecError extends GitJiraBranchError.Proto {
   readonly _tag: 'GitExecError';
 }
 
 export const GitExecError = makeError<GitExecError>('GitExecError');
 
-export interface UsageError extends GitCreateJiraBranchError.Proto {
+export interface UsageError extends GitJiraBranchError.Proto {
   readonly _tag: 'UsageError';
 }
 
 export const UsageError = makeError<UsageError>('UsageError');
 
-export interface AppConfigError extends GitCreateJiraBranchError.Proto {
+export interface AppConfigError extends GitJiraBranchError.Proto {
   readonly _tag: 'AppConfigError';
 }
 export const AppConfigError = makeError<AppConfigError>('AppConfigError');
@@ -148,7 +148,7 @@ export const AppConfigError = makeError<AppConfigError>('AppConfigError');
 export const isAppConfigError = (e: unknown): e is AppConfigError =>
   e instanceof Object && '_tag' in e && e['_tag'] === 'AppConfigError';
 
-export interface JiraApiError extends GitCreateJiraBranchError.Proto {
+export interface JiraApiError extends GitJiraBranchError.Proto {
   readonly _tag: 'JiraApiError';
 }
 export const JiraApiError = makeError<JiraApiError>('JiraApiError');

@@ -60,7 +60,7 @@ const mockOpenUrl = toEffectMock(
 const mockLog = vi.spyOn(console, 'log').mockImplementation(() => {});
 
 const withBaseArgs = (args: string[]): Effect.Effect<string[]> =>
-  Effect.sync(() => ['node', 'git-create-jira-branch', ...args]);
+  Effect.sync(() => ['node', 'git-jira-branch', ...args]);
 
 describe('cli', () => {
   describe('main command', () => {

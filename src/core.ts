@@ -8,7 +8,7 @@ import {AppConfigService} from './app-config';
 import {
   AppConfigError,
   CreatedBranch,
-  GitCreateJiraBranchError,
+  GitJiraBranchError,
   GitCreateJiraBranchResult,
   JiraIssue,
   JiraIssuetype,
@@ -24,7 +24,7 @@ export const gitCreateJiraBranch = (
   reset: boolean,
 ): Effect.Effect<
   GitCreateJiraBranchResult,
-  GitCreateJiraBranchError,
+  GitJiraBranchError,
   AppConfigService | GitClient | JiraClient
 > =>
   Effect.gen(function* ($) {
@@ -61,7 +61,7 @@ export const gitCreateJiraBranch = (
 
 export const ticketUrlForCurrentBranch = (): Effect.Effect<
   string,
-  GitCreateJiraBranchError,
+  GitJiraBranchError,
   AppConfigService | GitClient
 > =>
   Effect.gen(function* ($) {

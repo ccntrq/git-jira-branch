@@ -118,7 +118,7 @@ exports[`cli > main command > should print help (--help) 1`] = `
 "
 [0;1mUSAGE[0m
 
-$ git-create-jira-branch
+$ git-jira-branch
 
 [0;1mOPTIONS[0m
 
