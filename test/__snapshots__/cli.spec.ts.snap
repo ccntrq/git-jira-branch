@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`cli > cliEffect > should create branch with single argument 1`] = `
+exports[`cli > create subcommand > should create branch with single argument 1`] = `
 [
   [
     "Successfully created branch: 'feat/FOOX-1234-description'",
@@ -8,7 +8,7 @@ exports[`cli > cliEffect > should create branch with single argument 1`] = `
 ]
 `;
 
-exports[`cli > cliEffect > should handle basebranch argument (-b) 1`] = `
+exports[`cli > create subcommand > should handle basebranch argument (-b) 1`] = `
 [
   [
     "Successfully created branch: 'feat/FOOX-1234-description'",
@@ -16,39 +16,7 @@ exports[`cli > cliEffect > should handle basebranch argument (-b) 1`] = `
 ]
 `;
 
-exports[`cli > cliEffect > should handle open option (--open) with given ticket 1`] = `
-[
-  [
-    "Opening ticket url 'https://gcjb.atlassian.net/browse/GCJB-1234' in your default browser...",
-  ],
-]
-`;
-
-exports[`cli > cliEffect > should handle open option (--open) with given ticket 2`] = `
-[
-  [
-    "https://gcjb.atlassian.net/browse/GCJB-1234",
-  ],
-]
-`;
-
-exports[`cli > cliEffect > should handle open option (--open) without ticket 1`] = `
-[
-  [
-    "Opening ticket url 'https://gcjb.atlassian.net/browse/GCJB-1234' in your default browser...",
-  ],
-]
-`;
-
-exports[`cli > cliEffect > should handle open option (--open) without ticket 2`] = `
-[
-  [
-    "https://gcjb.atlassian.net/browse/GCJB-1234",
-  ],
-]
-`;
-
-exports[`cli > cliEffect > should handle reset option (-r) 1`] = `
+exports[`cli > create subcommand > should handle reset option (-r) 1`] = `
 [
   [
     "Reset branch: 'feat/FOOX-1234-description'",
@@ -56,7 +24,7 @@ exports[`cli > cliEffect > should handle reset option (-r) 1`] = `
 ]
 `;
 
-exports[`cli > cliEffect > should inform about branch switch 1`] = `
+exports[`cli > create subcommand > should inform about branch switch 1`] = `
 [
   [
     "Switched to already existing branch: 'feat/FOOX-1234-description'",
@@ -64,13 +32,14 @@ exports[`cli > cliEffect > should inform about branch switch 1`] = `
 ]
 `;
 
-exports[`cli > cliEffect > should print help (--help) 1`] = `
+exports[`cli > create subcommand > should print subcommand help (--help) 1`] = `
 "
 [0;1mUSAGE[0m
 
-$ git-create-jira-branch [(-b, --baseBranch text)] [(-r, --reset)] [(-o, --open)] <jira-key>...
+$ create [(-b, --base text)] [(-r, --reset)] <jira-key>
 
 [0;1mDESCRIPTION[0m
+
 
 Fetches the given Jira ticket and creates an aproriately named branch for it.
 The branch type (bug or feat) is determined by the ticket type. The branch name
@@ -78,21 +47,19 @@ is based on the ticket summary.
 
 [0;1mARGUMENTS[0m
 
-[0;1m[0;30;1m<jira-key>[0;1m 0 - 1[0m
+[0;1m[0;30;1m<jira-key>[0;1m[0m
 
   A user-defined piece of text.
 
   The Jira ticket key to create a branch for (e.g. FOOX-1234)
 
-  This argument must be repeated at least 0 times and may be repeated up to 1 times.
-
 [0;1mOPTIONS[0m
 
-[0;1m(-b, --baseBranch text)[0m
+[0;1m(-b, --base text)[0m
 
   A user-defined piece of text.
 
-  Base branch to create the new branch from
+  Base revision to create the new branch from (a branch name, tag or commit SHA)
 
   This setting is optional.
 
@@ -101,14 +68,6 @@ is based on the ticket summary.
   A true or false value.
 
   Reset the branch if it already exists
-
-  This setting is optional.
-
-[0;1m(-o, --open)[0m
-
-  A true or false value.
-
-  Open the ticket for the current branch or the given ticket in the browser
 
   This setting is optional.
 
@@ -146,11 +105,154 @@ is based on the ticket summary.
 "
 `;
 
-exports[`cli > cliEffect > should report missing jirakey 1`] = `
+exports[`cli > create subcommand > should report missing jirakey 1`] = `
 [
   [
-    "[0;31mNo Jira Key provided[0m
+    "Missing argument <jira-key>
 ",
   ],
 ]
+`;
+
+exports[`cli > main command > should print help (--help) 1`] = `
+"
+[0;1mUSAGE[0m
+
+$ git-create-jira-branch
+
+[0;1mOPTIONS[0m
+
+[0;1m--completions sh | bash | fish | zsh[0m
+
+  One of the following: sh, bash, fish, zsh
+
+  Generate a completion script for a specific shell
+
+  This setting is optional.
+
+[0;1m(-h, --help)[0m
+
+  A true or false value.
+
+  Show the help documentation for a command
+
+  This setting is optional.
+
+[0;1m--wizard[0m
+
+  A true or false value.
+
+  Start wizard mode for a command
+
+  This setting is optional.
+
+[0;1m--version[0m
+
+  A true or false value.
+
+  Show the version of the application
+
+  This setting is optional.
+
+[0;1mCOMMANDS[0m
+
+  - create [(-b, --base text)] [(-r, --reset)] <jira-key>  
+Fetches the given Jira ticket and creates an aproriately named branch for it.
+The branch type (bug or feat) is determined by the ticket type. The branch name
+is based on the ticket summary.
+
+  - open [<jira-key>]                                      
+Opens the given Jira ticket in your default browser. If no ticket is given the
+jira ticket for the current branch is opened.
+"
+`;
+
+exports[`cli > open subcommand > should open url for current branch without arguments 1`] = `
+[
+  [
+    "Opening ticket url 'https://gcjb.atlassian.net/browse/GCJB-1234' in your default browser...",
+  ],
+]
+`;
+
+exports[`cli > open subcommand > should open url for current branch without arguments 2`] = `
+[
+  [
+    "https://gcjb.atlassian.net/browse/GCJB-1234",
+  ],
+]
+`;
+
+exports[`cli > open subcommand > should open url for given ticket 1`] = `
+[
+  [
+    "Opening ticket url 'https://gcjb.atlassian.net/browse/GCJB-1234' in your default browser...",
+  ],
+]
+`;
+
+exports[`cli > open subcommand > should open url for given ticket 2`] = `
+[
+  [
+    "https://gcjb.atlassian.net/browse/GCJB-1234",
+  ],
+]
+`;
+
+exports[`cli > open subcommand > should print subcommand help (--help) 1`] = `
+"
+[0;1mUSAGE[0m
+
+$ open [<jira-key>]
+
+[0;1mDESCRIPTION[0m
+
+
+Opens the given Jira ticket in your default browser. If no ticket is given the
+jira ticket for the current branch is opened.
+
+[0;1mARGUMENTS[0m
+
+[0;1m[0;30;1m<jira-key>[0;1m[0m
+
+  A user-defined piece of text.
+
+  The Jira ticket key to create a branch for (e.g. FOOX-1234)
+
+  This setting is optional.
+
+[0;1mOPTIONS[0m
+
+[0;1m--completions sh | bash | fish | zsh[0m
+
+  One of the following: sh, bash, fish, zsh
+
+  Generate a completion script for a specific shell
+
+  This setting is optional.
+
+[0;1m(-h, --help)[0m
+
+  A true or false value.
+
+  Show the help documentation for a command
+
+  This setting is optional.
+
+[0;1m--wizard[0m
+
+  A true or false value.
+
+  Start wizard mode for a command
+
+  This setting is optional.
+
+[0;1m--version[0m
+
+  A true or false value.
+
+  Show the version of the application
+
+  This setting is optional.
+"
 `;

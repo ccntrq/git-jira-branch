@@ -63,7 +63,46 @@ const withBaseArgs = (args: string[]): Effect.Effect<string[]> =>
   Effect.sync(() => ['node', 'git-create-jira-branch', ...args]);
 
 describe('cli', () => {
-  describe('cliEffect', () => {
+  describe('main command', () => {
+    afterEach(() => {
+      vi.clearAllMocks();
+    });
+
+    itEffect('should print version (--version)', () =>
+      Effect.gen(function* ($) {
+        yield* $(
+          Effect.provide(
+            pipe(withBaseArgs(['--version']), Effect.flatMap(cliEffect)),
+            cliTestLayer,
+          ),
+        );
+
+        expect(mockGitCreateJiraBranch).not.toHaveBeenCalled();
+        expect(mockLog.mock.calls[0]?.[0]).toMatch(/\d+\.\d+\.\d+/);
+      }),
+    );
+
+    itEffect('should print help (--help)', () =>
+      Effect.gen(function* ($) {
+        yield* $(
+          Effect.provide(
+            pipe(withBaseArgs(['--help']), Effect.flatMap(cliEffect)),
+            cliTestLayer,
+          ),
+        );
+
+        expect(mockGitCreateJiraBranch).not.toHaveBeenCalled();
+        expect(
+          (mockLog.mock.calls[0]?.[0] as string)
+            .split(/\n/)
+            .slice(3)
+            .join('\n'),
+        ).toMatchSnapshot();
+      }),
+    );
+  });
+
+  describe('create subcommand', () => {
     afterEach(() => {
       vi.clearAllMocks();
     });
@@ -75,7 +114,10 @@ describe('cli', () => {
         );
         yield* $(
           Effect.provide(
-            pipe(withBaseArgs(['FOOX-1234']), Effect.flatMap(cliEffect)),
+            pipe(
+              withBaseArgs(['create', 'FOOX-1234']),
+              Effect.flatMap(cliEffect),
+            ),
             cliTestLayer,
           ),
         );
@@ -96,7 +138,10 @@ describe('cli', () => {
         );
         yield* $(
           Effect.provide(
-            pipe(withBaseArgs(['FOOX-1234']), Effect.flatMap(cliEffect)),
+            pipe(
+              withBaseArgs(['create', 'FOOX-1234']),
+              Effect.flatMap(cliEffect),
+            ),
             cliTestLayer,
           ),
         );
@@ -118,7 +163,7 @@ describe('cli', () => {
         yield* $(
           Effect.provide(
             pipe(
-              withBaseArgs(['-b', 'master', 'FOOX-1234']),
+              withBaseArgs(['create', '-b', 'master', 'FOOX-1234']),
               Effect.flatMap(cliEffect),
             ),
             cliTestLayer,
@@ -141,7 +186,10 @@ describe('cli', () => {
         );
         yield* $(
           Effect.provide(
-            pipe(withBaseArgs(['-r', 'FOOX-1234']), Effect.flatMap(cliEffect)),
+            pipe(
+              withBaseArgs(['create', '-r', 'FOOX-1234']),
+              Effect.flatMap(cliEffect),
+            ),
             cliTestLayer,
           ),
         );
@@ -155,7 +203,46 @@ describe('cli', () => {
       }),
     );
 
-    itEffect('should handle open option (--open) without ticket', () =>
+    itEffect('should report missing jirakey', () =>
+      Effect.gen(function* ($) {
+        yield* $(
+          Effect.provide(
+            pipe(withBaseArgs(['create']), Effect.flatMap(cliEffect)),
+            cliTestLayer,
+          ),
+        );
+
+        expect(mockGitCreateJiraBranch).not.toHaveBeenCalled();
+        expect(mockLog.mock.calls).toMatchSnapshot();
+      }),
+    );
+
+    itEffect('should print subcommand help (--help)', () =>
+      Effect.gen(function* ($) {
+        yield* $(
+          Effect.provide(
+            pipe(withBaseArgs(['create', '--help']), Effect.flatMap(cliEffect)),
+            cliTestLayer,
+          ),
+        );
+
+        expect(mockGitCreateJiraBranch).not.toHaveBeenCalled();
+        expect(
+          (mockLog.mock.calls[0]?.[0] as string)
+            .split(/\n/)
+            .slice(3)
+            .join('\n'),
+        ).toMatchSnapshot();
+      }),
+    );
+  });
+
+  describe('open subcommand', () => {
+    afterEach(() => {
+      vi.clearAllMocks();
+    });
+
+    itEffect('should open url for current branch without arguments', () =>
       Effect.gen(function* ($) {
         mockTicketUrlForCurrentBranch.mockSuccessValue(
           'https://gcjb.atlassian.net/browse/GCJB-1234',
@@ -163,7 +250,7 @@ describe('cli', () => {
         mockOpenUrl.mockSuccessValue();
         yield* $(
           Effect.provide(
-            pipe(withBaseArgs(['--open']), Effect.flatMap(cliEffect)),
+            pipe(withBaseArgs(['open']), Effect.flatMap(cliEffect)),
             cliTestLayer,
           ),
         );
@@ -174,7 +261,7 @@ describe('cli', () => {
       }),
     );
 
-    itEffect('should handle open option (--open) with given ticket', () =>
+    itEffect('should open url for given ticket', () =>
       Effect.gen(function* ($) {
         mockTicketUrl.mockSuccessValue(
           'https://gcjb.atlassian.net/browse/GCJB-1234',
@@ -182,7 +269,7 @@ describe('cli', () => {
         mockOpenUrl.mockSuccessValue();
         yield* $(
           Effect.provide(
-            pipe(withBaseArgs(['--open', '1234']), Effect.flatMap(cliEffect)),
+            pipe(withBaseArgs(['open', '1234']), Effect.flatMap(cliEffect)),
             cliTestLayer,
           ),
         );
@@ -193,42 +280,11 @@ describe('cli', () => {
       }),
     );
 
-    itEffect('should report missing jirakey', () =>
+    itEffect('should print subcommand help (--help)', () =>
       Effect.gen(function* ($) {
         yield* $(
           Effect.provide(
-            pipe(
-              Effect.sync(() => []),
-              Effect.flatMap(cliEffect),
-            ),
-            cliTestLayer,
-          ),
-        );
-
-        expect(mockGitCreateJiraBranch).not.toHaveBeenCalled();
-        expect(mockLog.mock.calls).toMatchSnapshot();
-      }),
-    );
-
-    itEffect('should print version (--version)', () =>
-      Effect.gen(function* ($) {
-        yield* $(
-          Effect.provide(
-            pipe(withBaseArgs(['--version']), Effect.flatMap(cliEffect)),
-            cliTestLayer,
-          ),
-        );
-
-        expect(mockGitCreateJiraBranch).not.toHaveBeenCalled();
-        expect(mockLog.mock.calls[0]?.[0]).toMatch(/\d+\.\d+\.\d+/);
-      }),
-    );
-
-    itEffect('should print help (--help)', () =>
-      Effect.gen(function* ($) {
-        yield* $(
-          Effect.provide(
-            pipe(withBaseArgs(['--help']), Effect.flatMap(cliEffect)),
+            pipe(withBaseArgs(['open', '--help']), Effect.flatMap(cliEffect)),
             cliTestLayer,
           ),
         );

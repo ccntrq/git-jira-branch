@@ -12,7 +12,7 @@
 Creates feature branches based on your Jira tickets type and description.
 
 ```bash
-$ git create-jira-branch MYAPP-1234
+$ git create-jira-branch create MYAPP-1234
 > Successfully created branch: 'feat/MYAPP-1234-sluggified-description-used-as-branchname'
 ```
 
@@ -30,7 +30,7 @@ before the jira ticket key argument.
 Using the default JIRA_KEY_PREFIX
 
 ```bash
-git-create-jira-branch 1324
+git-create-jira-branch create 1324
 ```
 
 Or fully specified:
@@ -44,7 +44,7 @@ git-create-jira-branch MYAPP-1234
 To create a new branch based on your `master` branch:
 
 ```bash
-git-create-jira-branch -b master MYAPP-1234
+git-create-jira-branch create -b master MYAPP-1234
 ```
 
 ### Reset an already existing branch
@@ -53,19 +53,19 @@ Pass the `-r|--reset` flag to reset an already existing branch to the current
 `HEAD` or the specified base revision (with `-b`)
 
 ```bash
-git-create-jira-branch -r MYAPP-1234
+git-create-jira-branch create -r MYAPP-1234
 ```
 
 ### Open tickets in your browser
 
 1. For the current branch:
    ```bash
-   $ git create-jira-branch --open
+   $ git create-jira-branch open
    > Opening ticket url 'https://gcjb.atlassian.net/browse/GCJB-164' in your default browser...
    ```
 2. For a given ticket:
    ```bash
-   $ git create-jira-branch --open GCJB-1234
+   $ git create-jira-branch open GCJB-1234
    > Opening ticket url 'https://gcjb.atlassian.net/browse/GCJB-1234' in your default browser...
    ```
 
