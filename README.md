@@ -1,25 +1,25 @@
 <p align="center">
   <img
     width="256px"
-    title="git-create-jira-branch Logo"
-    alt="git-create-jira-branch Logo"
+    title="git-jira-branch Logo"
+    alt="git-jira-branch Logo"
     src="./assets/logo.webp"
   >
 </p>
 
-# git-create-jira-branch - Setup feature branches for your Jira tickets with one command.
+# git-jira-branch - Manage branches for your Jira tickets
 
 Creates feature branches based on your Jira tickets type and description.
 
 ```bash
-$ git create-jira-branch create MYAPP-1234
+$ git jira-branch create MYAPP-1234
 > Successfully created branch: 'feat/MYAPP-1234-sluggified-description-used-as-branchname'
 ```
 
 ## Usage
 
 Since this command starts with `git-` all commands can be run via
-`git-create-jira-branch` or as a git subcommand with `git create-jira-branch`.
+`git-jira-branch` or as a git subcommand with `git jira-branch`.
 
 Due to a limitation in the awesome [cli
 library](https://github.com/Effect-TS/cli) used, all options must be passed
@@ -30,13 +30,13 @@ before the jira ticket key argument.
 Using the default JIRA_KEY_PREFIX
 
 ```bash
-git-create-jira-branch create 1324
+git-jira-branch create 1324
 ```
 
 Or fully specified:
 
-```
-git-create-jira-branch MYAPP-1234
+```bash
+git-jira-branch create MYAPP-1234
 ```
 
 ### Create a new branch based on some other revision
@@ -44,7 +44,7 @@ git-create-jira-branch MYAPP-1234
 To create a new branch based on your `master` branch:
 
 ```bash
-git-create-jira-branch create -b master MYAPP-1234
+git-jira-branch create -b master MYAPP-1234
 ```
 
 ### Reset an already existing branch
@@ -53,19 +53,19 @@ Pass the `-r|--reset` flag to reset an already existing branch to the current
 `HEAD` or the specified base revision (with `-b`)
 
 ```bash
-git-create-jira-branch create -r MYAPP-1234
+git-jira-branch create -r MYAPP-1234
 ```
 
 ### Open tickets in your browser
 
 1. For the current branch:
    ```bash
-   $ git create-jira-branch open
+   $ git jira-branch open
    > Opening ticket url 'https://gcjb.atlassian.net/browse/GCJB-164' in your default browser...
    ```
 2. For a given ticket:
    ```bash
-   $ git create-jira-branch open GCJB-1234
+   $ git jira-branch open GCJB-1234
    > Opening ticket url 'https://gcjb.atlassian.net/browse/GCJB-1234' in your default browser...
    ```
 
@@ -76,7 +76,7 @@ Jira ticket key and additional options and build the appropriate command line
 for you.
 
 ```bash
-git-create-jira-branch --wizard
+git-jira-branch --wizard
 ```
 
 ## Setup
@@ -87,7 +87,7 @@ The cli can be installed from `npm`. It assumes you have git installed on your
 system and the `git` command to be available on your `$PATH`.
 
 ```bash
-npm i -g git-create-jira-branch
+npm i -g git-jira-branch
 ```
 
 ### Configuration
@@ -125,7 +125,7 @@ The cli can generate shell completion scripts for `bash`,`zsh` and `fish`. To
 generate and print the script for your shell run:
 
 ```bash
-git-create-jira-branch --completions (bash|zsh|fish)
+git-jira-branch --completions (bash|zsh|fish)
 ```
 
 To install the completions for your shell, run the above command and pipe the
@@ -134,8 +134,8 @@ output to a file and source it in your shell config.
 E.g. for `bash`:
 
 ```bash
-git-create-jira-branch --completions bash > ~/.git-create-jira-branch-bash-completions
-echo "source \$HOME/.git-create-jira-branch-bash-completions" >> ~/.bashrc
+git-jira-branch --completions bash > ~/.git-jira-branch-bash-completions
+echo "source \$HOME/.git-jira-branch-bash-completions" >> ~/.bashrc
 source ~/.bashrc
 ```
 

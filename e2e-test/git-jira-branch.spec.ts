@@ -10,7 +10,7 @@ type Directory = string & Brand.Brand<'Directory'>;
 const Directory = Brand.nominal<Directory>();
 
 const setupTmpDir = async (): Promise<Directory> => {
-  const tmpDir = await mkdtemp(join(tmpdir(), 'git-create-jira-branch-e2e-'));
+  const tmpDir = await mkdtemp(join(tmpdir(), 'git-jira-branch-e2e-'));
   // eslint-disable-next-line no-console
   console.log(`Setting up e2e env in ${tmpDir}`);
 
@@ -35,7 +35,7 @@ const currentBranch = (dir: Directory): string =>
     .toString()
     .trim();
 
-describe('git-create-jira-branch', () => {
+describe('git-jira-branch', () => {
   let tmpDir: Directory;
 
   beforeAll(async () => {
@@ -44,7 +44,7 @@ describe('git-create-jira-branch', () => {
 
   it('starts app and outputs help', async () => {
     const res = runApp(tmpDir, '--help');
-    expect(res).toMatch(/git-create-jira-branch/);
+    expect(res).toMatch(/git-jira-branch/);
   });
 
   it('create subcommand prints error for non existing jira ticket', () => {
@@ -83,7 +83,7 @@ describe('git-create-jira-branch', () => {
   });
 
   it('create subcommand resets branch to given base ref', () => {
-    runApp(tmpDir, 'GCJB-1');
+    runApp(tmpDir, 'create', 'GCJB-1');
     expect(currentBranch(tmpDir)).toMatchInlineSnapshot(
       '"feat/GCJB-1-e2e-test-ticket-with-a-fancy-summary"',
     );

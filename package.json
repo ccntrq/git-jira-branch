@@ -1,13 +1,13 @@
 {
-  "name": "git-create-jira-branch",
-  "version": "4.0.0",
-  "description": "Setup feature branches for your Jira tickets with one command",
+  "name": "git-jira-branch",
+  "version": "1.0.0",
+  "description": "Manage branches for your Jira tickets",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ccntrq/git-create-jira-branch.git"
+    "url": "git+https://github.com/ccntrq/git-jira-branch.git"
   },
-  "bugs": "https://github.com/ccntrq/git-create-jira-branch/issues",
+  "bugs": "https://github.com/ccntrq/git-jira-branch/issues",
   "author": {
     "name": "Alexander 'ccntrq' Pankoff",
     "email": "ccntrq@screenri.de"
@@ -24,7 +24,8 @@
     "productivity"
   ],
   "bin": {
-    "git-create-jira-branch": "dist/main.js"
+    "git-jira-branch": "dist/main.js",
+    "git-jb": "dist/main.js"
   },
   "files": [
     "/dist"
