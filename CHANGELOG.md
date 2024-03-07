@@ -7,6 +7,17 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [4.0.0](https://github.com/ccntrq/git-create-jira-branch/compare/v3.4.0...v4.0.0) (2024-03-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* the are 2 subcommands `open` and `create` now that must be used instead of the options `--open` and implicit `create` base command that existed before.
+
+### Features
+
+* rework cli to use subcommands ([#204](https://github.com/ccntrq/git-create-jira-branch/issues/204)) ([9a240ea](https://github.com/ccntrq/git-create-jira-branch/commit/9a240ea469133032a3ed462cd2695529598a8af8))
+
 ## [3.4.0](https://github.com/ccntrq/git-create-jira-branch/compare/v3.3.0...v3.4.0) (2024-03-01)
 
 
