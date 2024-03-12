@@ -114,6 +114,15 @@ exports[`cli > create subcommand > should report missing jirakey 1`] = `
 ]
 `;
 
+exports[`cli > create subcommand > should report unknwon argument 1`] = `
+[
+  [
+    "Received unknown argument: 'unknown'
+",
+  ],
+]
+`;
+
 exports[`cli > main command > should print help (--help) 1`] = `
 "
 [0;1mUSAGE[0m

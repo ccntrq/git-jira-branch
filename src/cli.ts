@@ -1,7 +1,7 @@
 import {Option, Effect, pipe, Console} from 'effect';
 import {ValidationError} from '@effect/cli';
 import {CliApp} from '@effect/cli/CliApp';
-import {compose} from 'effect/Function';
+import {compose, constant} from 'effect/Function';
 import * as Args from '@effect/cli/Args';
 import * as Command from '@effect/cli/Command';
 import * as Options from '@effect/cli/Options';
@@ -121,10 +121,10 @@ export const cliEffect = (
     mainCommand,
     cli,
   )(args).pipe(
-    Effect.catchIf(ValidationError.isValidationError, (e) =>
-      ValidationError.isInvalidValue(e) // Not printed by the cli yet
-        ? printDocs(HelpDoc.p(Span.error(HelpDoc.getSpan(e.error))))
-        : Effect.succeed(undefined),
+    Effect.catchIf(
+      ValidationError.isValidationError,
+      // handled and printed by the cli library already
+      constant(Effect.unit),
     ),
     Effect.catchAll((e) => printDocs(HelpDoc.p(Span.error(e.message)))),
   );

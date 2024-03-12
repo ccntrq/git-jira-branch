@@ -235,6 +235,23 @@ describe('cli', () => {
         ).toMatchSnapshot();
       }),
     );
+
+    itEffect('should report unknwon argument', () =>
+      Effect.gen(function* ($) {
+        yield* $(
+          Effect.provide(
+            pipe(
+              withBaseArgs(['create', '111', 'unknown']),
+              Effect.flatMap(cliEffect),
+            ),
+            cliTestLayer,
+          ),
+        );
+
+        expect(mockGitCreateJiraBranch).not.toHaveBeenCalled();
+        expect(mockLog.mock.calls).toMatchSnapshot();
+      }),
+    );
   });
 
   describe('open subcommand', () => {
