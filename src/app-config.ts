@@ -81,6 +81,7 @@ const collectConfigErrorMessagesReducer: ConfigError.ConfigErrorReducer<
   };
 })();
 
+// biome-ignore lint/complexity/noStaticOnlyClass: okay for AppConfigService
 export class AppConfigService extends Context.Tag('AppConfigService')<
   AppConfigService,
   {
