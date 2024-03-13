@@ -7,39 +7,33 @@ export const itEffect = (() => {
     name: string,
     self: () => Effect.Effect<A, E>,
     timeout = 5_000,
-  ): void => {
-    return it(
-      name,
-      () => pipe(Effect.suspend(self), Effect.runPromise),
-      timeout,
-    );
-  };
+  ): void =>
+    it(name, () => pipe(Effect.suspend(self), Effect.runPromise), timeout);
   return Object.assign(f, {
     skip: <E, A>(
       name: string,
       self: () => Effect.Effect<A, E>,
       timeout = 5_000,
-    ): void => {
-      return it.skip(
+    ): void =>
+      it.skip(
         name,
         () => pipe(Effect.suspend(self), Effect.runPromise),
         timeout,
-      );
-    },
+      ),
     only: <E, A>(
       name: string,
       self: () => Effect.Effect<A, E>,
       timeout = 5_000,
-    ): void => {
-      return it.only(
+    ): void =>
+      it.only(
         name,
         () => pipe(Effect.suspend(self), Effect.runPromise),
         timeout,
-      );
-    },
+      ),
   });
 })();
 
+// biome-ignore lint/suspicious/noExplicitAny: any okay in tests
 export interface EffectMock<T extends any[], E = any, R = any>
   extends Mock<T, Effect.Effect<R, E>> {
   mockSuccessValue: (obj: R) => this;
@@ -48,6 +42,7 @@ export interface EffectMock<T extends any[], E = any, R = any>
   mockFailValueOnce: (e: E) => this;
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: any okay in tests
 export const toEffectMock = <T extends any[], E = any, R = any>(
   fn: Mock<T, Effect.Effect<R, E>>,
 ): EffectMock<T, E, R> => {
@@ -66,6 +61,7 @@ export const toEffectMock = <T extends any[], E = any, R = any>(
   return mock;
 };
 
+// biome-ignore lint/suspicious/noExplicitAny: any okay in tests
 export const effectMock = <T extends any[], E = any, R = any>(
   implementation?: (...args: T) => Effect.Effect<R, E>,
 ): EffectMock<T, E, R> =>
@@ -79,9 +75,13 @@ export const effectMock = <T extends any[], E = any, R = any>(
   );
 
 export const curriedEffectMock2 = <
+  // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
   T1 extends any[],
+  // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
   T2 extends any[],
+  // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
   E = any,
+  // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
   R = any,
 >(
   implementation?: (...args: T2) => Effect.Effect<R, E>,
