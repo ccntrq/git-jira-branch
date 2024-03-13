@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.5.3/schema.json",
+  "$schema": "https://biomejs.dev/schemas/1.6.1/schema.json",
   "files": {
     "ignore": ["dist/*"]
   },
@@ -22,8 +22,26 @@
     "rules": {
       "recommended": true,
       "correctness": {
-        "noUndeclaredVariables": "warn",
-        "noUnusedVariables": "warn"
+        "noUndeclaredVariables": "error",
+        "noUnusedVariables": "error",
+        "noUnusedImports": "error",
+        "noUnusedPrivateClassMembers": "error"
+      },
+      "style": {
+        "useBlockStatements": "error",
+        "useConsistentArrayType": {
+          "level": "error",
+          "options": { "syntax": "generic" }
+        }
+      },
+      "complexity": {
+        "useSimplifiedLogicExpression": "error"
+      },
+      "nursery": {
+        "noConsole": "error"
+      },
+      "suspicious": {
+        "noEmptyBlockStatements": "error"
       }
     }
   }

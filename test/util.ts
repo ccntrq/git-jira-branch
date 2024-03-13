@@ -34,7 +34,7 @@ export const itEffect = (() => {
 })();
 
 // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
-export interface EffectMock<T extends any[], E = any, R = any>
+export interface EffectMock<T extends Array<any>, E = any, R = any>
   extends Mock<T, Effect.Effect<R, E>> {
   mockSuccessValue: (obj: R) => this;
   mockSuccessValueOnce: (obj: R) => this;
@@ -43,7 +43,7 @@ export interface EffectMock<T extends any[], E = any, R = any>
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
-export const toEffectMock = <T extends any[], E = any, R = any>(
+export const toEffectMock = <T extends Array<any>, E = any, R = any>(
   fn: Mock<T, Effect.Effect<R, E>>,
 ): EffectMock<T, E, R> => {
   const mock = Object.assign(fn, {
@@ -62,7 +62,7 @@ export const toEffectMock = <T extends any[], E = any, R = any>(
 };
 
 // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
-export const effectMock = <T extends any[], E = any, R = any>(
+export const effectMock = <T extends Array<any>, E = any, R = any>(
   implementation?: (...args: T) => Effect.Effect<R, E>,
 ): EffectMock<T, E, R> =>
   toEffectMock<T, E, R>(
@@ -76,9 +76,9 @@ export const effectMock = <T extends any[], E = any, R = any>(
 
 export const curriedEffectMock2 = <
   // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
-  T1 extends any[],
+  T1 extends Array<any>,
   // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
-  T2 extends any[],
+  T2 extends Array<any>,
   // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
   E = any,
   // biome-ignore lint/suspicious/noExplicitAny: any okay in tests

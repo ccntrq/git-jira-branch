@@ -65,7 +65,7 @@ const collectConfigErrorMessagesReducer: ConfigError.ConfigErrorReducer<
 > = (() => {
   const collectMessage = (
     _: undefined,
-    _path: string[],
+    _path: Array<string>,
     message: string,
   ): Doc.Doc<never> => Doc.text(message);
 

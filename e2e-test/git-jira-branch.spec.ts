@@ -11,6 +11,7 @@ const Directory = Brand.nominal<Directory>();
 
 const setupTmpDir = async (): Promise<Directory> => {
   const tmpDir = await mkdtemp(join(tmpdir(), 'git-jira-branch-e2e-'));
+  // biome-ignore lint/nursery/noConsole: log statement okay in this test
   console.log(`Setting up e2e env in ${tmpDir}`);
 
   execSync('git init', {cwd: tmpDir});
@@ -24,7 +25,7 @@ const setupTmpDir = async (): Promise<Directory> => {
   return Directory(tmpDir);
 };
 
-const runApp = (dir: Directory, ...args: string[]): string => {
+const runApp = (dir: Directory, ...args: Array<string>): string => {
   const cmd = `node ${join(cwd(), 'dist', 'main.js')} ${args.join(' ')}`;
   return execSync(cmd, {cwd: dir}).toString();
 };

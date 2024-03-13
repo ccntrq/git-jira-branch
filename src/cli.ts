@@ -107,7 +107,7 @@ const cli = {
 };
 
 export const cliEffect = (
-  args: string[],
+  args: Array<string>,
 ): Effect.Effect<
   void,
   never,
