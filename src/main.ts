@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
-import {Cause, Console, Effect, Layer, pipe} from 'effect';
-import * as Http from '@effect/platform/HttpClient';
 import * as NodeCommandExecutor from '@effect/platform-node/NodeCommandExecutor';
 import * as NodeFileSystem from '@effect/platform-node/NodeFileSystem';
+import * as Http from '@effect/platform/HttpClient';
+import {Cause, Console, Effect, Layer, pipe} from 'effect';
 
+import {NodeContext} from '@effect/platform-node';
 import {AppConfigService} from './app-config';
+import {cliEffect} from './cli';
 import {GitClientLive} from './git-client';
 import {JiraClientLive} from './jira-client';
-import {cliEffect} from './cli';
-import {NodeContext} from '@effect/platform-node';
 
 const commandExecutorLayer = NodeCommandExecutor.layer.pipe(
   Layer.provide(NodeFileSystem.layer),

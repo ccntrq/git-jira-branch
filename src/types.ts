@@ -1,5 +1,5 @@
 import * as Schema from '@effect/schema/Schema';
-import {Brand, Data, Match, Option, pipe} from 'effect';
+import {Brand, Data, Match, type Option, pipe} from 'effect';
 import {dual} from 'effect/Function';
 
 export type JiraApiUrl = string & Brand.Brand<'JiraApiUrl'>;
@@ -145,7 +145,7 @@ export interface AppConfigError extends GitJiraBranchError.Proto {
 export const AppConfigError = makeError<AppConfigError>('AppConfigError');
 
 export const isAppConfigError = (e: unknown): e is AppConfigError =>
-  e instanceof Object && '_tag' in e && e['_tag'] === 'AppConfigError';
+  e instanceof Object && '_tag' in e && e._tag === 'AppConfigError';
 
 export interface JiraApiError extends GitJiraBranchError.Proto {
   readonly _tag: 'JiraApiError';

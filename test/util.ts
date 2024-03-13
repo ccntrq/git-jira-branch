@@ -1,6 +1,6 @@
 import {Effect, pipe} from 'effect';
 
-import {Mock, it, vi} from 'vitest';
+import {type Mock, it, vi} from 'vitest';
 
 export const itEffect = (() => {
   const f = <E, A>(

@@ -1,14 +1,14 @@
-import {describe, expect, beforeEach, afterEach, vi} from 'vitest';
-import {Effect, Layer, Stream, Sink, Either} from 'effect';
+import {Effect, Either, Layer, Sink, Stream} from 'effect';
+import {afterEach, beforeEach, describe, expect, vi} from 'vitest';
 
-import * as Error from '@effect/platform/Error';
 import * as CommandExecutor from '@effect/platform/CommandExecutor';
+import * as Error from '@effect/platform/Error';
 
+import {TextEncoder} from 'node:util';
+import type {Command} from '@effect/platform';
 import {GitClient, GitClientLive} from '../src/git-client';
-import {EffectMock, effectMock, itEffect} from './util';
 import {GitExecError} from '../src/types';
-import {TextEncoder} from 'util';
-import {Command} from '@effect/platform';
+import {type EffectMock, effectMock, itEffect} from './util';
 
 const testProg = Effect.gen(function* ($) {
   const gitClient = yield* $(GitClient);

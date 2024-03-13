@@ -1,6 +1,6 @@
-import {Chunk, Context, Effect, Layer, Sink, Stream, pipe} from 'effect';
 import * as Command from '@effect/platform/Command';
 import * as CommandExecutor from '@effect/platform/CommandExecutor';
+import {Chunk, Context, Effect, Layer, Sink, Stream, pipe} from 'effect';
 
 import {GitExecError} from './types';
 

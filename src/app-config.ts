@@ -1,5 +1,7 @@
+import {Doc} from '@effect/printer';
+import {prettyDefault} from '@effect/printer/Render';
 import {
-  Brand,
+  type Brand,
   Config,
   ConfigError,
   Context,
@@ -9,11 +11,9 @@ import {
   flow,
 } from 'effect';
 import {InvalidData} from 'effect/ConfigError';
-import {Doc} from '@effect/printer';
-import {prettyDefault} from '@effect/printer/Render';
 
 import {
-  AppConfig,
+  type AppConfig,
   AppConfigError,
   JiraApiToken,
   JiraApiUrl,

@@ -1,9 +1,9 @@
-import {Effect, Chunk, Layer} from 'effect';
 import {NodeContext} from '@effect/platform-node';
+import {Chunk, Effect, Layer} from 'effect';
 
+import {AppConfigService} from '../src/app-config';
 import {GitClient} from '../src/git-client';
 import {JiraClient} from '../src/jira-client';
-import {AppConfigService} from '../src/app-config';
 import {curriedEffectMock2, effectMock} from './util';
 
 export const mockGitClient = {

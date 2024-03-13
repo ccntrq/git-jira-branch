@@ -1,8 +1,4 @@
 {
-  "extends": [
-    "./tsconfig.test.json",
-  ],
-  "include": [
-    "e2e-test/**/*.ts"
-  ]
+  "extends": ["./tsconfig.test.json"],
+  "include": ["e2e-test/**/*.ts"]
 }

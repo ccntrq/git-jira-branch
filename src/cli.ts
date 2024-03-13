@@ -1,24 +1,24 @@
-import {Option, Effect, pipe, Console} from 'effect';
 import {ValidationError} from '@effect/cli';
-import {CliApp} from '@effect/cli/CliApp';
-import {compose, constant} from 'effect/Function';
 import * as Args from '@effect/cli/Args';
+import type {CliApp} from '@effect/cli/CliApp';
 import * as Command from '@effect/cli/Command';
-import * as Options from '@effect/cli/Options';
-import * as Span from '@effect/cli/HelpDoc/Span';
 import * as HelpDoc from '@effect/cli/HelpDoc';
-import * as CommandExecutor from '@effect/platform/CommandExecutor';
+import * as Span from '@effect/cli/HelpDoc/Span';
+import * as Options from '@effect/cli/Options';
+import type * as CommandExecutor from '@effect/platform/CommandExecutor';
+import {Console, Effect, Option, pipe} from 'effect';
+import {compose, constant} from 'effect/Function';
 
+import * as packageJson from '../package.json';
+import type {AppConfigService} from './app-config';
 import {
   gitCreateJiraBranch,
   ticketUrl,
   ticketUrlForCurrentBranch,
 } from './core';
-import * as packageJson from '../package.json';
+import type {GitClient} from './git-client';
+import type {JiraClient} from './jira-client';
 import {matchGitCreateJiraBranchResult} from './types';
-import {AppConfigService} from './app-config';
-import {GitClient} from './git-client';
-import {JiraClient} from './jira-client';
 import {openUrl} from './url-opener';
 
 // for version and help

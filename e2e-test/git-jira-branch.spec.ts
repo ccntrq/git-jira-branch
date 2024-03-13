@@ -1,10 +1,10 @@
-import {execSync} from 'child_process';
+import {execSync} from 'node:child_process';
+import {mkdtemp} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {cwd} from 'node:process';
 import {Brand} from 'effect';
-import {mkdtemp} from 'fs/promises';
-import {tmpdir} from 'os';
-import {join} from 'path';
-import {cwd} from 'process';
-import {it, describe, expect, beforeAll} from 'vitest';
+import {beforeAll, describe, expect, it} from 'vitest';
 
 type Directory = string & Brand.Brand<'Directory'>;
 const Directory = Brand.nominal<Directory>();
