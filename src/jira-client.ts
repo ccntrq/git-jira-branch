@@ -1,16 +1,14 @@
-import {Layer, Context, Effect} from 'effect';
 import * as Http from '@effect/platform/HttpClient';
-// eslint-disable-next-line node/no-extraneous-import
 import * as ArrayFormatter from '@effect/schema/ArrayFormatter';
-// eslint-disable-next-line node/no-extraneous-import
-import * as ParseResult from '@effect/schema/ParseResult';
+import type * as ParseResult from '@effect/schema/ParseResult';
+import {Context, Effect, Layer} from 'effect';
 
 import {AppConfigService} from './app-config';
 import {
-  AppConfigError,
+  type AppConfigError,
   JiraApiError,
-  JiraAuth,
-  JiraIssue,
+  type JiraAuth,
+  type JiraIssue,
   JiraIssueSchema,
 } from './types';
 

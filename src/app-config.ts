@@ -1,5 +1,7 @@
+import {Doc} from '@effect/printer';
+import {prettyDefault} from '@effect/printer/Render';
 import {
-  Brand,
+  type Brand,
   Config,
   ConfigError,
   Context,
@@ -9,11 +11,9 @@ import {
   flow,
 } from 'effect';
 import {InvalidData} from 'effect/ConfigError';
-import {Doc} from '@effect/printer';
-import {prettyDefault} from '@effect/printer/Render';
 
 import {
-  AppConfig,
+  type AppConfig,
   AppConfigError,
   JiraApiToken,
   JiraApiUrl,
@@ -65,7 +65,7 @@ const collectConfigErrorMessagesReducer: ConfigError.ConfigErrorReducer<
 > = (() => {
   const collectMessage = (
     _: undefined,
-    _path: string[],
+    _path: Array<string>,
     message: string,
   ): Doc.Doc<never> => Doc.text(message);
 
@@ -81,6 +81,7 @@ const collectConfigErrorMessagesReducer: ConfigError.ConfigErrorReducer<
   };
 })();
 
+// biome-ignore lint/complexity/noStaticOnlyClass: okay for AppConfigService
 export class AppConfigService extends Context.Tag('AppConfigService')<
   AppConfigService,
   {

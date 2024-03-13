@@ -1,8 +1,7 @@
-import {AppConfigService} from '../src/app-config';
 import {ConfigProvider, Effect, Either, Layer} from 'effect';
 import * as Option from 'effect/Option';
 import {describe, expect} from 'vitest';
-import {itEffect} from './util';
+import {AppConfigService} from '../src/app-config';
 import {
   JiraApiToken,
   JiraCloudAuth,
@@ -10,6 +9,7 @@ import {
   JiraPat,
   JiraUserEmail,
 } from '../src/types';
+import {itEffect} from './util';
 
 const testProg = AppConfigService.pipe(Effect.flatMap((_) => _.getAppConfig));
 

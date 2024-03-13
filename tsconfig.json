@@ -1,16 +1,27 @@
 {
-  "extends": [
-    "@tsconfig/strictest/tsconfig",
-    "@tsconfig/node20/tsconfig"
-  ],
+  "extends": ["@tsconfig/node20/tsconfig"],
   "compilerOptions": {
     "rootDir": ".",
     "outDir": ".",
     "target": "es2016",
     "composite": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
+
+    "allowUnusedLabels": true,
+    "allowUnreachableCode": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+
+    "isolatedModules": true,
+    "checkJs": true
   },
-  "files": [
-    "package.json"
-  ]
+  "files": ["package.json"]
 }

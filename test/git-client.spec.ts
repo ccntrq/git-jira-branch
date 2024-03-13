@@ -1,14 +1,14 @@
-import {describe, expect, beforeEach, afterEach, vi} from 'vitest';
-import {Effect, Layer, Stream, Sink, Either} from 'effect';
+import {Effect, Either, Layer, Sink, Stream} from 'effect';
+import {afterEach, beforeEach, describe, expect, vi} from 'vitest';
 
-import * as Error from '@effect/platform/Error';
 import * as CommandExecutor from '@effect/platform/CommandExecutor';
+import * as PlatformError from '@effect/platform/Error';
 
+import {TextEncoder} from 'node:util';
+import type {Command} from '@effect/platform';
 import {GitClient, GitClientLive} from '../src/git-client';
-import {EffectMock, effectMock, itEffect} from './util';
 import {GitExecError} from '../src/types';
-import {TextEncoder} from 'util';
-import {Command} from '@effect/platform';
+import {type EffectMock, effectMock, itEffect} from './util';
 
 const testProg = Effect.gen(function* ($) {
   const gitClient = yield* $(GitClient);
@@ -36,7 +36,7 @@ const mkTestProcess = (
 describe('GitClient', () => {
   let executorMock: EffectMock<
     [Command.Command],
-    Error.SystemError | Error.BadArgument,
+    PlatformError.SystemError | PlatformError.BadArgument,
     CommandExecutor.Process
   >;
   let testExecutor: Layer.Layer<CommandExecutor.CommandExecutor>;
@@ -265,10 +265,10 @@ describe('GitClient', () => {
   itEffect('should handle git errors', () =>
     Effect.gen(function* ($) {
       executorMock.mockFailValue(
-        Error.SystemError({
+        PlatformError.SystemError({
           message: 'git command not found',
           reason: 'NotFound',
-        } as Error.SystemError),
+        } as PlatformError.SystemError),
       );
 
       const res = yield* $(Effect.either(Effect.provide(testProg, testLayer)));
@@ -289,9 +289,9 @@ describe('GitClient', () => {
   itEffect('should handle BadArgument errors', () =>
     Effect.gen(function* ($) {
       executorMock.mockFailValue(
-        Error.BadArgument({
+        PlatformError.BadArgument({
           message: 'Dummy Message',
-        } as Error.BadArgument),
+        } as PlatformError.BadArgument),
       );
 
       const res = yield* $(Effect.either(Effect.provide(testProg, testLayer)));
@@ -311,10 +311,10 @@ describe('GitClient', () => {
   itEffect('should handle command execution platform errors', () =>
     Effect.gen(function* ($) {
       executorMock.mockFailValue(
-        Error.SystemError({
+        PlatformError.SystemError({
           message: 'Fail',
           reason: 'Unknown',
-        } as Error.SystemError),
+        } as PlatformError.SystemError),
       );
 
       const res = yield* $(Effect.either(Effect.provide(testProg, testLayer)));

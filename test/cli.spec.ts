@@ -1,5 +1,5 @@
-import {Effect, pipe, Option} from 'effect';
-import {Effect as EffectNs} from 'effect/Effect';
+import {Effect, Option, pipe} from 'effect';
+import type {Effect as EffectNs} from 'effect/Effect';
 
 import {cliEffect} from '../src/cli';
 import {
@@ -9,10 +9,10 @@ import {
 } from '../src/core';
 import {openUrl} from '../src/url-opener';
 
-import {vi, describe, afterEach, expect, Mock} from 'vitest';
-import {itEffect, toEffectMock} from './util';
+import {type Mock, afterEach, describe, expect, vi} from 'vitest';
 import {CreatedBranch, ResetBranch, SwitchedBranch} from '../src/types';
 import {cliTestLayer} from './mock-implementations';
+import {itEffect, toEffectMock} from './util';
 
 vi.mock('../src/core');
 vi.mock('../src/url-opener');
@@ -57,9 +57,9 @@ const mockOpenUrl = toEffectMock(
   >,
 );
 
-const mockLog = vi.spyOn(console, 'log').mockImplementation(() => {});
+const mockLog = vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
-const withBaseArgs = (args: string[]): Effect.Effect<string[]> =>
+const withBaseArgs = (args: Array<string>): Effect.Effect<Array<string>> =>
   Effect.sync(() => ['node', 'git-jira-branch', ...args]);
 
 describe('cli', () => {

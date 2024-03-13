@@ -1,6 +1,6 @@
-import {Chunk, Context, Effect, Layer, Sink, Stream, pipe} from 'effect';
 import * as Command from '@effect/platform/Command';
 import * as CommandExecutor from '@effect/platform/CommandExecutor';
+import {Chunk, Context, Effect, Layer, Sink, Stream, pipe} from 'effect';
 
 import {GitExecError} from './types';
 
@@ -30,8 +30,8 @@ const runGitCommand =
       commandExecutor.start,
       Effect.flatMap((process) =>
         Effect.all({
-          stdout: toString(process.stdout),
-          stderr: toString(process.stderr),
+          stdout: streamToString(process.stdout),
+          stderr: streamToString(process.stderr),
           exitCode: process.exitCode,
         }),
       ),
@@ -143,7 +143,7 @@ export const GitClientLive = Layer.effect(
   ),
 );
 
-const toString = <E>(
+const streamToString = <E>(
   stream: Stream.Stream<Uint8Array, E>,
 ): Effect.Effect<string, E> => {
   const decoder = new TextDecoder('utf-8');

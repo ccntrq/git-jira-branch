@@ -1,17 +1,17 @@
-import {execSync} from 'child_process';
+import {execSync} from 'node:child_process';
+import {mkdtemp} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {cwd} from 'node:process';
 import {Brand} from 'effect';
-import {mkdtemp} from 'fs/promises';
-import {tmpdir} from 'os';
-import {join} from 'path';
-import {cwd} from 'process';
-import {it, describe, expect, beforeAll} from 'vitest';
+import {beforeAll, describe, expect, it} from 'vitest';
 
 type Directory = string & Brand.Brand<'Directory'>;
 const Directory = Brand.nominal<Directory>();
 
 const setupTmpDir = async (): Promise<Directory> => {
   const tmpDir = await mkdtemp(join(tmpdir(), 'git-jira-branch-e2e-'));
-  // eslint-disable-next-line no-console
+  // biome-ignore lint/nursery/noConsole: log statement okay in this test
   console.log(`Setting up e2e env in ${tmpDir}`);
 
   execSync('git init', {cwd: tmpDir});
@@ -25,7 +25,7 @@ const setupTmpDir = async (): Promise<Directory> => {
   return Directory(tmpDir);
 };
 
-const runApp = (dir: Directory, ...args: string[]): string => {
+const runApp = (dir: Directory, ...args: Array<string>): string => {
   const cmd = `node ${join(cwd(), 'dist', 'main.js')} ${args.join(' ')}`;
   return execSync(cmd, {cwd: dir}).toString();
 };

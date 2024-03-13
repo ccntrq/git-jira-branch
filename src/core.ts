@@ -2,17 +2,17 @@ import {Chunk, Effect, Option} from 'effect';
 import {constant, pipe} from 'effect/Function';
 import {isNone} from 'effect/Option';
 
+import {AppConfigService} from './app-config';
 import {GitClient} from './git-client';
 import {JiraClient} from './jira-client';
-import {AppConfigService} from './app-config';
 import {
-  AppConfigError,
+  type AppConfigError,
   CreatedBranch,
-  GitJiraBranchError,
-  GitCreateJiraBranchResult,
-  JiraIssue,
-  JiraIssuetype,
-  JiraKeyPrefix,
+  type GitCreateJiraBranchResult,
+  type GitJiraBranchError,
+  type JiraIssue,
+  type JiraIssuetype,
+  type JiraKeyPrefix,
   ResetBranch,
   SwitchedBranch,
   UsageError,

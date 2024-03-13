@@ -1,7 +1,7 @@
+import * as ShellCommand from '@effect/platform/Command';
+import type * as CommandExecutor from '@effect/platform/CommandExecutor';
 import {Effect, pipe} from 'effect';
 import {UsageError} from './types';
-import * as ShellCommand from '@effect/platform/Command';
-import * as CommandExecutor from '@effect/platform/CommandExecutor';
 
 export const openUrl = (
   url: string,

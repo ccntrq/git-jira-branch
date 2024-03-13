@@ -1,13 +1,13 @@
 import {Chunk, Effect, Either, Option} from 'effect';
 import {itEffect} from './util';
 
+import {afterEach, describe, expect, vi} from 'vitest';
 import {
   gitCreateJiraBranch,
   ticketUrl,
   ticketUrlForCurrentBranch,
 } from '../src/core';
-import {vi, describe, expect, afterEach} from 'vitest';
-import {JiraIssue} from '../src/types';
+import type {JiraIssue} from '../src/types';
 import {
   mockAppConfigService,
   mockGitClient,

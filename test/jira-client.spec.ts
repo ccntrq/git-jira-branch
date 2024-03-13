@@ -1,9 +1,9 @@
-import {ConfigProvider, Effect, Either, Layer} from 'effect';
 import * as Http from '@effect/platform/HttpClient';
+import {ConfigProvider, Effect, Either, Layer} from 'effect';
 
 import {AppConfigService} from '../src/app-config';
 import {JiraClient, JiraClientLive} from '../src/jira-client';
-import {JiraApiError, JiraIssue} from '../src/types';
+import {JiraApiError, type JiraIssue} from '../src/types';
 
 import {describe, expect} from 'vitest';
 import {itEffect} from './util';

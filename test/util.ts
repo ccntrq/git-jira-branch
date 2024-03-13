@@ -1,47 +1,40 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {Effect, pipe} from 'effect';
 
-import {Mock, it, vi} from 'vitest';
+import {type Mock, it, vi} from 'vitest';
 
 export const itEffect = (() => {
   const f = <E, A>(
     name: string,
     self: () => Effect.Effect<A, E>,
     timeout = 5_000,
-  ): void => {
-    return it(
-      name,
-      () => pipe(Effect.suspend(self), Effect.runPromise),
-      timeout,
-    );
-  };
+  ): void =>
+    it(name, () => pipe(Effect.suspend(self), Effect.runPromise), timeout);
   return Object.assign(f, {
     skip: <E, A>(
       name: string,
       self: () => Effect.Effect<A, E>,
       timeout = 5_000,
-    ): void => {
-      return it.skip(
+    ): void =>
+      it.skip(
         name,
         () => pipe(Effect.suspend(self), Effect.runPromise),
         timeout,
-      );
-    },
+      ),
     only: <E, A>(
       name: string,
       self: () => Effect.Effect<A, E>,
       timeout = 5_000,
-    ): void => {
-      return it.only(
+    ): void =>
+      it.only(
         name,
         () => pipe(Effect.suspend(self), Effect.runPromise),
         timeout,
-      );
-    },
+      ),
   });
 })();
 
-export interface EffectMock<T extends any[], E = any, R = any>
+// biome-ignore lint/suspicious/noExplicitAny: any okay in tests
+export interface EffectMock<T extends Array<any>, E = any, R = any>
   extends Mock<T, Effect.Effect<R, E>> {
   mockSuccessValue: (obj: R) => this;
   mockSuccessValueOnce: (obj: R) => this;
@@ -49,7 +42,8 @@ export interface EffectMock<T extends any[], E = any, R = any>
   mockFailValueOnce: (e: E) => this;
 }
 
-export const toEffectMock = <T extends any[], E = any, R = any>(
+// biome-ignore lint/suspicious/noExplicitAny: any okay in tests
+export const toEffectMock = <T extends Array<any>, E = any, R = any>(
   fn: Mock<T, Effect.Effect<R, E>>,
 ): EffectMock<T, E, R> => {
   const mock = Object.assign(fn, {
@@ -67,7 +61,8 @@ export const toEffectMock = <T extends any[], E = any, R = any>(
   return mock;
 };
 
-export const effectMock = <T extends any[], E = any, R = any>(
+// biome-ignore lint/suspicious/noExplicitAny: any okay in tests
+export const effectMock = <T extends Array<any>, E = any, R = any>(
   implementation?: (...args: T) => Effect.Effect<R, E>,
 ): EffectMock<T, E, R> =>
   toEffectMock<T, E, R>(
@@ -80,9 +75,13 @@ export const effectMock = <T extends any[], E = any, R = any>(
   );
 
 export const curriedEffectMock2 = <
-  T1 extends any[],
-  T2 extends any[],
+  // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
+  T1 extends Array<any>,
+  // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
+  T2 extends Array<any>,
+  // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
   E = any,
+  // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
   R = any,
 >(
   implementation?: (...args: T2) => Effect.Effect<R, E>,
