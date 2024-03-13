@@ -1,4 +1,3 @@
-// eslint-disable-next-line node/no-extraneous-import
 import * as Schema from '@effect/schema/Schema';
 import {Brand, Data, Match, Option, pipe} from 'effect';
 import {dual} from 'effect/Function';

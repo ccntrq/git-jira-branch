@@ -1,8 +1,6 @@
 import {Layer, Context, Effect} from 'effect';
 import * as Http from '@effect/platform/HttpClient';
-// eslint-disable-next-line node/no-extraneous-import
 import * as ArrayFormatter from '@effect/schema/ArrayFormatter';
-// eslint-disable-next-line node/no-extraneous-import
 import * as ParseResult from '@effect/schema/ParseResult';
 
 import {AppConfigService} from './app-config';

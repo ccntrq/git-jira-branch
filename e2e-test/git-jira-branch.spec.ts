@@ -11,7 +11,6 @@ const Directory = Brand.nominal<Directory>();
 
 const setupTmpDir = async (): Promise<Directory> => {
   const tmpDir = await mkdtemp(join(tmpdir(), 'git-jira-branch-e2e-'));
-  // eslint-disable-next-line no-console
   console.log(`Setting up e2e env in ${tmpDir}`);
 
   execSync('git init', {cwd: tmpDir});

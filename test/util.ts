@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {Effect, pipe} from 'effect';
 
 import {Mock, it, vi} from 'vitest';
