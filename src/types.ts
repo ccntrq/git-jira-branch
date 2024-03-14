@@ -48,7 +48,7 @@ export const JiraIssuetypeSchema = Schema.struct({
   name: Schema.string,
 });
 
-export type JiraIssuetype = Schema.Schema.To<typeof JiraIssuetypeSchema>;
+export type JiraIssuetype = Schema.Schema.Type<typeof JiraIssuetypeSchema>;
 
 export const JiraIssueSchema = Schema.struct({
   key: Schema.string,
@@ -58,7 +58,7 @@ export const JiraIssueSchema = Schema.struct({
   }),
 });
 
-export type JiraIssue = Schema.Schema.To<typeof JiraIssueSchema>;
+export type JiraIssue = Schema.Schema.Type<typeof JiraIssueSchema>;
 
 export type GitCreateJiraBranchResult = Data.TaggedEnum<{
   CreatedBranch: {branch: string};
