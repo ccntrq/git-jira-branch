@@ -4,26 +4,18 @@ import {itEffect} from './util';
 import {afterEach, describe, expect, vi} from 'vitest';
 import {
   gitCreateJiraBranch,
+  ticketInfo,
+  ticketInfoForCurrentBranch,
   ticketUrl,
   ticketUrlForCurrentBranch,
 } from '../src/core';
-import type {JiraIssue} from '../src/types';
+import {dummyJiraIssue} from './dummies/dummyJiraIssue';
 import {
   mockAppConfigService,
   mockGitClient,
   mockJiraClient,
   testLayer,
 } from './mock-implementations';
-
-const testIssue: JiraIssue = {
-  key: 'DUMMYAPP-123',
-  fields: {
-    summary: 'Dummy isssue summary',
-    issuetype: {
-      name: 'Feature',
-    },
-  },
-};
 
 describe('core', () => {
   describe('gitCreateJiraBranch', () => {
@@ -39,7 +31,9 @@ describe('core', () => {
         mockGitClient.createGitBranch.mockReturnValue(
           Effect.succeed(undefined),
         );
-        mockJiraClient.getJiraIssue.mockReturnValue(Effect.succeed(testIssue));
+        mockJiraClient.getJiraIssue.mockReturnValue(
+          Effect.succeed(dummyJiraIssue),
+        );
 
         const result = yield* $(
           Effect.either(
@@ -87,9 +81,9 @@ describe('core', () => {
         );
         mockJiraClient.getJiraIssue.mockReturnValue(
           Effect.succeed({
-            ...testIssue,
+            ...dummyJiraIssue,
             fields: {
-              ...testIssue.fields,
+              ...dummyJiraIssue.fields,
               issuetype: {
                 name: 'Bug',
               },
@@ -140,7 +134,9 @@ describe('core', () => {
           Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
         );
         mockGitClient.createGitBranchFrom.innerMock.mockSuccessValue(undefined);
-        mockJiraClient.getJiraIssue.mockReturnValue(Effect.succeed(testIssue));
+        mockJiraClient.getJiraIssue.mockReturnValue(
+          Effect.succeed(dummyJiraIssue),
+        );
 
         const result = yield* $(
           Effect.either(
@@ -190,7 +186,9 @@ describe('core', () => {
           Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
         );
         mockGitClient.createGitBranchFrom.innerMock.mockSuccessValue(undefined);
-        mockJiraClient.getJiraIssue.mockReturnValue(Effect.succeed(testIssue));
+        mockJiraClient.getJiraIssue.mockReturnValue(
+          Effect.succeed(dummyJiraIssue),
+        );
         mockGitClient.listBranches.mockSuccessValue(
           Chunk.fromIterable([
             'feat/DUMMYAPP-123-dummy-isssue-summary',
@@ -233,7 +231,9 @@ describe('core', () => {
           Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
         );
         mockGitClient.createGitBranchFrom.innerMock.mockSuccessValue(undefined);
-        mockJiraClient.getJiraIssue.mockReturnValue(Effect.succeed(testIssue));
+        mockJiraClient.getJiraIssue.mockReturnValue(
+          Effect.succeed(dummyJiraIssue),
+        );
         mockGitClient.listBranches.mockSuccessValue(
           Chunk.fromIterable(['master']),
         );
@@ -272,7 +272,7 @@ describe('core', () => {
         mockAppConfigService.getAppConfig.mockSuccessValue({
           defaultJiraKeyPrefix: Option.none(),
         });
-        mockJiraClient.getJiraIssue.mockSuccessValue(testIssue);
+        mockJiraClient.getJiraIssue.mockSuccessValue(dummyJiraIssue);
         mockGitClient.listBranches.mockSuccessValue(
           Chunk.fromIterable([
             'feat/DUMMYAPP-123-dummy-isssue-summary',
@@ -315,7 +315,9 @@ describe('core', () => {
         mockGitClient.createGitBranch.mockReturnValue(
           Effect.succeed(undefined),
         );
-        mockJiraClient.getJiraIssue.mockReturnValue(Effect.succeed(testIssue));
+        mockJiraClient.getJiraIssue.mockReturnValue(
+          Effect.succeed(dummyJiraIssue),
+        );
 
         const result = yield* $(
           Effect.either(
@@ -364,7 +366,9 @@ describe('core', () => {
         mockGitClient.createGitBranch.mockReturnValue(
           Effect.succeed(undefined),
         );
-        mockJiraClient.getJiraIssue.mockReturnValue(Effect.succeed(testIssue));
+        mockJiraClient.getJiraIssue.mockReturnValue(
+          Effect.succeed(dummyJiraIssue),
+        );
 
         const result = yield* $(
           Effect.either(
@@ -413,9 +417,9 @@ describe('core', () => {
         );
         mockJiraClient.getJiraIssue.mockReturnValue(
           Effect.succeed({
-            ...testIssue,
+            ...dummyJiraIssue,
             fields: {
-              ...testIssue.fields,
+              ...dummyJiraIssue.fields,
               summary: '  -Öther-Dümmÿ_ißue summäry!',
             },
           }),
@@ -498,6 +502,50 @@ describe('core', () => {
             '"https://gcjb.atlassian.com/browse/MYAPP-123"',
           );
         }),
+    );
+  });
+
+  describe('ticketInfo', () => {
+    itEffect('should return info for a given ticket', () =>
+      Effect.gen(function* ($) {
+        mockAppConfigService.getAppConfig.mockSuccessValue({
+          defaultJiraKeyPrefix: Option.some('DUMMYAPP'),
+        });
+
+        mockJiraClient.getJiraIssue.mockSuccessValue(dummyJiraIssue);
+
+        const result = yield* $(Effect.provide(ticketInfo('123'), testLayer));
+
+        expect(mockJiraClient.getJiraIssue).toHaveBeenLastCalledWith(
+          'DUMMYAPP-123',
+        );
+        expect(result).toBe(dummyJiraIssue);
+      }),
+    );
+  });
+
+  describe('ticketInfoForCurrentBranch', () => {
+    itEffect('should extract ticket from branch and return issue info', () =>
+      Effect.gen(function* ($) {
+        mockAppConfigService.getAppConfig.mockSuccessValue({
+          defaultJiraKeyPrefix: Option.some('DUMMYAPP'),
+        });
+
+        mockJiraClient.getJiraIssue.mockSuccessValue(dummyJiraIssue);
+
+        mockGitClient.getCurrentBranch.mockSuccessValue(
+          'feat/DUMMYAPP-123-dummy-isssue-summary',
+        );
+
+        const result = yield* $(
+          Effect.provide(ticketInfoForCurrentBranch(), testLayer),
+        );
+
+        expect(mockJiraClient.getJiraIssue).toHaveBeenLastCalledWith(
+          'DUMMYAPP-123',
+        );
+        expect(result).toBe(dummyJiraIssue);
+      }),
     );
   });
 });

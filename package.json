@@ -64,6 +64,7 @@
     "@effect/platform": "0.48.14",
     "@effect/platform-node": "0.45.16",
     "@effect/printer": "0.31.19",
+    "@effect/printer-ansi": "0.32.19",
     "@effect/schema": "0.64.10",
     "effect": "2.4.10"
   }

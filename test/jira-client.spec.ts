@@ -6,6 +6,7 @@ import {JiraClient, JiraClientLive} from '../src/jira-client';
 import {JiraApiError, type JiraIssue} from '../src/types';
 
 import {describe, expect} from 'vitest';
+import {dummyJiraIssue} from './dummies/dummyJiraIssue';
 import {itEffect} from './util';
 
 const appConfigTest = AppConfigService.Live.pipe(
@@ -51,56 +52,16 @@ const testProg = Effect.gen(function* ($) {
 describe('JiraClient', () => {
   itEffect('should make ticket request', () =>
     Effect.gen(function* ($) {
-      const testIssue: JiraIssue = {
-        key: 'DUMMYAPP-123',
-        fields: {
-          summary: 'Dummy isssue summary',
-          issuetype: {
-            name: 'Feature',
-          },
-        },
-      };
-
       const res = yield* $(
         Effect.either(
-          Effect.provide(testProg, mkTestLayer(Response.json(testIssue))),
+          Effect.provide(testProg, mkTestLayer(Response.json(dummyJiraIssue))),
         ),
       );
 
       Either.match(res, {
         onLeft: (e) =>
           expect.unreachable(`Should have returned a ticket: ${e}`),
-        onRight: (ticket) => expect(ticket).toEqual(testIssue),
-      });
-    }),
-  );
-
-  itEffect('should handle BadRequest errors', () =>
-    Effect.gen(function* ($) {
-      const testIssue: Partial<JiraIssue> = {
-        fields: {
-          summary: 'Dummy isssue summary',
-          issuetype: {
-            name: 'Feature',
-          },
-        },
-      };
-
-      const res = yield* $(
-        Effect.either(
-          Effect.provide(testProg, mkTestLayer(Response.json(testIssue))),
-        ),
-      );
-
-      Either.match(res, {
-        onLeft: (e) => {
-          expect(e._tag).toBe('JiraApiError');
-          expect(e.message).toMatchInlineSnapshot(`
-            "Failed to parse ticket response from Jira:
-            'key': 'is missing'"
-          `);
-        },
-        onRight: (_) => expect.unreachable('Should have returned an error.'),
+        onRight: (ticket) => expect(ticket).toEqual(dummyJiraIssue),
       });
     }),
   );
@@ -109,13 +70,9 @@ describe('JiraClient', () => {
     Effect.gen(function* ($) {
       const testIssue: Partial<JiraIssue> = {
         fields: {
-          summary: 'Dummy isssue summary',
-          issuetype: {
-            name: 'Feature',
-          },
+          ...dummyJiraIssue.fields,
         },
       };
-
       const res = yield* $(
         Effect.either(
           Effect.provide(testProg, mkTestLayer(Response.json(testIssue))),

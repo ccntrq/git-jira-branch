@@ -4,18 +4,28 @@ import type {Effect as EffectNs} from 'effect/Effect';
 import {cliEffect} from '../src/cli';
 import {
   gitCreateJiraBranch,
+  ticketInfo,
+  ticketInfoForCurrentBranch,
   ticketUrl,
   ticketUrlForCurrentBranch,
 } from '../src/core';
 import {openUrl} from '../src/url-opener';
 
 import {type Mock, afterEach, describe, expect, vi} from 'vitest';
-import {CreatedBranch, ResetBranch, SwitchedBranch} from '../src/types';
+import {formatIssue} from '../src/issue-formatter';
+import {
+  CreatedBranch,
+  type JiraIssue,
+  ResetBranch,
+  SwitchedBranch,
+} from '../src/types';
+import {dummyJiraIssue} from './dummies/dummyJiraIssue';
 import {cliTestLayer} from './mock-implementations';
 import {itEffect, toEffectMock} from './util';
 
 vi.mock('../src/core');
 vi.mock('../src/url-opener');
+vi.mock('../src/issue-formatter');
 
 const mockGitCreateJiraBranch = toEffectMock(
   gitCreateJiraBranch as unknown as Mock<
@@ -47,6 +57,16 @@ const mockTicketUrlForCurrentBranch = toEffectMock(
   >,
 );
 
+const mockTicketInfoForCurrentBranch = toEffectMock<
+  typeof ticketInfoForCurrentBranch
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+>(ticketInfoForCurrentBranch as any);
+
+const mockTicketInfo = toEffectMock<
+  typeof ticketInfo
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+>(ticketInfo as any);
+
 const mockOpenUrl = toEffectMock(
   openUrl as unknown as Mock<
     Parameters<typeof openUrl>,
@@ -56,6 +76,8 @@ const mockOpenUrl = toEffectMock(
     >
   >,
 );
+
+const mockFormatIssue = formatIssue as unknown as Mock<[JiraIssue], string>;
 
 const mockLog = vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
@@ -302,6 +324,65 @@ describe('cli', () => {
         yield* $(
           Effect.provide(
             pipe(withBaseArgs(['open', '--help']), Effect.flatMap(cliEffect)),
+            cliTestLayer,
+          ),
+        );
+
+        expect(mockGitCreateJiraBranch).not.toHaveBeenCalled();
+        expect(
+          (mockLog.mock.calls[0]?.[0] as string)
+            .split(/\n/)
+            .slice(3)
+            .join('\n'),
+        ).toMatchSnapshot();
+      }),
+    );
+  });
+
+  describe('info subcommand', () => {
+    afterEach(() => {
+      vi.clearAllMocks();
+    });
+
+    itEffect('should render ticket info for current branch', () =>
+      Effect.gen(function* ($) {
+        mockTicketInfoForCurrentBranch.mockSuccessValue(dummyJiraIssue);
+        mockFormatIssue.mockReturnValue('formatted issue');
+
+        yield* $(
+          withBaseArgs(['info']),
+          Effect.flatMap(cliEffect),
+          Effect.provide(cliTestLayer),
+        );
+
+        expect(mockTicketInfoForCurrentBranch).toHaveBeenCalledWith();
+        expect(mockLog).toHaveBeenCalledWith('formatted issue');
+        expect(mockFormatIssue).toHaveBeenCalledWith(dummyJiraIssue);
+      }),
+    );
+
+    itEffect('should render ticket info for given branch', () =>
+      Effect.gen(function* ($) {
+        mockTicketInfo.mockSuccessValue(dummyJiraIssue);
+        mockFormatIssue.mockReturnValue('formatted issue');
+
+        yield* $(
+          withBaseArgs(['info', '1234']),
+          Effect.flatMap(cliEffect),
+          Effect.provide(cliTestLayer),
+        );
+
+        expect(mockTicketInfo).toHaveBeenCalledWith('1234');
+        expect(mockLog).toHaveBeenCalledWith('formatted issue');
+        expect(mockFormatIssue).toHaveBeenCalledWith(dummyJiraIssue);
+      }),
+    );
+
+    itEffect('should print subcommand help (--help)', () =>
+      Effect.gen(function* ($) {
+        yield* $(
+          Effect.provide(
+            pipe(withBaseArgs(['info', '--help']), Effect.flatMap(cliEffect)),
             cliTestLayer,
           ),
         );

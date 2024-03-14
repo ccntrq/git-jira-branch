@@ -1,0 +1,14 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`issue-formatter > formatIssue > should format issue 1`] = `
+"[0;4m[0;1;4mDUMMYAPP-123[0;4m - Dummy isssue summary[0m
+[0;4m[0;1;4mFeature[0;4m | [0;1;4mStatus:[0;4m done | [0;1;4mCreator:[0;4m Wendy Darling | [0;1;4mAssignee:[0;4m Peter Pan[0m
+
+Dummy issue description.
+    
+This is a multiline description with some very very long lines that should be broken up into multiple lines when rendered.
+
+* This is a list item
+* This is a list item
+"
+`;

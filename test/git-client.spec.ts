@@ -40,8 +40,8 @@ const mkTestProcess = (
 describe('GitClient', () => {
   let executorMock: EffectMock<
     [Command.Command],
-    PlatformError.SystemError | PlatformError.BadArgument,
-    CommandExecutor.Process
+    CommandExecutor.Process,
+    PlatformError.SystemError | PlatformError.BadArgument
   >;
   let testExecutor: Layer.Layer<CommandExecutor.CommandExecutor>;
   let testLayer: Layer.Layer<GitClient>;

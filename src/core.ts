@@ -9,10 +9,10 @@ import {
   type AppConfigError,
   CreatedBranch,
   type GitCreateJiraBranchResult,
+  type GitExecError,
   type GitJiraBranchError,
   type JiraIssue,
   type JiraIssuetype,
-  type JiraKeyPrefix,
   ResetBranch,
   SwitchedBranch,
   UsageError,
@@ -28,14 +28,15 @@ export const gitCreateJiraBranch = (
   AppConfigService | GitClient | JiraClient
 > =>
   Effect.gen(function* ($) {
-    const [envProvider, gitClient, jiraClient] = yield* $(
-      Effect.all([AppConfigService, GitClient, JiraClient]),
+    const [gitClient, jiraClient] = yield* $(
+      Effect.all([GitClient, JiraClient]),
     );
 
-    const {defaultJiraKeyPrefix} = yield* $(envProvider.getAppConfig);
-    const fullKey = buildJiraKey(defaultJiraKeyPrefix, jiraKey);
+    const issue = yield* $(
+      fullKey(jiraKey),
+      Effect.flatMap(jiraClient.getJiraIssue),
+    );
 
-    const issue = yield* $(jiraClient.getJiraIssue(fullKey));
     const branchName = jiraIssueToBranchName(issue);
 
     const branchExists = yield* $(
@@ -59,41 +60,61 @@ export const gitCreateJiraBranch = (
     return (resetBranch ? ResetBranch : CreatedBranch)({branch: branchName});
   });
 
+const getJiraKeyFromCurrentBranch = (): Effect.Effect<
+  string,
+  UsageError | GitExecError,
+  GitClient
+> =>
+  pipe(
+    GitClient,
+    Effect.flatMap((_) => _.getCurrentBranch()),
+    Effect.map(extractJiraKey),
+    Effect.flatMap((key) =>
+      Option.match({
+        onNone: () =>
+          Effect.fail(
+            UsageError({message: 'No Jira Key found in current branch'}),
+          ),
+        onSome: (key: string) => Effect.succeed(key),
+      })(key),
+    ),
+  );
+
 export const ticketUrlForCurrentBranch = (): Effect.Effect<
   string,
   GitJiraBranchError,
   AppConfigService | GitClient
-> =>
-  Effect.gen(function* ($) {
-    const currentBranch = yield* $(
-      GitClient,
-      Effect.flatMap(({getCurrentBranch}) => getCurrentBranch()),
-    );
-
-    const jiraKey = extractJiraKey(currentBranch);
-
-    if (isNone(jiraKey)) {
-      return yield* $(
-        Effect.fail(
-          UsageError({message: 'No Jira Key found in current branch'}),
-        ),
-      );
-    }
-
-    return yield* $(ticketUrl(jiraKey.value));
-  });
+> => getJiraKeyFromCurrentBranch().pipe(Effect.flatMap(ticketUrl));
 
 export const ticketUrl = (
   jiraKey: string,
 ): Effect.Effect<string, AppConfigError, AppConfigService> =>
-  pipe(
-    AppConfigService,
-    Effect.flatMap(({getAppConfig}) => getAppConfig),
-    Effect.map(({defaultJiraKeyPrefix, jiraApiUrl}) =>
-      pipe(
-        buildJiraKey(defaultJiraKeyPrefix, jiraKey),
-        buildTicketUrl(jiraApiUrl),
-      ),
+  pipe(jiraKey, fullKey, Effect.flatMap(buildTicketUrl));
+
+export const ticketInfoForCurrentBranch = () =>
+  getJiraKeyFromCurrentBranch().pipe(Effect.flatMap(ticketInfo));
+
+export const ticketInfo = (jiraKey: string) =>
+  Effect.gen(function* ($) {
+    const jiraClient = yield* $(JiraClient);
+
+    const issue = yield* $(
+      fullKey(jiraKey),
+      Effect.flatMap(jiraClient.getJiraIssue),
+    );
+
+    return issue;
+  });
+
+const fullKey = (
+  jiraKey: string,
+): Effect.Effect<string, AppConfigError, AppConfigService> =>
+  AppConfigService.pipe(
+    Effect.flatMap((_) => _.getAppConfig),
+    Effect.map(({defaultJiraKeyPrefix}) =>
+      jiraKey.match(/^([a-z]+)-(\d+)$/i) || isNone(defaultJiraKeyPrefix)
+        ? jiraKey
+        : `${defaultJiraKeyPrefix.value}-${jiraKey}`,
     ),
   );
 
@@ -121,20 +142,15 @@ const jiraIssuetypeBranchtype = (issuetype: JiraIssuetype): string => {
   return 'feat';
 };
 
-const buildTicketUrl =
-  (jiraApiUrl: string) =>
-  (jiraKey: string): string =>
-    `${jiraApiUrl}/browse/${jiraKey}`;
-
-const buildJiraKey = (
-  defaultJiraKeyPrefix: Option.Option<JiraKeyPrefix>,
+const buildTicketUrl = (
   jiraKey: string,
-): string =>
-  jiraKey.match(/^([a-z]+)-(\d+)$/i) || isNone(defaultJiraKeyPrefix)
-    ? jiraKey
-    : `${defaultJiraKeyPrefix.value}-${jiraKey}`;
+): Effect.Effect<string, AppConfigError, AppConfigService> =>
+  AppConfigService.pipe(
+    Effect.flatMap((_) => _.getAppConfig),
+    Effect.map(({jiraApiUrl}) => `${jiraApiUrl}/browse/${jiraKey}`),
+  );
 
-const extractJiraKey = (branchName: string): Option.Option<string> => {
+function extractJiraKey(branchName: string): Option.Option<string> {
   const res = branchName.match(/^(?:\w+\/)?((?:[a-z]+-)?\d+)/i);
   return Option.fromNullable(res?.[1]);
-};
+}

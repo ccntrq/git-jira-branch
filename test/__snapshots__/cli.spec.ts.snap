@@ -123,6 +123,65 @@ exports[`cli > create subcommand > should report unknwon argument 1`] = `
 ]
 `;
 
+exports[`cli > info subcommand > should print subcommand help (--help) 1`] = `
+"
+[0;1mUSAGE[0m
+
+$ info [<jira-key>]
+
+[0;1mDESCRIPTION[0m
+
+
+Displays information for the given Jira ticket on your terminal. If no ticket is
+provided, it presents information for the Jira ticket associated with the
+current branch.
+
+[0;1mARGUMENTS[0m
+
+[0;1m[0;30;1m<jira-key>[0;1m[0m
+
+  A user-defined piece of text.
+
+  The Jira key for the ticket to get information for (e.g. FOOX-1234)
+
+  This setting is optional.
+
+[0;1mOPTIONS[0m
+
+[0;1m--completions sh | bash | fish | zsh[0m
+
+  One of the following: sh, bash, fish, zsh
+
+  Generate a completion script for a specific shell
+
+  This setting is optional.
+
+[0;1m(-h, --help)[0m
+
+  A true or false value.
+
+  Show the help documentation for a command
+
+  This setting is optional.
+
+[0;1m--wizard[0m
+
+  A true or false value.
+
+  Start wizard mode for a command
+
+  This setting is optional.
+
+[0;1m--version[0m
+
+  A true or false value.
+
+  Show the version of the application
+
+  This setting is optional.
+"
+`;
+
 exports[`cli > main command > should print help (--help) 1`] = `
 "
 [0;1mUSAGE[0m
@@ -173,6 +232,11 @@ is based on the ticket summary.
   - open [<jira-key>]                                      
 Opens the given Jira ticket in your default browser. If no ticket is given the
 jira ticket for the current branch is opened.
+
+  - info [<jira-key>]                                      
+Displays information for the given Jira ticket on your terminal. If no ticket is
+provided, it presents information for the Jira ticket associated with the
+current branch.
 "
 `;
 
