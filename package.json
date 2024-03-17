@@ -1,6 +1,6 @@
 {
   "name": "git-jira-branch",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Manage branches for your Jira tickets",
   "license": "MIT",
   "repository": {
@@ -18,12 +18,18 @@
   "volta": {
     "node": "20.9.0"
   },
-  "keywords": ["git", "jira", "productivity"],
+  "keywords": [
+    "git",
+    "jira",
+    "productivity"
+  ],
   "bin": {
     "git-jira-branch": "dist/main.js",
     "git-jb": "dist/main.js"
   },
-  "files": ["/dist"],
+  "files": [
+    "/dist"
+  ],
   "scripts": {
     "start": "npm run build && node dist/main.js",
     "build": "tsc --build src",
