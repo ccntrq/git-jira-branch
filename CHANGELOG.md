@@ -9,6 +9,13 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [1.0.3](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v1.0.2...git-jira-branch-v1.0.3) (2024-03-19)
+
+
+### Bug Fixes
+
+* **deps:** resolve broken effect package combination ([#227](https://github.com/ccntrq/git-jira-branch/issues/227)) ([3205612](https://github.com/ccntrq/git-jira-branch/commit/3205612b07852910f5bc1725fe7b951a8464ca28))
+
 ## [1.0.2](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v1.0.1...git-jira-branch-v1.0.2) (2024-03-17)
 
 
