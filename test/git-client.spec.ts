@@ -6,6 +6,7 @@ import * as PlatformError from '@effect/platform/Error';
 
 import {TextEncoder} from 'node:util';
 import type {Command} from '@effect/platform';
+import {NodeInspectSymbol} from 'effect/Inspectable';
 import {GitClient, GitClientLive} from '../src/git-client';
 import {GitExecError} from '../src/types';
 import {type EffectMock, effectMock, itEffect} from './util';
@@ -23,6 +24,7 @@ const mkTestProcess = (
   const encoder = new TextEncoder();
   return {
     [CommandExecutor.ProcessTypeId]: CommandExecutor.ProcessTypeId,
+    [NodeInspectSymbol]: () => 'not implemented',
     pid: CommandExecutor.ProcessId(1),
     exitCode: Effect.succeed(CommandExecutor.ExitCode(exitCode)),
     isRunning: Effect.succeed(false),
@@ -30,6 +32,8 @@ const mkTestProcess = (
     stdout: stdout ? Stream.make(encoder.encode(stdout)) : Stream.empty,
     stdin: Sink.drain,
     kill: () => Effect.unit,
+    toJSON: () => 'not implemented',
+    toString: () => 'not implemented',
   };
 };
 
