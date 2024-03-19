@@ -73,7 +73,7 @@ const openCommand = pipe(
     {
       jiraKey: Args.withDescription(
         Args.optional(Args.text({name: 'jira-key'})),
-        'The Jira ticket key to create a branch for (e.g. FOOX-1234)',
+        'The Jira key for the ticket to open (e.g. FOOX-1234)',
       ),
     },
     ({jiraKey}) =>
