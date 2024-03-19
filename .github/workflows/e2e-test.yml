@@ -21,7 +21,11 @@ jobs:
           runner-os: ${{ matrix.os }}
       - name: Build
         run: npm run build
-      - name: Run tests
+      - name: Pack
+        run: npm pack
+      - name: Install
+        run: npm install -g git-jira-branch-*.tgz
+      - name: Run E2E tests
         env:
           JIRA_API_TOKEN: ${{ secrets.GCJB_JIRA_API_TOKEN }}
           JIRA_USER_EMAIL: ${{ secrets.GCJB_USER_EMAIL }}
