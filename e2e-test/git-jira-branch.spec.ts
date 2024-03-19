@@ -2,7 +2,6 @@ import {execSync} from 'node:child_process';
 import {mkdtemp} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
-import {cwd} from 'node:process';
 import {Brand} from 'effect';
 import {beforeAll, describe, expect, it} from 'vitest';
 
@@ -26,7 +25,7 @@ const setupTmpDir = async (): Promise<Directory> => {
 };
 
 const runApp = (dir: Directory, ...args: Array<string>): string => {
-  const cmd = `node ${join(cwd(), 'dist', 'main.js')} ${args.join(' ')}`;
+  const cmd = `git-jira-branch ${args.join(' ')}`;
   return execSync(cmd, {cwd: dir}).toString();
 };
 
