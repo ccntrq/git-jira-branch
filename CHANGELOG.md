@@ -9,6 +9,18 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [1.1.0](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v1.0.4...git-jira-branch-v1.1.0) (2024-03-21)
+
+
+### Features
+
+* add info subcommand to display details for a ticket ([#218](https://github.com/ccntrq/git-jira-branch/issues/218)) ([88317b0](https://github.com/ccntrq/git-jira-branch/commit/88317b0d08eece029d255d02b553e090887e8796))
+
+
+### Bug Fixes
+
+* **deps:** bump the production-dependencies group with 6 updates ([#235](https://github.com/ccntrq/git-jira-branch/issues/235)) ([c72a69a](https://github.com/ccntrq/git-jira-branch/commit/c72a69a248ba5cf529b96e64468ce61c9a658f42))
+
 ## [1.0.4](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v1.0.3...git-jira-branch-v1.0.4) (2024-03-20)
 
 
