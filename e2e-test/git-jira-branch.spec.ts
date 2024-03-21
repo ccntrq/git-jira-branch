@@ -101,4 +101,17 @@ describe('git-jira-branch', () => {
       .trim();
     expect(lastCommitMsg2).toMatchInlineSnapshot('"init"');
   });
+
+  it('info subcommand prints ticket info for given ticket', () => {
+    const result = runApp(tmpDir, 'info', '1');
+    expect(result).toMatchSnapshot();
+  });
+
+  it('info subcommand prints ticket info for current branch', () => {
+    execSync('git switch "feat/GCJB-1-e2e-test-ticket-with-a-fancy-summary"', {
+      cwd: tmpDir,
+    });
+    const result = runApp(tmpDir, 'info');
+    expect(result).toMatchSnapshot();
+  });
 });

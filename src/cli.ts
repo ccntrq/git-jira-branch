@@ -13,10 +13,13 @@ import * as packageJson from '../package.json';
 import type {AppConfigService} from './app-config';
 import {
   gitCreateJiraBranch,
+  ticketInfo,
+  ticketInfoForCurrentBranch,
   ticketUrl,
   ticketUrlForCurrentBranch,
 } from './core';
 import type {GitClient} from './git-client';
+import {formatIssue} from './issue-formatter';
 import type {JiraClient} from './jira-client';
 import {matchGitCreateJiraBranchResult} from './types';
 import {openUrl} from './url-opener';
@@ -96,8 +99,36 @@ jira ticket for the current branch is opened.`,
   ),
 );
 
+const infoCommand = pipe(
+  Command.make(
+    'info',
+    {
+      jiraKey: Args.withDescription(
+        Args.optional(Args.text({name: 'jira-key'})),
+        'The Jira key for the ticket to get information for (e.g. FOOX-1234)',
+      ),
+    },
+    ({jiraKey}) =>
+      pipe(
+        jiraKey,
+        Option.match({
+          onSome: ticketInfo,
+          onNone: () => ticketInfoForCurrentBranch(),
+        }),
+        Effect.map(formatIssue),
+        Effect.flatMap(Console.log),
+      ),
+  ),
+  Command.withDescription(
+    `
+Displays information for the given Jira ticket on your terminal. If no ticket is
+provided, it presents information for the Jira ticket associated with the
+current branch.`,
+  ),
+);
+
 const mainCommand = gitJiraBranch.pipe(
-  Command.withSubcommands([createCommand, openCommand]),
+  Command.withSubcommands([createCommand, openCommand, infoCommand]),
 );
 
 const cli = {

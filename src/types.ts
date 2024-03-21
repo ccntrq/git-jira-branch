@@ -50,11 +50,24 @@ export const JiraIssuetypeSchema = Schema.struct({
 
 export type JiraIssuetype = Schema.Schema.Type<typeof JiraIssuetypeSchema>;
 
+// TODO: transform nullable values into optionals
 export const JiraIssueSchema = Schema.struct({
   key: Schema.string,
   fields: Schema.struct({
     summary: Schema.string,
     issuetype: JiraIssuetypeSchema,
+    status: Schema.struct({
+      name: Schema.string,
+    }),
+    description: Schema.nullable(Schema.string),
+    assignee: Schema.nullable(
+      Schema.struct({
+        displayName: Schema.string,
+      }),
+    ),
+    creator: Schema.struct({
+      displayName: Schema.string,
+    }),
   }),
 });
 

@@ -1,4 +1,5 @@
 import {Effect, pipe} from 'effect';
+import type {Effect as EffectNs} from 'effect/Effect';
 
 import {type Mock, it, vi} from 'vitest';
 
@@ -34,7 +35,7 @@ export const itEffect = (() => {
 })();
 
 // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
-export interface EffectMock<T extends Array<any>, E = any, R = any>
+export interface EffectMock<T extends Array<any>, R = any, E = any>
   extends Mock<T, Effect.Effect<R, E>> {
   mockSuccessValue: (obj: R) => this;
   mockSuccessValueOnce: (obj: R) => this;
@@ -42,36 +43,88 @@ export interface EffectMock<T extends Array<any>, E = any, R = any>
   mockFailValueOnce: (e: E) => this;
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: any okay in tests
-export const toEffectMock = <T extends Array<any>, E = any, R = any>(
-  fn: Mock<T, Effect.Effect<R, E>>,
-): EffectMock<T, E, R> => {
+type ToEffectMock = {
+  // biome-ignore lint/suspicious/noExplicitAny: Okay to use any in tests
+  <T extends Array<any>, R = any, E = any>(
+    fn: Mock<T, Effect.Effect<R, E>>,
+  ): EffectMock<T, R, E>;
+  <
+    FN extends (
+      // biome-ignore lint/suspicious/noExplicitAny: Okay to use any in tests
+      ...args: Array<any>
+    ) => Effect.Effect<unknown, unknown, unknown>,
+  >(
+    fn: Mock<
+      Parameters<FN>,
+      Effect.Effect<
+        EffectNs.Success<ReturnType<FN>>,
+        EffectNs.Error<ReturnType<FN>>
+      >
+    >,
+  ): EffectMock<
+    Parameters<FN>,
+    EffectNs.Success<ReturnType<FN>>,
+    EffectNs.Error<ReturnType<FN>>
+  >;
+};
+
+export const toEffectMock: ToEffectMock = (
+  // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
+  fn: Mock<any, Effect.Effect<any, any>>,
+  // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
+): EffectMock<any, any, any> => {
   const mock = Object.assign(fn, {
-    mockSuccessValue: (obj: R) => fn.mockReturnValue(Effect.succeed(obj)),
-    mockSuccessValueOnce: (obj: R) =>
+    // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
+    mockSuccessValue: (obj: any) => fn.mockReturnValue(Effect.succeed(obj)),
+    // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
+    mockSuccessValueOnce: (obj: any) =>
       fn.mockReturnValueOnce(Effect.succeed(obj)),
-    mockFailValue: (e: E) => fn.mockReturnValue(Effect.fail(e)),
-    mockFailValueOnce: (e: E) => fn.mockReturnValueOnce(Effect.fail(e)),
-  }) as EffectMock<T, E, R>;
+    // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
+    mockFailValue: (e: any) => fn.mockReturnValue(Effect.fail(e)),
+    // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
+    mockFailValueOnce: (e: any) => fn.mockReturnValueOnce(Effect.fail(e)),
+    // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
+  }) as EffectMock<any, any, any>;
   if (!mock.getMockImplementation()) {
     mock.mockImplementation(
-      () => Effect.succeed(undefined) as unknown as Effect.Effect<R, E>,
+      // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
+      () => Effect.succeed(undefined) as unknown as Effect.Effect<any, any>,
     );
   }
   return mock;
 };
 
-// biome-ignore lint/suspicious/noExplicitAny: any okay in tests
-export const effectMock = <T extends Array<any>, E = any, R = any>(
-  implementation?: (...args: T) => Effect.Effect<R, E>,
-): EffectMock<T, E, R> =>
-  toEffectMock<T, E, R>(
+type MKEffectMock = {
+  // biome-ignore lint/suspicious/noExplicitAny: Okay to use any in tests
+  <T extends Array<any>, R = any, E = any>(
+    implementation?: (...args: T) => Effect.Effect<R, E>,
+  ): EffectMock<T, R, E>;
+  <
+    FN extends (
+      // biome-ignore lint/suspicious/noExplicitAny: Okay to use any in tests
+      ...args: Array<any>
+    ) => Effect.Effect<unknown, unknown, unknown>,
+  >(
+    implementation?: (
+      ...args: Parameters<FN>
+    ) => Effect.Effect<
+      EffectNs.Success<ReturnType<FN>>,
+      EffectNs.Error<ReturnType<FN>>
+    >,
+  ): EffectMock<
+    Parameters<FN>,
+    EffectNs.Success<ReturnType<FN>>,
+    EffectNs.Error<ReturnType<FN>>
+  >;
+};
+
+// biome-ignore lint/suspicious/noExplicitAny: Okay to use any in tests
+export const effectMock: MKEffectMock = (implementation?: any) =>
+  toEffectMock(
     implementation
       ? vi.fn(implementation)
-      : vi.fn(
-          (..._: T) =>
-            Effect.succeed(undefined) as unknown as Effect.Effect<R, E>,
-        ),
+      : // biome-ignore lint/suspicious/noExplicitAny: Okay to use any in tests
+        vi.fn(() => Effect.succeed(undefined) as any),
   );
 
 export const curriedEffectMock2 = <
@@ -80,15 +133,15 @@ export const curriedEffectMock2 = <
   // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
   T2 extends Array<any>,
   // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
-  E = any,
-  // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
   R = any,
+  // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
+  E = any,
 >(
   implementation?: (...args: T2) => Effect.Effect<R, E>,
-): Mock<T1, EffectMock<T2, E, R>> & {innerMock: EffectMock<T2, E, R>} => {
+): Mock<T1, EffectMock<T2, R, E>> & {innerMock: EffectMock<T2, R, E>} => {
   const mock = effectMock(implementation);
   return Object.assign(
-    vi.fn<T1, EffectMock<T2, E, R>>(() => mock),
+    vi.fn<T1, EffectMock<T2, R, E>>(() => mock),
 
     {innerMock: mock},
   );
