@@ -1,3 +1,4 @@
+import {live} from '@effect/vitest';
 import {ConfigProvider, Effect, Either, Layer} from 'effect';
 import * as Option from 'effect/Option';
 import {describe, expect} from 'vitest';
@@ -9,7 +10,6 @@ import {
   JiraPat,
   JiraUserEmail,
 } from '../src/types';
-import {itEffect} from './util';
 
 const testProg = AppConfigService.pipe(Effect.flatMap((_) => _.getAppConfig));
 
@@ -21,7 +21,7 @@ const mkTestLayer = (
   );
 
 describe('AppConfigService', () => {
-  itEffect('should provide jira data center appconfig', () =>
+  live('should provide jira data center appconfig', () =>
     Effect.gen(function* ($) {
       const configProvider = ConfigProvider.fromMap(
         new Map([
@@ -45,7 +45,7 @@ describe('AppConfigService', () => {
     }),
   );
 
-  itEffect('should provide jira cloud appconfig', () =>
+  live('should provide jira cloud appconfig', () =>
     Effect.gen(function* ($) {
       const configProvider = ConfigProvider.fromMap(
         new Map([
@@ -71,7 +71,7 @@ describe('AppConfigService', () => {
     }),
   );
 
-  itEffect('should provide appconfig with missing optional values', () =>
+  live('should provide appconfig with missing optional values', () =>
     Effect.gen(function* ($) {
       const configProvider = ConfigProvider.fromMap(
         new Map([
@@ -94,7 +94,7 @@ describe('AppConfigService', () => {
     }),
   );
 
-  itEffect('should report missing configuration values', () =>
+  live('should report missing configuration values', () =>
     Effect.gen(function* ($) {
       const configProvider = ConfigProvider.fromMap(
         new Map([['JIRA_API_URL', 'https://dummy-jira-instance.com']]),
@@ -110,7 +110,7 @@ describe('AppConfigService', () => {
     }),
   );
 
-  itEffect('should validate config values', () =>
+  live('should validate config values', () =>
     Effect.gen(function* ($) {
       const configProvider = ConfigProvider.fromMap(
         new Map([

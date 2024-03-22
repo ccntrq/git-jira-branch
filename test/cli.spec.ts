@@ -1,3 +1,4 @@
+import {live} from '@effect/vitest';
 import {Effect, Option, pipe} from 'effect';
 import type {Effect as EffectNs} from 'effect/Effect';
 
@@ -21,7 +22,7 @@ import {
 } from '../src/types';
 import {dummyJiraIssue} from './dummies/dummyJiraIssue';
 import {cliTestLayer} from './mock-implementations';
-import {itEffect, toEffectMock} from './util';
+import {toEffectMock} from './util';
 
 vi.mock('../src/core');
 vi.mock('../src/url-opener');
@@ -90,7 +91,7 @@ describe('cli', () => {
       vi.clearAllMocks();
     });
 
-    itEffect('should print version (--version)', () =>
+    live('should print version (--version)', () =>
       Effect.gen(function* ($) {
         yield* $(
           Effect.provide(
@@ -104,7 +105,7 @@ describe('cli', () => {
       }),
     );
 
-    itEffect('should print help (--help)', () =>
+    live('should print help (--help)', () =>
       Effect.gen(function* ($) {
         yield* $(
           Effect.provide(
@@ -129,7 +130,7 @@ describe('cli', () => {
       vi.clearAllMocks();
     });
 
-    itEffect('should create branch with single argument', () =>
+    live('should create branch with single argument', () =>
       Effect.gen(function* ($) {
         mockGitCreateJiraBranch.mockSuccessValue(
           CreatedBranch({branch: 'feat/FOOX-1234-description'}),
@@ -153,7 +154,7 @@ describe('cli', () => {
       }),
     );
 
-    itEffect('should inform about branch switch', () =>
+    live('should inform about branch switch', () =>
       Effect.gen(function* ($) {
         mockGitCreateJiraBranch.mockSuccessValue(
           SwitchedBranch({branch: 'feat/FOOX-1234-description'}),
@@ -177,7 +178,7 @@ describe('cli', () => {
       }),
     );
 
-    itEffect('should handle basebranch argument (-b)', () =>
+    live('should handle basebranch argument (-b)', () =>
       Effect.gen(function* ($) {
         mockGitCreateJiraBranch.mockSuccessValue(
           CreatedBranch({branch: 'feat/FOOX-1234-description'}),
@@ -201,7 +202,7 @@ describe('cli', () => {
       }),
     );
 
-    itEffect('should handle reset option (-r)', () =>
+    live('should handle reset option (-r)', () =>
       Effect.gen(function* ($) {
         mockGitCreateJiraBranch.mockSuccessValue(
           ResetBranch({branch: 'feat/FOOX-1234-description'}),
@@ -225,7 +226,7 @@ describe('cli', () => {
       }),
     );
 
-    itEffect('should report missing jirakey', () =>
+    live('should report missing jirakey', () =>
       Effect.gen(function* ($) {
         yield* $(
           Effect.provide(
@@ -239,7 +240,7 @@ describe('cli', () => {
       }),
     );
 
-    itEffect('should print subcommand help (--help)', () =>
+    live('should print subcommand help (--help)', () =>
       Effect.gen(function* ($) {
         yield* $(
           Effect.provide(
@@ -258,7 +259,7 @@ describe('cli', () => {
       }),
     );
 
-    itEffect('should report unknwon argument', () =>
+    live('should report unknwon argument', () =>
       Effect.gen(function* ($) {
         yield* $(
           Effect.provide(
@@ -281,7 +282,7 @@ describe('cli', () => {
       vi.clearAllMocks();
     });
 
-    itEffect('should open url for current branch without arguments', () =>
+    live('should open url for current branch without arguments', () =>
       Effect.gen(function* ($) {
         mockTicketUrlForCurrentBranch.mockSuccessValue(
           'https://gcjb.atlassian.net/browse/GCJB-1234',
@@ -300,7 +301,7 @@ describe('cli', () => {
       }),
     );
 
-    itEffect('should open url for given ticket', () =>
+    live('should open url for given ticket', () =>
       Effect.gen(function* ($) {
         mockTicketUrl.mockSuccessValue(
           'https://gcjb.atlassian.net/browse/GCJB-1234',
@@ -319,7 +320,7 @@ describe('cli', () => {
       }),
     );
 
-    itEffect('should print subcommand help (--help)', () =>
+    live('should print subcommand help (--help)', () =>
       Effect.gen(function* ($) {
         yield* $(
           Effect.provide(
@@ -344,7 +345,7 @@ describe('cli', () => {
       vi.clearAllMocks();
     });
 
-    itEffect('should render ticket info for current branch', () =>
+    live('should render ticket info for current branch', () =>
       Effect.gen(function* ($) {
         mockTicketInfoForCurrentBranch.mockSuccessValue(dummyJiraIssue);
         mockFormatIssue.mockReturnValue('formatted issue');
@@ -361,7 +362,7 @@ describe('cli', () => {
       }),
     );
 
-    itEffect('should render ticket info for given branch', () =>
+    live('should render ticket info for given branch', () =>
       Effect.gen(function* ($) {
         mockTicketInfo.mockSuccessValue(dummyJiraIssue);
         mockFormatIssue.mockReturnValue('formatted issue');
@@ -378,7 +379,7 @@ describe('cli', () => {
       }),
     );
 
-    itEffect('should print subcommand help (--help)', () =>
+    live('should print subcommand help (--help)', () =>
       Effect.gen(function* ($) {
         yield* $(
           Effect.provide(

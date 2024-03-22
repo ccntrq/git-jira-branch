@@ -1,4 +1,5 @@
 import * as Http from '@effect/platform/HttpClient';
+import {live} from '@effect/vitest';
 import {ConfigProvider, Effect, Either, Layer} from 'effect';
 
 import {AppConfigService} from '../src/app-config';
@@ -7,7 +8,6 @@ import {JiraApiError, type JiraIssue} from '../src/types';
 
 import {describe, expect} from 'vitest';
 import {dummyJiraIssue} from './dummies/dummyJiraIssue';
-import {itEffect} from './util';
 
 const appConfigTest = AppConfigService.Live.pipe(
   Layer.provide(
@@ -50,7 +50,7 @@ const testProg = Effect.gen(function* ($) {
 });
 
 describe('JiraClient', () => {
-  itEffect('should make ticket request', () =>
+  live('should make ticket request', () =>
     Effect.gen(function* ($) {
       const res = yield* $(
         Effect.either(
@@ -66,7 +66,7 @@ describe('JiraClient', () => {
     }),
   );
 
-  itEffect('should return ParseError for invalid response', () =>
+  live('should return ParseError for invalid response', () =>
     Effect.gen(function* ($) {
       const testIssue: Partial<JiraIssue> = {
         fields: {
@@ -92,7 +92,7 @@ describe('JiraClient', () => {
     }),
   );
 
-  itEffect('should handle 404 NOT_FOUND errors', () =>
+  live('should handle 404 NOT_FOUND errors', () =>
     Effect.gen(function* ($) {
       const failedResponse = new Response(null, {status: 404});
 
@@ -113,7 +113,7 @@ describe('JiraClient', () => {
     }),
   );
 
-  itEffect('should return error for response with non 200 status', () =>
+  live('should return error for response with non 200 status', () =>
     Effect.gen(function* ($) {
       const failedResponse = new Response(null, {status: 500});
 
