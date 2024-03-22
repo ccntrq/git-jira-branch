@@ -1,38 +1,6 @@
-import {Effect, pipe} from 'effect';
+import {Effect} from 'effect';
 import type {Effect as EffectNs} from 'effect/Effect';
-
-import {type Mock, it, vi} from 'vitest';
-
-export const itEffect = (() => {
-  const f = <E, A>(
-    name: string,
-    self: () => Effect.Effect<A, E>,
-    timeout = 5_000,
-  ): void =>
-    it(name, () => pipe(Effect.suspend(self), Effect.runPromise), timeout);
-  return Object.assign(f, {
-    skip: <E, A>(
-      name: string,
-      self: () => Effect.Effect<A, E>,
-      timeout = 5_000,
-    ): void =>
-      it.skip(
-        name,
-        () => pipe(Effect.suspend(self), Effect.runPromise),
-        timeout,
-      ),
-    only: <E, A>(
-      name: string,
-      self: () => Effect.Effect<A, E>,
-      timeout = 5_000,
-    ): void =>
-      it.only(
-        name,
-        () => pipe(Effect.suspend(self), Effect.runPromise),
-        timeout,
-      ),
-  });
-})();
+import {type Mock, vi} from 'vitest';
 
 // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
 export interface EffectMock<T extends Array<any>, R = any, E = any>

@@ -1,5 +1,5 @@
+import {live} from '@effect/vitest';
 import {Chunk, Effect, Either, Option} from 'effect';
-import {itEffect} from './util';
 
 import {afterEach, describe, expect, vi} from 'vitest';
 import {
@@ -23,7 +23,7 @@ describe('core', () => {
       vi.restoreAllMocks();
     });
 
-    itEffect('should create feature branch', () =>
+    live('should create feature branch', () =>
       Effect.gen(function* ($) {
         mockAppConfigService.getAppConfig.mockReturnValue(
           Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
@@ -71,7 +71,7 @@ describe('core', () => {
       }),
     );
 
-    itEffect('should create bugfix branch', () =>
+    live('should create bugfix branch', () =>
       Effect.gen(function* ($) {
         mockAppConfigService.getAppConfig.mockReturnValue(
           Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
@@ -128,7 +128,7 @@ describe('core', () => {
       }),
     );
 
-    itEffect('should create feature branch from base branch', () =>
+    live('should create feature branch from base branch', () =>
       Effect.gen(function* ($) {
         mockAppConfigService.getAppConfig.mockReturnValue(
           Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
@@ -180,7 +180,7 @@ describe('core', () => {
       }),
     );
 
-    itEffect('should reset existing branch', () =>
+    live('should reset existing branch', () =>
       Effect.gen(function* ($) {
         mockAppConfigService.getAppConfig.mockReturnValue(
           Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
@@ -225,7 +225,7 @@ describe('core', () => {
       }),
     );
 
-    itEffect('should create branch with reset for non existing branch', () =>
+    live('should create branch with reset for non existing branch', () =>
       Effect.gen(function* ($) {
         mockAppConfigService.getAppConfig.mockReturnValue(
           Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
@@ -267,7 +267,7 @@ describe('core', () => {
       }),
     );
 
-    itEffect('should switch to existing branch', () =>
+    live('should switch to existing branch', () =>
       Effect.gen(function* ($) {
         mockAppConfigService.getAppConfig.mockSuccessValue({
           defaultJiraKeyPrefix: Option.none(),
@@ -307,7 +307,7 @@ describe('core', () => {
       }),
     );
 
-    itEffect('should consider defaultJiraKeyPrefix', () =>
+    live('should consider defaultJiraKeyPrefix', () =>
       Effect.gen(function* ($) {
         mockAppConfigService.getAppConfig.mockReturnValue(
           Effect.succeed({defaultJiraKeyPrefix: Option.some('DUMMYAPP')}),
@@ -358,7 +358,7 @@ describe('core', () => {
       }),
     );
 
-    itEffect('should allow overriding defaultJiraKeyPrefix', () =>
+    live('should allow overriding defaultJiraKeyPrefix', () =>
       Effect.gen(function* ($) {
         mockAppConfigService.getAppConfig.mockReturnValue(
           Effect.succeed({defaultJiraKeyPrefix: Option.some('OTHERAPP')}),
@@ -407,7 +407,7 @@ describe('core', () => {
       }),
     );
 
-    itEffect('should handle umlauts and other chars in summary', () =>
+    live('should handle umlauts and other chars in summary', () =>
       Effect.gen(function* ($) {
         mockAppConfigService.getAppConfig.mockReturnValue(
           Effect.succeed({defaultJiraKeyPrefix: Option.some('OTHERAPP')}),
@@ -464,7 +464,7 @@ describe('core', () => {
   });
 
   describe('ticketUrl', () => {
-    itEffect('should return appropriate url for given ticket key', () =>
+    live('should return appropriate url for given ticket key', () =>
       Effect.gen(function* ($) {
         mockAppConfigService.getAppConfig.mockSuccessValue({
           defaultJiraKeyPrefix: Option.some('MYAPP'),
@@ -481,32 +481,30 @@ describe('core', () => {
   });
 
   describe('ticketUrlForCurrentBranch', () => {
-    itEffect(
-      'should extract ticket from branch an return appropriate url',
-      () =>
-        Effect.gen(function* ($) {
-          mockAppConfigService.getAppConfig.mockSuccessValue({
-            defaultJiraKeyPrefix: Option.some('MYAPP'),
-            jiraApiUrl: 'https://gcjb.atlassian.com',
-          });
+    live('should extract ticket from branch an return appropriate url', () =>
+      Effect.gen(function* ($) {
+        mockAppConfigService.getAppConfig.mockSuccessValue({
+          defaultJiraKeyPrefix: Option.some('MYAPP'),
+          jiraApiUrl: 'https://gcjb.atlassian.com',
+        });
 
-          mockGitClient.getCurrentBranch.mockSuccessValue(
-            'feat/MYAPP-123-dummy-isssue-summary',
-          );
+        mockGitClient.getCurrentBranch.mockSuccessValue(
+          'feat/MYAPP-123-dummy-isssue-summary',
+        );
 
-          const result = yield* $(
-            Effect.provide(ticketUrlForCurrentBranch(), testLayer),
-          );
+        const result = yield* $(
+          Effect.provide(ticketUrlForCurrentBranch(), testLayer),
+        );
 
-          expect(result).toMatchInlineSnapshot(
-            '"https://gcjb.atlassian.com/browse/MYAPP-123"',
-          );
-        }),
+        expect(result).toMatchInlineSnapshot(
+          '"https://gcjb.atlassian.com/browse/MYAPP-123"',
+        );
+      }),
     );
   });
 
   describe('ticketInfo', () => {
-    itEffect('should return info for a given ticket', () =>
+    live('should return info for a given ticket', () =>
       Effect.gen(function* ($) {
         mockAppConfigService.getAppConfig.mockSuccessValue({
           defaultJiraKeyPrefix: Option.some('DUMMYAPP'),
@@ -525,7 +523,7 @@ describe('core', () => {
   });
 
   describe('ticketInfoForCurrentBranch', () => {
-    itEffect('should extract ticket from branch and return issue info', () =>
+    live('should extract ticket from branch and return issue info', () =>
       Effect.gen(function* ($) {
         mockAppConfigService.getAppConfig.mockSuccessValue({
           defaultJiraKeyPrefix: Option.some('DUMMYAPP'),
