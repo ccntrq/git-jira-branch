@@ -175,18 +175,36 @@ describe('GitClient', () => {
       );
 
       expect(result).toMatchInlineSnapshot(`
-          {
-            "_id": "Chunk",
-            "values": [
-              "7-switch-to-existing-branches",
-              "chore/enforce-conventional-commits",
-              "develop",
-              "feat/MYAPP-1235-add-some-feature",
-              "fix/MYAPP-1234-errorhandling",
-              "master",
-            ],
-          }
-        `);
+        {
+          "_id": "Chunk",
+          "values": [
+            {
+              "isCurrent": true,
+              "name": "7-switch-to-existing-branches",
+            },
+            {
+              "isCurrent": false,
+              "name": "chore/enforce-conventional-commits",
+            },
+            {
+              "isCurrent": false,
+              "name": "develop",
+            },
+            {
+              "isCurrent": false,
+              "name": "feat/MYAPP-1235-add-some-feature",
+            },
+            {
+              "isCurrent": false,
+              "name": "fix/MYAPP-1234-errorhandling",
+            },
+            {
+              "isCurrent": false,
+              "name": "master",
+            },
+          ],
+        }
+      `);
 
       expect(executorMock).toHaveBeenCalledTimes(1);
       expect(executorMock.mock.calls[0]?.[0]).toMatchObject({

@@ -2,14 +2,14 @@ import * as Command from '@effect/platform/Command';
 import * as CommandExecutor from '@effect/platform/CommandExecutor';
 import {Chunk, Context, Effect, Layer, Sink, Stream, pipe} from 'effect';
 
-import {GitExecError} from './types';
+import {GitBranch, GitExecError} from './types';
 
 type GitClientEffect<A> = Effect.Effect<A, GitExecError, never>;
 
 export class GitClient extends Context.Tag('GitClient')<
   GitClient,
   {
-    readonly listBranches: () => GitClientEffect<Chunk.Chunk<string>>;
+    readonly listBranches: () => GitClientEffect<Chunk.Chunk<GitBranch>>;
     readonly getCurrentBranch: () => GitClientEffect<string>;
     readonly createGitBranch: (
       branchName: string,
@@ -66,7 +66,7 @@ const runGitCommand =
 
 const listBranches =
   (commandExecutor: CommandExecutor.CommandExecutor) =>
-  (): GitClientEffect<Chunk.Chunk<string>> =>
+  (): GitClientEffect<Chunk.Chunk<GitBranch>> =>
     pipe(
       Command.make('git', 'branch'),
       runGitCommand(commandExecutor),
@@ -76,7 +76,11 @@ const listBranches =
             .trim()
             .split('\n')
             .map((x) => x.trim())
-            .map((x) => x.replace(/^\*\s+/, '')),
+            .map((x) =>
+              x.startsWith('*')
+                ? GitBranch({name: x.replace(/^\*\s+/, ''), isCurrent: true})
+                : GitBranch({name: x, isCurrent: false}),
+            ),
         ),
       ),
       Effect.scoped,

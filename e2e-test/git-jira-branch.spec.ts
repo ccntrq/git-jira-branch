@@ -116,4 +116,20 @@ describe('git-jira-branch', () => {
     const result = runApp(tmpDir, 'info');
     expect(result).toMatchSnapshot();
   });
+
+  it('list subcommand prints associated branches with current', () => {
+    execSync('git switch "feat/GCJB-1-e2e-test-ticket-with-a-fancy-summary"', {
+      cwd: tmpDir,
+    });
+    const result = runApp(tmpDir, 'list');
+    expect(result).toMatchSnapshot();
+  });
+
+  it('list subcommand prints associated branches without current', () => {
+    execSync('git switch master', {
+      cwd: tmpDir,
+    });
+    const result = runApp(tmpDir, 'list');
+    expect(result).toMatchSnapshot();
+  });
 });
