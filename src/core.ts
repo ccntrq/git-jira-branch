@@ -151,6 +151,6 @@ const buildTicketUrl = (
   );
 
 function extractJiraKey(branchName: string): Option.Option<string> {
-  const res = branchName.match(/^(?:\w+\/)?((?:[a-z]+-)?\d+)/i);
+  const res = branchName.match(/^(?:\w+\/)?([A-Z]+-\d+)/);
   return Option.fromNullable(res?.[1]);
 }
