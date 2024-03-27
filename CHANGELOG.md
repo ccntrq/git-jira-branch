@@ -9,6 +9,14 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [1.1.2](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v1.1.1...git-jira-branch-v1.1.2) (2024-03-27)
+
+
+### Bug Fixes
+
+* **deps:** bump the production-dependencies group with 7 updates ([#244](https://github.com/ccntrq/git-jira-branch/issues/244)) ([d7a0833](https://github.com/ccntrq/git-jira-branch/commit/d7a083379ffa2b9c707f42a11fc49e8e20863770))
+* **deps:** bump the production-dependencies group with 7 updates ([#247](https://github.com/ccntrq/git-jira-branch/issues/247)) ([be02c49](https://github.com/ccntrq/git-jira-branch/commit/be02c4920dc5148a06c436cb546660a2634b0ee4))
+
 ## [1.1.1](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v1.1.0...git-jira-branch-v1.1.1) (2024-03-22)
 
 
