@@ -227,17 +227,20 @@ describe('cli', () => {
     );
 
     live('should report missing jirakey', () =>
-      Effect.gen(function* ($) {
-        yield* $(
-          Effect.provide(
-            pipe(withBaseArgs(['create']), Effect.flatMap(cliEffect)),
-            cliTestLayer,
-          ),
-        );
-
-        expect(mockGitCreateJiraBranch).not.toHaveBeenCalled();
-        expect(mockLog.mock.calls).toMatchSnapshot();
-      }),
+      pipe(
+        withBaseArgs(['create']),
+        Effect.flatMap(cliEffect),
+        Effect.match({
+          onFailure: () => {
+            expect(mockGitCreateJiraBranch).not.toHaveBeenCalled();
+            expect(mockLog.mock.calls).toMatchSnapshot();
+          },
+          onSuccess: () => {
+            expect.unreachable('Should have failed');
+          },
+        }),
+        Effect.provide(cliTestLayer),
+      ),
     );
 
     live('should print subcommand help (--help)', () =>
@@ -260,20 +263,20 @@ describe('cli', () => {
     );
 
     live('should report unknwon argument', () =>
-      Effect.gen(function* ($) {
-        yield* $(
-          Effect.provide(
-            pipe(
-              withBaseArgs(['create', '111', 'unknown']),
-              Effect.flatMap(cliEffect),
-            ),
-            cliTestLayer,
-          ),
-        );
-
-        expect(mockGitCreateJiraBranch).not.toHaveBeenCalled();
-        expect(mockLog.mock.calls).toMatchSnapshot();
-      }),
+      pipe(
+        withBaseArgs(['create', '111', 'unknown']),
+        Effect.flatMap(cliEffect),
+        Effect.match({
+          onFailure: () => {
+            expect(mockGitCreateJiraBranch).not.toHaveBeenCalled();
+            expect(mockLog.mock.calls).toMatchSnapshot();
+          },
+          onSuccess: () => {
+            expect.unreachable('Should have failed');
+          },
+        }),
+        Effect.provide(cliTestLayer),
+      ),
     );
   });
 

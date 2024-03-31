@@ -47,13 +47,15 @@ describe('git-jira-branch', () => {
   });
 
   it('create subcommand prints error for non existing jira ticket', () => {
-    const res = runApp(tmpDir, 'create', 'NOPROJECT-1');
-
-    expect(res).toMatchInlineSnapshot(`
-      "[0;31mJira returned status 404. Make sure the ticket with id NOPROJECT-1 exists.[0m
-
-      "
-    `);
+    try {
+      runApp(tmpDir, 'create', 'NOPROJECT-1');
+      expect.unreachable('Should have thrown');
+    } catch (error) {
+      expect(error).toMatchInlineSnapshot(
+        '[Error: Command failed: git-jira-branch create NOPROJECT-1]',
+      );
+      return;
+    }
   });
 
   it('create subcommand creates new branch for existing jira ticket', () => {

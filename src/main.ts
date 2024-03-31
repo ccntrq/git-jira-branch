@@ -3,7 +3,7 @@
 import * as NodeCommandExecutor from '@effect/platform-node/NodeCommandExecutor';
 import * as NodeFileSystem from '@effect/platform-node/NodeFileSystem';
 import * as Http from '@effect/platform/HttpClient';
-import {Cause, Console, Effect, Layer, pipe} from 'effect';
+import {Cause, Console, Effect, Exit, Layer, pipe} from 'effect';
 
 import {NodeContext} from '@effect/platform-node';
 import {AppConfigService} from './app-config';
@@ -35,11 +35,16 @@ const mainEffect = pipe(
   Effect.flatMap(cliEffect),
   Effect.provide(mainLive),
   Effect.catchAllDefect((defect) => {
-    if (Cause.isRuntimeException(defect)) {
-      return Console.log(`RuntimeException defect caught: ${defect.message}`);
-    }
-    return Console.log(`Unknown defect caught: ${JSON.stringify(defect)}`);
+    return Console.log(
+      Cause.isRuntimeException(defect)
+        ? `RuntimeException defect caught: ${defect.message}`
+        : `Unknown defect caught: ${JSON.stringify(defect)}`,
+    ).pipe(Effect.andThen(Effect.fail('Defect')));
   }),
 );
 
-Effect.runPromise(mainEffect);
+Effect.runPromiseExit(mainEffect).then((exit) => {
+  if (Exit.isFailure(exit)) {
+    process.exit(1);
+  }
+});
