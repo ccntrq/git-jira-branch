@@ -7,7 +7,7 @@ import * as Span from '@effect/cli/HelpDoc/Span';
 import * as Options from '@effect/cli/Options';
 import type * as CommandExecutor from '@effect/platform/CommandExecutor';
 import {Console, Effect, Option, pipe} from 'effect';
-import {compose, constant} from 'effect/Function';
+import {compose} from 'effect/Function';
 
 import * as packageJson from '../package.json';
 import type {AppConfigService} from './app-config';
@@ -21,7 +21,7 @@ import {
 import type {GitClient} from './git-client';
 import {formatIssue} from './issue-formatter';
 import type {JiraClient} from './jira-client';
-import {matchGitCreateJiraBranchResult} from './types';
+import {type GitJiraBranchError, matchGitCreateJiraBranchResult} from './types';
 import {openUrl} from './url-opener';
 
 // for version and help
@@ -141,7 +141,7 @@ export const cliEffect = (
   args: Array<string>,
 ): Effect.Effect<
   void,
-  never,
+  GitJiraBranchError | ValidationError.ValidationError,
   | CliApp.Environment
   | GitClient
   | AppConfigService
@@ -152,12 +152,13 @@ export const cliEffect = (
     mainCommand,
     cli,
   )(args).pipe(
-    Effect.catchIf(
-      ValidationError.isValidationError,
-      // handled and printed by the cli library already
-      constant(Effect.unit),
-    ),
-    Effect.catchAll((e) => printDocs(HelpDoc.p(Span.error(e.message)))),
+    Effect.tapError((e) => {
+      if (ValidationError.isValidationError(e)) {
+        // handled and printed by the cli library already
+        return Effect.unit;
+      }
+      return printDocs(HelpDoc.p(Span.error(e.message)));
+    }),
   );
 
 const printDocs = (doc: HelpDoc.HelpDoc): Effect.Effect<void> =>
