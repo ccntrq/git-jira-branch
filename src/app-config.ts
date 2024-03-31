@@ -1,5 +1,4 @@
-import {Doc} from '@effect/printer';
-import {prettyDefault} from '@effect/printer/Render';
+import * as Doc from '@effect/printer/Doc';
 import {
   type Brand,
   Config,
@@ -98,7 +97,7 @@ export class AppConfigService extends Context.Tag('AppConfigService')<
               void 0,
               collectConfigErrorMessagesReducer,
             ),
-            prettyDefault,
+            Doc.render({style: 'pretty'}),
             (message) => AppConfigError({message}),
           ),
         ),
