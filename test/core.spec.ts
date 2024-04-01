@@ -3,12 +3,14 @@ import {Chunk, Effect, Either, Option} from 'effect';
 
 import {afterEach, describe, expect, vi} from 'vitest';
 import {
+  getAssociatedBranches,
   gitCreateJiraBranch,
   ticketInfo,
   ticketInfoForCurrentBranch,
   ticketUrl,
   ticketUrlForCurrentBranch,
 } from '../src/core';
+import {GitBranch} from '../src/types';
 import {dummyJiraIssue} from './dummies/dummyJiraIssue';
 import {
   mockAppConfigService,
@@ -190,10 +192,11 @@ describe('core', () => {
           Effect.succeed(dummyJiraIssue),
         );
         mockGitClient.listBranches.mockSuccessValue(
-          Chunk.fromIterable([
-            'feat/DUMMYAPP-123-dummy-isssue-summary',
-            'master',
-          ]),
+          Chunk.fromIterable(
+            ['feat/DUMMYAPP-123-dummy-isssue-summary', 'master'].map((name) =>
+              GitBranch({name, isCurrent: false}),
+            ),
+          ),
         );
 
         const result = yield* $(
@@ -235,7 +238,9 @@ describe('core', () => {
           Effect.succeed(dummyJiraIssue),
         );
         mockGitClient.listBranches.mockSuccessValue(
-          Chunk.fromIterable(['master']),
+          Chunk.fromIterable(
+            ['master'].map((name) => GitBranch({name, isCurrent: false})),
+          ),
         );
 
         const result = yield* $(
@@ -274,10 +279,11 @@ describe('core', () => {
         });
         mockJiraClient.getJiraIssue.mockSuccessValue(dummyJiraIssue);
         mockGitClient.listBranches.mockSuccessValue(
-          Chunk.fromIterable([
-            'feat/DUMMYAPP-123-dummy-isssue-summary',
-            'master',
-          ]),
+          Chunk.fromIterable(
+            ['feat/DUMMYAPP-123-dummy-isssue-summary', 'master'].map((name) =>
+              GitBranch({name, isCurrent: false}),
+            ),
+          ),
         );
 
         const result = yield* $(
@@ -543,6 +549,52 @@ describe('core', () => {
           'DUMMYAPP-123',
         );
         expect(result).toBe(dummyJiraIssue);
+      }),
+    );
+  });
+
+  describe('getAssociatedBranches', () => {
+    live('should list branches possibly associated with a jira ticket', () =>
+      Effect.gen(function* ($) {
+        mockGitClient.listBranches.mockSuccessValue(
+          Chunk.fromIterable([
+            ...[
+              'feat/DUMMYAPP-123-dummy-isssue-summary',
+              'DUMMYAPP-121-asociated',
+              'master',
+              '123-not-asociated',
+              'dummyapp-121-also-not-asociated',
+            ].map((name) => GitBranch({name, isCurrent: false})),
+            GitBranch({
+              name: 'fix/DUMMYAPP-122-another-isssue-summary',
+              isCurrent: true,
+            }),
+          ]),
+        );
+
+        const result = yield* $(
+          Effect.provide(getAssociatedBranches(), testLayer),
+        );
+
+        expect(result).toMatchInlineSnapshot(`
+          {
+            "_id": "Chunk",
+            "values": [
+              {
+                "isCurrent": false,
+                "name": "feat/DUMMYAPP-123-dummy-isssue-summary",
+              },
+              {
+                "isCurrent": false,
+                "name": "DUMMYAPP-121-asociated",
+              },
+              {
+                "isCurrent": true,
+                "name": "fix/DUMMYAPP-122-another-isssue-summary",
+              },
+            ],
+          }
+        `);
       }),
     );
   });

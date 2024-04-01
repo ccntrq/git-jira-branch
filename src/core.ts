@@ -8,6 +8,7 @@ import {JiraClient} from './jira-client';
 import {
   type AppConfigError,
   CreatedBranch,
+  type GitBranch,
   type GitCreateJiraBranchResult,
   type GitExecError,
   type GitJiraBranchError,
@@ -40,7 +41,10 @@ export const gitCreateJiraBranch = (
     const branchName = jiraIssueToBranchName(issue);
 
     const branchExists = yield* $(
-      Effect.map(gitClient.listBranches(), Chunk.contains(branchName)),
+      Effect.map(
+        gitClient.listBranches(),
+        Chunk.some((b) => b.name === branchName),
+      ),
     );
 
     if (!reset && branchExists) {
@@ -105,6 +109,20 @@ export const ticketInfo = (jiraKey: string) =>
 
     return issue;
   });
+
+export const getAssociatedBranches = (): Effect.Effect<
+  Chunk.Chunk<GitBranch>,
+  GitExecError,
+  GitClient
+> =>
+  GitClient.pipe(
+    Effect.flatMap((_) => _.listBranches()),
+    Effect.map((branches) =>
+      Chunk.filter(branches, (branch) =>
+        Option.isSome(extractJiraKey(branch.name)),
+      ),
+    ),
+  );
 
 const fullKey = (
   jiraKey: string,

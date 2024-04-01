@@ -4,10 +4,11 @@ import {Chunk, Effect, Layer} from 'effect';
 import {AppConfigService} from '../src/app-config';
 import {GitClient} from '../src/git-client';
 import {JiraClient} from '../src/jira-client';
+import type {GitBranch} from '../src/types';
 import {curriedEffectMock2, effectMock} from './util';
 
 export const mockGitClient = {
-  listBranches: effectMock(() => Effect.succeed(Chunk.empty<string>())),
+  listBranches: effectMock(() => Effect.succeed(Chunk.empty<GitBranch>())),
   getCurrentBranch: effectMock(),
   createGitBranch: effectMock(),
   createGitBranchFrom: curriedEffectMock2(),

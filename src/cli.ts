@@ -11,7 +11,9 @@ import {compose} from 'effect/Function';
 
 import * as packageJson from '../package.json';
 import type {AppConfigService} from './app-config';
+import {formatBranches} from './branch-formatter';
 import {
+  getAssociatedBranches,
   gitCreateJiraBranch,
   ticketInfo,
   ticketInfoForCurrentBranch,
@@ -127,8 +129,27 @@ current branch.`,
   ),
 );
 
+const listCommand = pipe(
+  Command.make('list', {}, () =>
+    pipe(
+      getAssociatedBranches(),
+      Effect.map(formatBranches),
+      Effect.flatMap(Console.log),
+    ),
+  ),
+  Command.withDescription(
+    `
+Lists all branches that appear to be associated with a Jira ticket.`,
+  ),
+);
+
 const mainCommand = gitJiraBranch.pipe(
-  Command.withSubcommands([createCommand, openCommand, infoCommand]),
+  Command.withSubcommands([
+    createCommand,
+    openCommand,
+    infoCommand,
+    listCommand,
+  ]),
 );
 
 const cli = {

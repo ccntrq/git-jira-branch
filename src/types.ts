@@ -44,6 +44,13 @@ export type AppConfig = {
   jiraAuth: JiraAuth;
 };
 
+export interface GitBranch {
+  name: string;
+  isCurrent: boolean;
+}
+
+export const GitBranch = Data.case<GitBranch>();
+
 export const JiraIssuetypeSchema = Schema.struct({
   name: Schema.string,
 });

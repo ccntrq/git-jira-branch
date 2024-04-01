@@ -51,3 +51,13 @@ In the description, there exist certain lines of considerable length that, despi
 {noformat}const sourceCode: string = "some ts source code";{noformat}
 "
 `;
+
+exports[`git-jira-branch > list subcommand prints associated branches with current 1`] = `
+"* [0;32mfeat/GCJB-1-e2e-test-ticket-with-a-fancy-summary[0m
+"
+`;
+
+exports[`git-jira-branch > list subcommand prints associated branches without current 1`] = `
+"feat/GCJB-1-e2e-test-ticket-with-a-fancy-summary
+"
+`;

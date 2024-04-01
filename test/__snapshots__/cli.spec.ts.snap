@@ -237,6 +237,9 @@ jira ticket for the current branch is opened.
 Displays information for the given Jira ticket on your terminal. If no ticket is
 provided, it presents information for the Jira ticket associated with the
 current branch.
+
+  - list                                                   
+Lists all branches that appear to be associated with a Jira ticket.
 "
 `;
 

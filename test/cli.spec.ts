@@ -1,9 +1,10 @@
 import {live} from '@effect/vitest';
-import {Effect, Option, pipe} from 'effect';
+import {Chunk, Effect, Option, pipe} from 'effect';
 import type {Effect as EffectNs} from 'effect/Effect';
 
 import {cliEffect} from '../src/cli';
 import {
+  getAssociatedBranches,
   gitCreateJiraBranch,
   ticketInfo,
   ticketInfoForCurrentBranch,
@@ -13,9 +14,11 @@ import {
 import {openUrl} from '../src/url-opener';
 
 import {type Mock, afterEach, describe, expect, vi} from 'vitest';
+import {formatBranches} from '../src/branch-formatter';
 import {formatIssue} from '../src/issue-formatter';
 import {
   CreatedBranch,
+  GitBranch,
   type JiraIssue,
   ResetBranch,
   SwitchedBranch,
@@ -27,6 +30,7 @@ import {toEffectMock} from './util';
 vi.mock('../src/core');
 vi.mock('../src/url-opener');
 vi.mock('../src/issue-formatter');
+vi.mock('../src/branch-formatter');
 
 const mockGitCreateJiraBranch = toEffectMock(
   gitCreateJiraBranch as unknown as Mock<
@@ -68,6 +72,11 @@ const mockTicketInfo = toEffectMock<
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 >(ticketInfo as any);
 
+const mockGetAssociatedBranches = toEffectMock<
+  typeof getAssociatedBranches
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+>(getAssociatedBranches as any);
+
 const mockOpenUrl = toEffectMock(
   openUrl as unknown as Mock<
     Parameters<typeof openUrl>,
@@ -79,6 +88,10 @@ const mockOpenUrl = toEffectMock(
 );
 
 const mockFormatIssue = formatIssue as unknown as Mock<[JiraIssue], string>;
+const mockFormatBranches = formatBranches as unknown as Mock<
+  [JiraIssue],
+  string
+>;
 
 const mockLog = vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
@@ -398,6 +411,38 @@ describe('cli', () => {
             .slice(3)
             .join('\n'),
         ).toMatchSnapshot();
+      }),
+    );
+  });
+
+  describe('list subcommand', () => {
+    afterEach(() => {
+      vi.clearAllMocks();
+    });
+
+    live('should show associated branches', () =>
+      Effect.gen(function* ($) {
+        const associated = Chunk.fromIterable([
+          GitBranch({
+            name: 'feat/DUMMYAPP-123-dummy-issue-summary',
+            isCurrent: true,
+          }),
+          GitBranch({
+            name: 'feat/DUMMYAPP-124-another-issue-summary',
+            isCurrent: false,
+          }),
+        ]);
+        mockGetAssociatedBranches.mockSuccessValue(associated);
+        mockFormatBranches.mockReturnValue('formatted branches');
+
+        yield* $(
+          withBaseArgs(['list']),
+          Effect.flatMap(cliEffect),
+          Effect.provide(cliTestLayer),
+        );
+
+        expect(mockFormatBranches).toHaveBeenCalledWith(associated);
+        expect(mockLog).toHaveBeenCalledWith('formatted branches');
       }),
     );
   });

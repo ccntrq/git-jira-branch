@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`branch-formatter > formatBranches > should format branches with current 1`] = `
+"* [0;32mfeat/DUMMYAPP-123-dummy-issue-summary[0m
+  feat/DUMMYAPP-124-another-issue-summary"
+`;
+
+exports[`branch-formatter > should format branches without current 1`] = `
+"feat/DUMMYAPP-123-dummy-issue-summary
+feat/DUMMYAPP-124-another-issue-summary"
+`;
