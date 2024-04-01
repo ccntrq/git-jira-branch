@@ -98,17 +98,6 @@ $ git jira-branch list
 >   feat/GCJB-2-another-ticket-that-looks-like-its-associated-with-a-jira-ticket
 ```
 
-1. For the current branch:
-   ```bash
-   $ git jira-branch open
-   > Opening ticket url 'https://gcjb.atlassian.net/browse/GCJB-164' in your default browser...
-   ```
-2. For a given ticket:
-   ```bash
-   $ git jira-branch open GCJB-1234
-   > Opening ticket url 'https://gcjb.atlassian.net/browse/GCJB-1234' in your default browser...
-   ```
-
 ### `wizard` mode
 
 Use the `--wizard` option to enter `wizard` mode. This will prompt you for the
