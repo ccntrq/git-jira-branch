@@ -1,5 +1,5 @@
 import {Chunk, Effect, Option} from 'effect';
-import {constant, pipe} from 'effect/Function';
+import {constFalse, constant, pipe} from 'effect/Function';
 import {isNone} from 'effect/Option';
 
 import {AppConfigService} from './app-config';
@@ -33,27 +33,38 @@ export const gitCreateJiraBranch = (
       Effect.all([GitClient, JiraClient]),
     );
 
-    const issue = yield* $(
-      fullKey(jiraKey),
-      Effect.flatMap(jiraClient.getJiraIssue),
-    );
+    const fullJiraKey = yield* $(fullKey(jiraKey));
 
-    const branchName = jiraIssueToBranchName(issue);
-
-    const branchExists = yield* $(
+    const associatedBranch = yield* $(
       Effect.map(
         gitClient.listBranches(),
-        Chunk.some((b) => b.name === branchName),
+        Chunk.findFirst((b) =>
+          pipe(
+            extractJiraKey(b.name),
+            Option.map((key) => key === fullJiraKey),
+            Option.getOrElse(constFalse),
+          ),
+        ),
       ),
     );
 
-    if (!reset && branchExists) {
-      yield* $(gitClient.switchBranch(branchName));
-      return SwitchedBranch({branch: branchName});
+    if (!reset && Option.isSome(associatedBranch)) {
+      yield* $(gitClient.switchBranch(associatedBranch.value.name));
+      return SwitchedBranch({branch: associatedBranch.value.name});
     }
 
-    const resetBranch = branchExists && reset;
-
+    const branchName = yield* $(
+      associatedBranch,
+      Option.match({
+        onNone: () =>
+          pipe(
+            jiraClient.getJiraIssue(fullJiraKey),
+            Effect.map((issue) => jiraIssueToBranchName(issue)),
+          ),
+        onSome: (branch) => Effect.succeed(branch.name),
+      }),
+    );
+    const resetBranch = reset && Option.isSome(associatedBranch);
     yield* $(
       Option.match(baseBranch, {
         onNone: constant(gitClient.createGitBranch),

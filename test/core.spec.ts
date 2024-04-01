@@ -216,10 +216,6 @@ describe('core', () => {
         );
 
         expect(mockAppConfigService.getAppConfig).toHaveBeenCalledTimes(1);
-        expect(mockJiraClient.getJiraIssue).toHaveBeenCalledTimes(1);
-        expect(mockJiraClient.getJiraIssue).toHaveBeenCalledWith(
-          'DUMMYAPP-123',
-        );
         expect(mockGitClient.createGitBranch).toHaveBeenCalledTimes(1);
         expect(mockGitClient.createGitBranch).toHaveBeenCalledWith(
           'feat/DUMMYAPP-123-dummy-isssue-summary',
@@ -301,10 +297,6 @@ describe('core', () => {
         `);
 
         expect(mockAppConfigService.getAppConfig).toHaveBeenCalledTimes(1);
-        expect(mockJiraClient.getJiraIssue).toHaveBeenCalledTimes(1);
-        expect(mockJiraClient.getJiraIssue).toHaveBeenCalledWith(
-          'DUMMYAPP-123',
-        );
         expect(mockGitClient.listBranches).toHaveBeenCalledTimes(1);
         expect(mockGitClient.switchBranch).toHaveBeenCalledTimes(1);
         expect(mockGitClient.switchBranch).toHaveBeenCalledWith(
