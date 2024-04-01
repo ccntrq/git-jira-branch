@@ -9,6 +9,20 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [1.2.0](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v1.1.3...git-jira-branch-v1.2.0) (2024-04-01)
+
+
+### Features
+
+* new `list` command shows branches possibly associated with a jira ticket ([#243](https://github.com/ccntrq/git-jira-branch/issues/243)) ([a8eb9ce](https://github.com/ccntrq/git-jira-branch/commit/a8eb9ce8f98b01ca04e5443e82d0176e5953fe80))
+* reflow text to 80 chars in info output ([#258](https://github.com/ccntrq/git-jira-branch/issues/258)) ([d65a640](https://github.com/ccntrq/git-jira-branch/commit/d65a64030d447921ff5b1a56a50e0b961dd966e3))
+* set nonzero exitcode on failures ([#254](https://github.com/ccntrq/git-jira-branch/issues/254)) ([0a2a085](https://github.com/ccntrq/git-jira-branch/commit/0a2a08578c67a350d2c249fed8592e8934e8abea))
+
+
+### Bug Fixes
+
+* **deps:** bump the production-dependencies group with 4 updates ([#256](https://github.com/ccntrq/git-jira-branch/issues/256)) ([3ca8c47](https://github.com/ccntrq/git-jira-branch/commit/3ca8c479e474bad472066f7ea81ccd392a745dd0))
+
 ## [1.1.3](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v1.1.2...git-jira-branch-v1.1.3) (2024-03-31)
 
 
