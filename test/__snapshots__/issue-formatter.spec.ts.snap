@@ -6,7 +6,8 @@ exports[`issue-formatter > formatIssue > should format issue 1`] = `
 
 Dummy issue description.
     
-This is a multiline description with some very very long lines that should be broken up into multiple lines when rendered.
+This is a multiline description with some very very long lines that should be
+broken up into multiple lines when rendered.
 
 * This is a list item
 * This is a list item

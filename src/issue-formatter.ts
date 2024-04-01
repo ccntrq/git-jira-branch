@@ -9,45 +9,47 @@ export const formatIssue = (issue: JiraIssue): string => {
   const heading = pipe(
     [
       mkBold(Doc.text(issue.key)),
-      //Doc.text(issue.key),
-      Doc.char('-'),
-      Doc.text(issue.fields.summary),
+      pipe(
+        [Doc.char('-'), Doc.reflow(issue.fields.summary)],
+        unwords,
+        Doc.hang(2),
+      ),
     ],
-    unwords,
+    Doc.seps,
+    Doc.hang(2),
     underline,
   );
 
   const details = pipe(
     [
       mkBold(Doc.text(issue.fields.issuetype.name)),
-      Doc.char('|'),
-      mkBold(Doc.text('Status:')),
-      Doc.text(issue.fields.status.name),
-      Doc.char('|'),
-      mkBold(Doc.text('Creator:')),
-      Doc.text(issue.fields.creator.displayName),
-      ...(issue.fields.assignee
-        ? [
+      unwords([
+        Doc.char('|'),
+        mkBold(Doc.text('Status:')),
+        Doc.text(issue.fields.status.name),
+      ]),
+      unwords([
+        Doc.char('|'),
+        mkBold(Doc.text('Creator:')),
+        Doc.text(issue.fields.creator.displayName),
+      ]),
+      issue.fields.assignee
+        ? unwords([
             Doc.char('|'),
             mkBold(Doc.text('Assignee:')),
             Doc.text(issue.fields.assignee.displayName),
-          ]
-        : []),
+          ])
+        : Doc.empty,
     ],
-    unwords,
+    Doc.seps,
+    Doc.hang(2),
     underline,
   );
 
   const description = issue.fields.description
     ? pipe(
         issue.fields.description.split(/\n|\r\n/),
-        (d) =>
-          // TODO:
-          // use fillSep/reflow here to break lines at 80 characters when
-          // performance issue is resolved
-          // https://github.com/Effect-TS/effect/issues/2371
-          // https://discord.com/channels/795981131316985866/1219736390401786008
-          d.map(Doc.text),
+        (lines) => lines.map((l) => Doc.reflow(l)),
         Doc.vcat,
       )
     : Doc.empty;
@@ -61,7 +63,7 @@ export const formatIssue = (issue: JiraIssue): string => {
     unlines,
   );
 
-  return render(doc, {style: 'pretty'});
+  return render(doc, {style: 'pretty', options: {lineWidth: 80}});
 };
 
 const unwords = <T>(docs: Iterable<Doc.Doc<T>>): Doc.Doc<T> =>
