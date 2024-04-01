@@ -69,6 +69,27 @@ git-jira-branch create -r MYAPP-1234
    > Opening ticket url 'https://gcjb.atlassian.net/browse/GCJB-1234' in your default browser...
    ```
 
+### Show ticket info on your terminal
+
+The `info` command shows the information for ticket nicely rendered for
+consumtpion in the terminal.
+
+By default info is show for the ticket associated with the current branch.
+Alternatively a ticket key can be passed as an argument to show info for that
+ticket.
+
+```bash
+$ git jira-branch info
+```
+
+Will create output like this:
+
+> <ins>**GCJB-1** - Ticket summary</ins></br>
+> <ins>**Task** | **Status**: To Do | **Creator**: Alexander Pankoff | **Assignee**: Alexander Pankoff</ins>
+>
+> Long lines in the description of the ticket are wrapped to fit a line width of<br>
+> 80 characters to make it easier to read.
+
 ### List branches associated with jira tickets
 
 ```bash
