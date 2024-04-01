@@ -15,8 +15,30 @@ Creates feature branches based on your Jira tickets type and description.
 $ git jira-branch create MYAPP-1234
 > Successfully created branch: 'feat/MYAPP-1234-sluggified-description-used-as-branchname'
 ```
+<!-- vscode-markdown-toc -->
+* [Usage](#Usage)
+	* [Create a new branch from your current `HEAD`](#CreateanewbranchfromyourcurrentHEAD)
+	* [Create a new branch based on some other revision](#Createanewbranchbasedonsomeotherrevision)
+	* [Reset an already existing branch](#Resetanalreadyexistingbranch)
+	* [Open tickets in your browser](#Openticketsinyourbrowser)
+	* [Show ticket info on your terminal](#Showticketinfoonyourterminal)
+	* [List branches associated with jira tickets](#Listbranchesassociatedwithjiratickets)
+	* [`wizard` mode](#wizardmode)
+* [Setup](#Setup)
+	* [Install](#Install)
+	* [Configuration](#Configuration)
+		* [For Jira Cloud](#ForJiraCloud)
+		* [For Jira Data Center](#ForJiraDataCenter)
+	* [Setup shell completions](#Setupshellcompletions)
+* [Technologies used](#Technologiesused)
 
-## Usage
+<!-- vscode-markdown-toc-config
+	numbering=false
+	autoSave=true
+	/vscode-markdown-toc-config -->
+<!-- /vscode-markdown-toc -->
+
+## <a name='Usage'></a>Usage
 
 Since this command starts with `git-` all commands can be run via
 `git-jira-branch` or as a git subcommand with `git jira-branch`.
@@ -25,7 +47,7 @@ Due to a limitation in the awesome [cli
 library](https://github.com/Effect-TS/cli) used, all options must be passed
 before the jira ticket key argument.
 
-### Create a new branch from your current `HEAD`
+### <a name='CreateanewbranchfromyourcurrentHEAD'></a>Create a new branch from your current `HEAD`
 
 Using the default JIRA_KEY_PREFIX
 
@@ -39,7 +61,7 @@ Or fully specified:
 git-jira-branch create MYAPP-1234
 ```
 
-### Create a new branch based on some other revision
+### <a name='Createanewbranchbasedonsomeotherrevision'></a>Create a new branch based on some other revision
 
 To create a new branch based on your `master` branch:
 
@@ -47,7 +69,7 @@ To create a new branch based on your `master` branch:
 git-jira-branch create -b master MYAPP-1234
 ```
 
-### Reset an already existing branch
+### <a name='Resetanalreadyexistingbranch'></a>Reset an already existing branch
 
 Pass the `-r|--reset` flag to reset an already existing branch to the current
 `HEAD` or the specified base revision (with `-b`)
@@ -56,7 +78,7 @@ Pass the `-r|--reset` flag to reset an already existing branch to the current
 git-jira-branch create -r MYAPP-1234
 ```
 
-### Open tickets in your browser
+### <a name='Openticketsinyourbrowser'></a>Open tickets in your browser
 
 1. For the current branch:
    ```bash
@@ -69,7 +91,7 @@ git-jira-branch create -r MYAPP-1234
    > Opening ticket url 'https://gcjb.atlassian.net/browse/GCJB-1234' in your default browser...
    ```
 
-### Show ticket info on your terminal
+### <a name='Showticketinfoonyourterminal'></a>Show ticket info on your terminal
 
 The `info` command shows the information for ticket nicely rendered for
 consumtpion in the terminal.
@@ -90,7 +112,7 @@ Will create output like this:
 > Long lines in the description of the ticket are wrapped to fit a line width of<br>
 > 80 characters to make it easier to read.
 
-### List branches associated with jira tickets
+### <a name='Listbranchesassociatedwithjiratickets'></a>List branches associated with jira tickets
 
 ```bash
 $ git jira-branch list
@@ -98,7 +120,7 @@ $ git jira-branch list
 >   feat/GCJB-2-another-ticket-that-looks-like-its-associated-with-a-jira-ticket
 ```
 
-### `wizard` mode
+### <a name='wizardmode'></a>`wizard` mode
 
 Use the `--wizard` option to enter `wizard` mode. This will prompt you for the
 Jira ticket key and additional options and build the appropriate command line
@@ -108,9 +130,9 @@ for you.
 git-jira-branch --wizard
 ```
 
-## Setup
+## <a name='Setup'></a>Setup
 
-### Install
+### <a name='Install'></a>Install
 
 The cli can be installed from `npm`. It assumes you have git installed on your
 system and the `git` command to be available on your `$PATH`.
@@ -119,9 +141,9 @@ system and the `git` command to be available on your `$PATH`.
 npm i -g git-jira-branch
 ```
 
-### Configuration
+### <a name='Configuration'></a>Configuration
 
-#### For Jira Cloud
+#### <a name='ForJiraCloud'></a>For Jira Cloud
 
 1. Create a Jira API Token [See Jira
    Docs](https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/)
@@ -135,7 +157,7 @@ npm i -g git-jira-branch
    export JIRA_KEY_PREFIX="MYAPP"
    ```
 
-#### For Jira Data Center
+#### <a name='ForJiraDataCenter'></a>For Jira Data Center
 
 1. Create a Jira PAT (Personal Access Token) [See Jira
    Docs](https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html)
@@ -148,7 +170,7 @@ npm i -g git-jira-branch
    export JIRA_KEY_PREFIX="MYAPP"
    ```
 
-### Setup shell completions
+### <a name='Setupshellcompletions'></a>Setup shell completions
 
 The cli can generate shell completion scripts for `bash`,`zsh` and `fish`. To
 generate and print the script for your shell run:
@@ -168,7 +190,7 @@ echo "source \$HOME/.git-jira-branch-bash-completions" >> ~/.bashrc
 source ~/.bashrc
 ```
 
-## Technologies used
+## <a name='Technologiesused'></a>Technologies used
 
 This project was started as an excuse to explore the
 [Effect](https://effect.website/) ecosystem and was written with only
