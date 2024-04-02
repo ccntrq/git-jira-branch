@@ -1,13 +1,12 @@
+# git-jira-branch - Manage branches for your Jira tickets
+
 <p align="center">
   <img
-    width="256px"
     title="git-jira-branch Logo"
     alt="git-jira-branch Logo"
-    src="./assets/logo.webp"
+    src="./assets/gjb-logo.svg"
   >
 </p>
-
-# git-jira-branch - Manage branches for your Jira tickets
 
 Creates feature branches based on your Jira tickets type and description.
 
@@ -15,22 +14,25 @@ Creates feature branches based on your Jira tickets type and description.
 $ git jira-branch create MYAPP-1234
 > Successfully created branch: 'feat/MYAPP-1234-sluggified-description-used-as-branchname'
 ```
+
 <!-- vscode-markdown-toc -->
-* [Usage](#Usage)
-	* [Create a new branch from your current `HEAD`](#CreateanewbranchfromyourcurrentHEAD)
-	* [Create a new branch based on some other revision](#Createanewbranchbasedonsomeotherrevision)
-	* [Reset an already existing branch](#Resetanalreadyexistingbranch)
-	* [Open tickets in your browser](#Openticketsinyourbrowser)
-	* [Show ticket info on your terminal](#Showticketinfoonyourterminal)
-	* [List branches associated with jira tickets](#Listbranchesassociatedwithjiratickets)
-	* [`wizard` mode](#wizardmode)
-* [Setup](#Setup)
-	* [Install](#Install)
-	* [Configuration](#Configuration)
-		* [For Jira Cloud](#ForJiraCloud)
-		* [For Jira Data Center](#ForJiraDataCenter)
-	* [Setup shell completions](#Setupshellcompletions)
-* [Technologies used](#Technologiesused)
+
+- [Usage](#Usage)
+  - [Create a new branch from your current `HEAD`](#CreateanewbranchfromyourcurrentHEAD)
+  - [Create a new branch based on some other revision](#Createanewbranchbasedonsomeotherrevision)
+  - [Reset an already existing branch](#Resetanalreadyexistingbranch)
+  - [Open tickets in your browser](#Openticketsinyourbrowser)
+  - [Show ticket info on your terminal](#Showticketinfoonyourterminal)
+  - [List branches associated with jira tickets](#Listbranchesassociatedwithjiratickets)
+  - [`wizard` mode](#wizardmode)
+- [Setup](#Setup)
+  - [Install](#Install)
+  - [Configuration](#Configuration)
+    - [For Jira Cloud](#ForJiraCloud)
+    - [For Jira Data Center](#ForJiraDataCenter)
+  - [Setup shell completions](#Setupshellcompletions)
+- [Technologies used](#Technologiesused)
+- [License](#License)
 
 <!-- vscode-markdown-toc-config
 	numbering=false
@@ -206,3 +208,9 @@ This project was started as an excuse to explore the
 It uses the Jira API to fetch the details for a ticket and calls out directly to `git` for branch creation.
 
 Tests were written using [`vitest`](https://vitest.dev). The testsuite can be run using `npm run test`.
+
+## <a name='License'></a>License
+
+The code in this repository is licensed under the [MIT License](/LICENSE).
+Please note that the MIT License applies only to the code in this repository and
+not to any other assets, especially not the [Logo](/assets/gjb-logo.svg).
