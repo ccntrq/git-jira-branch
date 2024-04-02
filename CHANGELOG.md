@@ -9,6 +9,13 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [1.3.0](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v1.2.0...git-jira-branch-v1.3.0) (2024-04-02)
+
+
+### Features
+
+* base existing branch matches only on their jira key ([#262](https://github.com/ccntrq/git-jira-branch/issues/262)) ([4a65cc6](https://github.com/ccntrq/git-jira-branch/commit/4a65cc661a394ddb5dc6c92b8ce2f6efae480d0d))
+
 ## [1.2.0](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v1.1.3...git-jira-branch-v1.2.0) (2024-04-01)
 
 
