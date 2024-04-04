@@ -44,6 +44,8 @@ $ create [(-b, --base text)] [(-r, --reset)] <jira-key>
 Fetches the given Jira ticket and creates an aproriately named branch for it.
 The branch type (bug or feat) is determined by the ticket type. The branch name
 is based on the ticket summary.
+If there already is a branch associated with the ticket, it will be switched to
+instead.
 
 [0;1mARGUMENTS[0m
 
@@ -228,6 +230,8 @@ $ git-jira-branch
 Fetches the given Jira ticket and creates an aproriately named branch for it.
 The branch type (bug or feat) is determined by the ticket type. The branch name
 is based on the ticket summary.
+If there already is a branch associated with the ticket, it will be switched to
+instead.
 
   - open [<jira-key>]                                      
 Opens the given Jira ticket in your default browser. If no ticket is given the
