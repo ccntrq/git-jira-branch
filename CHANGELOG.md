@@ -9,6 +9,15 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [1.3.2](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v1.3.1...git-jira-branch-v1.3.2) (2024-04-05)
+
+
+### Bug Fixes
+
+* add info about switching to existing branches to create command ([#272](https://github.com/ccntrq/git-jira-branch/issues/272)) ([382acfd](https://github.com/ccntrq/git-jira-branch/commit/382acfd39ace74221f082a482d0122d27e28d08b))
+* **deps:** bump the production-dependencies group with 7 updates ([#273](https://github.com/ccntrq/git-jira-branch/issues/273)) ([9e78a7c](https://github.com/ccntrq/git-jira-branch/commit/9e78a7c29d518ff6980ed44f89a1893584c965d4))
+* **deps:** bump undici from 6.10.1 to 6.11.1 ([#270](https://github.com/ccntrq/git-jira-branch/issues/270)) ([7ed228d](https://github.com/ccntrq/git-jira-branch/commit/7ed228d3be7e7d61154aeaf008e60259c2179c38))
+
 ## [1.3.1](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v1.3.0...git-jira-branch-v1.3.1) (2024-04-04)
 
 
