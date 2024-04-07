@@ -104,6 +104,33 @@ describe('git-jira-branch', () => {
     expect(lastCommitMsg2).toMatchInlineSnapshot('"init"');
   });
 
+  it('switch subcommand switches to already existing branch', async () => {
+    const res = runApp(tmpDir, 'switch', 'GCJB-1');
+
+    expect(res).toMatchInlineSnapshot(`
+      "Switched to already existing branch: 'feat/GCJB-1-e2e-test-ticket-with-a-fancy-summary'
+      "
+    `);
+    expect(currentBranch(tmpDir)).toMatchInlineSnapshot(
+      '"feat/GCJB-1-e2e-test-ticket-with-a-fancy-summary"',
+    );
+  });
+
+  it('switch subcommand fails on non existing branches', async () => {
+    try {
+      runApp(tmpDir, 'switch', 'GCJB-5');
+      expect.unreachable('Should have thrown');
+      // biome-ignore lint/suspicious/noExplicitAny: any is okay in this test
+    } catch (error: any) {
+      expect(error?.stdout.toString()).toMatchInlineSnapshot(`
+        "[0;31mNo branch associated with Jira ticket 'GCJB-5'[0m
+
+        "
+      `);
+      return;
+    }
+  });
+
   it('info subcommand prints ticket info for given ticket', () => {
     const result = runApp(tmpDir, 'info', '1');
     expect(result).toMatchSnapshot();

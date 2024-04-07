@@ -6,6 +6,7 @@ import {cliEffect} from '../src/cli';
 import {
   getAssociatedBranches,
   gitCreateJiraBranch,
+  switchBranch,
   ticketInfo,
   ticketInfoForCurrentBranch,
   ticketUrl,
@@ -22,6 +23,7 @@ import {
   type JiraIssue,
   ResetBranch,
   SwitchedBranch,
+  UsageError,
 } from '../src/types';
 import {dummyJiraIssue} from './dummies/dummyJiraIssue';
 import {cliTestLayer} from './mock-implementations';
@@ -61,6 +63,11 @@ const mockTicketUrlForCurrentBranch = toEffectMock(
     >
   >,
 );
+
+const mockSwitchBranch = toEffectMock<
+  typeof switchBranch
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+>(switchBranch as any);
 
 const mockTicketInfoForCurrentBranch = toEffectMock<
   typeof ticketInfoForCurrentBranch
@@ -290,6 +297,74 @@ describe('cli', () => {
         }),
         Effect.provide(cliTestLayer),
       ),
+    );
+  });
+
+  describe('switch subcommand', () => {
+    afterEach(() => {
+      vi.clearAllMocks();
+    });
+
+    live('should switch branch', () =>
+      Effect.gen(function* ($) {
+        mockSwitchBranch.mockSuccessValue(
+          SwitchedBranch({branch: 'feat/FOOX-1234-description'}),
+        );
+        yield* $(
+          Effect.provide(
+            pipe(
+              withBaseArgs(['switch', 'FOOX-1234']),
+              Effect.flatMap(cliEffect),
+            ),
+            cliTestLayer,
+          ),
+        );
+
+        expect(mockSwitchBranch).toHaveBeenCalledWith('FOOX-1234');
+        expect(mockLog.mock.calls).toMatchSnapshot();
+      }),
+    );
+
+    live('should handle branch not found error', () =>
+      Effect.gen(function* ($) {
+        mockSwitchBranch.mockFailValue(
+          UsageError({
+            message: `No branch associated with Jira ticket 'FOOX-1234'`,
+          }),
+        );
+
+        yield* $(
+          Effect.provide(
+            pipe(
+              withBaseArgs(['switch', 'FOOX-1234']),
+              Effect.flatMap(cliEffect),
+              Effect.match({
+                onFailure: () => expect(mockLog.mock.calls).toMatchSnapshot(),
+                onSuccess: () => expect.unreachable('Should have failed'),
+              }),
+            ),
+            cliTestLayer,
+          ),
+        );
+      }),
+    );
+
+    live('should print subcommand help (--help)', () =>
+      Effect.gen(function* ($) {
+        yield* $(
+          Effect.provide(
+            pipe(withBaseArgs(['switch', '--help']), Effect.flatMap(cliEffect)),
+            cliTestLayer,
+          ),
+        );
+
+        expect(
+          (mockLog.mock.calls[0]?.[0] as string)
+            .split(/\n/)
+            .slice(3)
+            .join('\n'),
+        ).toMatchSnapshot();
+      }),
     );
   });
 

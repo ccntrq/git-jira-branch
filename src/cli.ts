@@ -15,6 +15,7 @@ import {formatBranches} from './branch-formatter';
 import {
   getAssociatedBranches,
   gitCreateJiraBranch,
+  switchBranch,
   ticketInfo,
   ticketInfoForCurrentBranch,
   ticketUrl,
@@ -23,7 +24,11 @@ import {
 import type {GitClient} from './git-client';
 import {formatIssue} from './issue-formatter';
 import type {JiraClient} from './jira-client';
-import {type GitJiraBranchError, matchGitCreateJiraBranchResult} from './types';
+import {
+  type GitJiraBranchError,
+  type SwitchedBranch,
+  matchGitCreateJiraBranchResult,
+} from './types';
 import {openUrl} from './url-opener';
 
 // for version and help
@@ -51,16 +56,7 @@ const createCommand = pipe(
     ({options, jiraKey}) => {
       return Effect.flatMap(
         gitCreateJiraBranch(jiraKey, options.baseBranch, options.reset),
-        compose(
-          matchGitCreateJiraBranchResult({
-            onCreatedBranch: (branch) =>
-              `Successfully created branch: '${branch}'`,
-            onSwitchedBranch: (branch) =>
-              `Switched to already existing branch: '${branch}'`,
-            onResetBranch: (branch) => `Reset branch: '${branch}'`,
-          }),
-          Console.log,
-        ),
+        compose(formatGitCreateJiraBranchResult, Console.log),
       );
     },
   ),
@@ -71,6 +67,27 @@ The branch type (bug or feat) is determined by the ticket type. The branch name
 is based on the ticket summary.
 If there already is a branch associated with the ticket, it will be switched to
 instead.`,
+  ),
+);
+
+const switchCommand = pipe(
+  Command.make(
+    'switch',
+    {
+      jiraKey: Args.withDescription(
+        Args.text({name: 'jira-key'}),
+        'The Jira ticket key associated with the branch to switch to (e.g. FOOX-1234)',
+      ),
+    },
+    ({jiraKey}) =>
+      switchBranch(jiraKey).pipe(
+        Effect.flatMap(compose(formatSwitchedBranch, Console.log)),
+      ),
+  ),
+  Command.withDescription(
+    `
+Switches to an already existing branch that is associated with the given Jira
+ticket.`,
   ),
 );
 
@@ -148,6 +165,7 @@ Lists all branches that appear to be associated with a Jira ticket.`,
 const mainCommand = gitJiraBranch.pipe(
   Command.withSubcommands([
     createCommand,
+    switchCommand,
     openCommand,
     infoCommand,
     listCommand,
@@ -183,6 +201,15 @@ export const cliEffect = (
       return printDocs(HelpDoc.p(Span.error(e.message)));
     }),
   );
+
+const formatSwitchedBranch = (switchedBranch: SwitchedBranch): string =>
+  `Switched to already existing branch: '${switchedBranch.branch}'`;
+
+const formatGitCreateJiraBranchResult = matchGitCreateJiraBranchResult({
+  onCreatedBranch: ({branch}) => `Successfully created branch: '${branch}'`,
+  onSwitchedBranch: formatSwitchedBranch,
+  onResetBranch: ({branch}) => `Reset branch: '${branch}'`,
+});
 
 const printDocs = (doc: HelpDoc.HelpDoc): Effect.Effect<void> =>
   Console.log(HelpDoc.toAnsiText(doc));

@@ -2,6 +2,7 @@ import {Chunk, Effect, Option} from 'effect';
 import {constFalse, constant, pipe} from 'effect/Function';
 import {isNone} from 'effect/Option';
 
+import {isNoSuchElementException} from 'effect/Cause';
 import {AppConfigService} from './app-config';
 import {GitClient} from './git-client';
 import {JiraClient} from './jira-client';
@@ -34,19 +35,7 @@ export const gitCreateJiraBranch = (
     );
 
     const fullJiraKey = yield* $(fullKey(jiraKey));
-
-    const associatedBranch = yield* $(
-      Effect.map(
-        gitClient.listBranches(),
-        Chunk.findFirst((b) =>
-          pipe(
-            extractJiraKey(b.name),
-            Option.map((key) => key === fullJiraKey),
-            Option.getOrElse(constFalse),
-          ),
-        ),
-      ),
-    );
+    const associatedBranch = yield* $(getAssociatedBranch(fullJiraKey));
 
     if (!reset && Option.isSome(associatedBranch)) {
       yield* $(gitClient.switchBranch(associatedBranch.value.name));
@@ -74,6 +63,37 @@ export const gitCreateJiraBranch = (
 
     return (resetBranch ? ResetBranch : CreatedBranch)({branch: branchName});
   });
+
+export const switchBranch = (
+  jiraKey: string,
+): Effect.Effect<
+  SwitchedBranch,
+  GitJiraBranchError,
+  AppConfigService | GitClient
+> =>
+  pipe(
+    jiraKey,
+    fullKey,
+    Effect.flatMap((fullJiraKey) =>
+      pipe(
+        fullJiraKey,
+        getAssociatedBranch,
+        Effect.flatten,
+        Effect.flatMap((branch) =>
+          Effect.flatMap(GitClient, (_) => _.switchBranch(branch.name)).pipe(
+            Effect.map((_) => SwitchedBranch({branch: branch.name})),
+          ),
+        ),
+        Effect.catchIf(isNoSuchElementException, () =>
+          Effect.fail(
+            UsageError({
+              message: `No branch associated with Jira ticket '${fullJiraKey}'`,
+            }),
+          ),
+        ),
+      ),
+    ),
+  );
 
 const getJiraKeyFromCurrentBranch = (): Effect.Effect<
   string,
@@ -131,6 +151,21 @@ export const getAssociatedBranches = (): Effect.Effect<
     Effect.map((branches) =>
       Chunk.filter(branches, (branch) =>
         Option.isSome(extractJiraKey(branch.name)),
+      ),
+    ),
+  );
+
+const getAssociatedBranch = (fullJiraKey: string) =>
+  pipe(
+    GitClient,
+    Effect.flatMap((_) => _.listBranches()),
+    Effect.map(
+      Chunk.findFirst((b) =>
+        pipe(
+          extractJiraKey(b.name),
+          Option.map((key) => key === fullJiraKey),
+          Option.getOrElse(constFalse),
+        ),
       ),
     ),
   );

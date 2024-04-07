@@ -89,37 +89,39 @@ export type GitCreateJiraBranchResult = Data.TaggedEnum<{
 export const {CreatedBranch, SwitchedBranch, ResetBranch} =
   Data.taggedEnum<GitCreateJiraBranchResult>();
 
+export type SwitchedBranch = ReturnType<typeof SwitchedBranch>;
+export type CreatedBranch = ReturnType<typeof CreatedBranch>;
+export type ResetBranch = ReturnType<typeof ResetBranch>;
+
 export const matchGitCreateJiraBranchResult: {
   <A>(
     result: GitCreateJiraBranchResult,
     matcher: {
-      onCreatedBranch: (branch: string) => A;
-      onSwitchedBranch: (branch: string) => A;
-      onResetBranch: (branch: string) => A;
+      onCreatedBranch: (branch: CreatedBranch) => A;
+      onSwitchedBranch: (branch: SwitchedBranch) => A;
+      onResetBranch: (branch: ResetBranch) => A;
     },
   ): A;
   <A>(matcher: {
-    onCreatedBranch: (branch: string) => A;
-    onSwitchedBranch: (branch: string) => A;
-    onResetBranch: (branch: string) => A;
+    onCreatedBranch: (branch: CreatedBranch) => A;
+    onSwitchedBranch: (branch: SwitchedBranch) => A;
+    onResetBranch: (branch: ResetBranch) => A;
   }): (result: GitCreateJiraBranchResult) => A;
 } = dual(
   2,
   <A>(
     result: GitCreateJiraBranchResult,
     matcher: {
-      onCreatedBranch: (branch: string) => A;
-      onSwitchedBranch: (branch: string) => A;
-      onResetBranch: (branch: string) => A;
+      onCreatedBranch: (branch: CreatedBranch) => A;
+      onSwitchedBranch: (branch: SwitchedBranch) => A;
+      onResetBranch: (branch: ResetBranch) => A;
     },
   ): A =>
     pipe(
       Match.type<GitCreateJiraBranchResult>(),
-      Match.tag('CreatedBranch', ({branch}) => matcher.onCreatedBranch(branch)),
-      Match.tag('SwitchedBranch', ({branch}) =>
-        matcher.onSwitchedBranch(branch),
-      ),
-      Match.tag('ResetBranch', ({branch}) => matcher.onResetBranch(branch)),
+      Match.tag('CreatedBranch', (res) => matcher.onCreatedBranch(res)),
+      Match.tag('SwitchedBranch', (res) => matcher.onSwitchedBranch(res)),
+      Match.tag('ResetBranch', (res) => matcher.onResetBranch(res)),
       Match.exhaustive,
     )(result) as A,
 );
