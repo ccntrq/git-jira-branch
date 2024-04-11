@@ -57,7 +57,7 @@
     "@vitest/ui": "^1.2.2",
     "husky": "^9.0.11",
     "rimraf": "^5.0.5",
-    "typescript": "^5.4.4",
+    "typescript": "^5.4.5",
     "vitest": "^1.2.2"
   },
   "dependencies": {
