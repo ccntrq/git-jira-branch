@@ -233,6 +233,10 @@ is based on the ticket summary.
 If there already is a branch associated with the ticket, it will be switched to
 instead.
 
+  - switch <jira-key>                                      
+Switches to an already existing branch that is associated with the given Jira
+ticket.
+
   - open [<jira-key>]                                      
 Opens the given Jira ticket in your default browser. If no ticket is given the
 jira ticket for the current branch is opened.
@@ -335,4 +339,77 @@ jira ticket for the current branch is opened.
 
   This setting is optional.
 "
+`;
+
+exports[`cli > switch subcommand > should handle branch not found error 1`] = `
+[
+  [
+    "[0;31mNo branch associated with Jira ticket 'FOOX-1234'[0m
+",
+  ],
+]
+`;
+
+exports[`cli > switch subcommand > should print subcommand help (--help) 1`] = `
+"
+[0;1mUSAGE[0m
+
+$ switch <jira-key>
+
+[0;1mDESCRIPTION[0m
+
+
+Switches to an already existing branch that is associated with the given Jira
+ticket.
+
+[0;1mARGUMENTS[0m
+
+[0;1m[0;30;1m<jira-key>[0;1m[0m
+
+  A user-defined piece of text.
+
+  The Jira ticket key associated with the branch to switch to (e.g. FOOX-1234)
+
+[0;1mOPTIONS[0m
+
+[0;1m--completions sh | bash | fish | zsh[0m
+
+  One of the following: sh, bash, fish, zsh
+
+  Generate a completion script for a specific shell
+
+  This setting is optional.
+
+[0;1m(-h, --help)[0m
+
+  A true or false value.
+
+  Show the help documentation for a command
+
+  This setting is optional.
+
+[0;1m--wizard[0m
+
+  A true or false value.
+
+  Start wizard mode for a command
+
+  This setting is optional.
+
+[0;1m--version[0m
+
+  A true or false value.
+
+  Show the version of the application
+
+  This setting is optional.
+"
+`;
+
+exports[`cli > switch subcommand > should switch branch 1`] = `
+[
+  [
+    "Switched to already existing branch: 'feat/FOOX-1234-description'",
+  ],
+]
 `;
