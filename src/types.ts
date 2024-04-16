@@ -51,29 +51,29 @@ export interface GitBranch {
 
 export const GitBranch = Data.case<GitBranch>();
 
-export const JiraIssuetypeSchema = Schema.struct({
-  name: Schema.string,
+export const JiraIssuetypeSchema = Schema.Struct({
+  name: Schema.String,
 });
 
 export type JiraIssuetype = Schema.Schema.Type<typeof JiraIssuetypeSchema>;
 
 // TODO: transform nullable values into optionals
-export const JiraIssueSchema = Schema.struct({
-  key: Schema.string,
-  fields: Schema.struct({
-    summary: Schema.string,
+export const JiraIssueSchema = Schema.Struct({
+  key: Schema.String,
+  fields: Schema.Struct({
+    summary: Schema.String,
     issuetype: JiraIssuetypeSchema,
-    status: Schema.struct({
-      name: Schema.string,
+    status: Schema.Struct({
+      name: Schema.String,
     }),
-    description: Schema.nullable(Schema.string),
-    assignee: Schema.nullable(
-      Schema.struct({
-        displayName: Schema.string,
+    description: Schema.NullOr(Schema.String),
+    assignee: Schema.NullOr(
+      Schema.Struct({
+        displayName: Schema.String,
       }),
     ),
-    creator: Schema.struct({
-      displayName: Schema.string,
+    creator: Schema.Struct({
+      displayName: Schema.String,
     }),
   }),
 });

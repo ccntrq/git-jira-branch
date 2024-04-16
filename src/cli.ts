@@ -196,7 +196,7 @@ export const cliEffect = (
     Effect.tapError((e) => {
       if (ValidationError.isValidationError(e)) {
         // handled and printed by the cli library already
-        return Effect.unit;
+        return Effect.void;
       }
       return printDocs(HelpDoc.p(Span.error(e.message)));
     }),

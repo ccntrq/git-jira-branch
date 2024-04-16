@@ -110,7 +110,7 @@ const createGitBranchFrom =
         baseBranch,
       ),
       runGitCommand(commandExecutor),
-      Effect.flatMap(() => Effect.unit),
+      Effect.flatMap(() => Effect.void),
       Effect.scoped,
     );
 
@@ -120,7 +120,7 @@ const createGitBranch =
     pipe(
       Command.make('git', 'checkout', reset ? '-B' : '-b', branchName),
       runGitCommand(commandExecutor),
-      Effect.flatMap(() => Effect.unit),
+      Effect.flatMap(() => Effect.void),
       Effect.scoped,
     );
 
@@ -130,7 +130,7 @@ const switchBranch =
     pipe(
       Command.make('git', 'checkout', branchName),
       runGitCommand(commandExecutor),
-      Effect.flatMap(() => Effect.unit),
+      Effect.flatMap(() => Effect.void),
       Effect.scoped,
     );
 
