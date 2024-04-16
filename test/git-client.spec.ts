@@ -32,7 +32,7 @@ const mkTestProcess = (
     stderr: stderr ? Stream.make(encoder.encode(stderr)) : Stream.empty,
     stdout: stdout ? Stream.make(encoder.encode(stdout)) : Stream.empty,
     stdin: Sink.drain,
-    kill: () => Effect.unit,
+    kill: () => Effect.void,
     toJSON: () => 'not implemented',
     toString: () => 'not implemented',
   };
