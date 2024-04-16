@@ -9,6 +9,14 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [1.4.0](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v1.3.3...git-jira-branch-v1.4.0) (2024-04-16)
+
+
+### Features
+
+* add switch command to switch to already existing branches ([#275](https://github.com/ccntrq/git-jira-branch/issues/275)) ([b7f356f](https://github.com/ccntrq/git-jira-branch/commit/b7f356fc8a7823425765d33d6f5086e619dc688e))
+* update to effect v3.0.0 🎉 ([#289](https://github.com/ccntrq/git-jira-branch/issues/289)) ([0271755](https://github.com/ccntrq/git-jira-branch/commit/02717550ab6d446cf8b55687b8433f5f7fd4a34f))
+
 ## [1.3.3](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v1.3.2...git-jira-branch-v1.3.3) (2024-04-08)
 
 
