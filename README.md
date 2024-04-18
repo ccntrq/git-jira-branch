@@ -80,6 +80,15 @@ Pass the `-r|--reset` flag to reset an already existing branch to the current
 git-jira-branch create -r MYAPP-1234
 ```
 
+### Switch to an already existing branch that is associated with a Jira ticket
+
+To switch to an already existing branch that is associated with a Jira ticket
+you can use the `switch` command.
+
+```bash
+git-jira-branch switch MYAPP-1234
+```
+
 ### <a name='Openticketsinyourbrowser'></a>Open tickets in your browser
 
 1. For the current branch:
