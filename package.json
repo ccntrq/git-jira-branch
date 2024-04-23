@@ -47,8 +47,8 @@
     "lint:fix": "biome check . --apply"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.7.0",
-    "@commitlint/cli": "^19.2.2",
+    "@biomejs/biome": "1.7.1",
+    "@commitlint/cli": "^19.3.0",
     "@commitlint/config-conventional": "^19.2.2",
     "@effect/vitest": "0.3.3",
     "@tsconfig/node20": "^20.1.4",
