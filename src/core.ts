@@ -29,20 +29,18 @@ export const gitCreateJiraBranch = (
   GitJiraBranchError,
   AppConfigService | GitClient | JiraClient
 > =>
-  Effect.gen(function* ($) {
-    const [gitClient, jiraClient] = yield* $(
-      Effect.all([GitClient, JiraClient]),
-    );
+  Effect.gen(function* () {
+    const [gitClient, jiraClient] = yield* Effect.all([GitClient, JiraClient]);
 
-    const fullJiraKey = yield* $(fullKey(jiraKey));
-    const associatedBranch = yield* $(getAssociatedBranch(fullJiraKey));
+    const fullJiraKey = yield* fullKey(jiraKey);
+    const associatedBranch = yield* getAssociatedBranch(fullJiraKey);
 
     if (!reset && Option.isSome(associatedBranch)) {
-      yield* $(gitClient.switchBranch(associatedBranch.value.name));
+      yield* gitClient.switchBranch(associatedBranch.value.name);
       return SwitchedBranch({branch: associatedBranch.value.name});
     }
 
-    const branchName = yield* $(
+    const branchName = yield* pipe(
       associatedBranch,
       Option.match({
         onNone: () =>
@@ -54,12 +52,10 @@ export const gitCreateJiraBranch = (
       }),
     );
     const resetBranch = reset && Option.isSome(associatedBranch);
-    yield* $(
-      Option.match(baseBranch, {
-        onNone: constant(gitClient.createGitBranch),
-        onSome: gitClient.createGitBranchFrom,
-      })(branchName, resetBranch),
-    );
+    yield* Option.match(baseBranch, {
+      onNone: constant(gitClient.createGitBranch),
+      onSome: gitClient.createGitBranchFrom,
+    })(branchName, resetBranch);
 
     return (resetBranch ? ResetBranch : CreatedBranch)({branch: branchName});
   });
@@ -130,11 +126,10 @@ export const ticketInfoForCurrentBranch = () =>
   getJiraKeyFromCurrentBranch().pipe(Effect.flatMap(ticketInfo));
 
 export const ticketInfo = (jiraKey: string) =>
-  Effect.gen(function* ($) {
-    const jiraClient = yield* $(JiraClient);
+  Effect.gen(function* () {
+    const jiraClient = yield* JiraClient;
 
-    const issue = yield* $(
-      fullKey(jiraKey),
+    const issue = yield* fullKey(jiraKey).pipe(
       Effect.flatMap(jiraClient.getJiraIssue),
     );
 

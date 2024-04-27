@@ -43,19 +43,17 @@ const mkTestLayer = (
   );
 };
 
-const testProg = Effect.gen(function* ($) {
-  const jiraClient = yield* $(JiraClient);
-  const ticket = yield* $(jiraClient.getJiraIssue('DUMMYAPP-123'));
+const testProg = Effect.gen(function* () {
+  const jiraClient = yield* JiraClient;
+  const ticket = yield* jiraClient.getJiraIssue('DUMMYAPP-123');
   return ticket;
 });
 
 describe('JiraClient', () => {
   live('should make ticket request', () =>
-    Effect.gen(function* ($) {
-      const res = yield* $(
-        Effect.either(
-          Effect.provide(testProg, mkTestLayer(Response.json(dummyJiraIssue))),
-        ),
+    Effect.gen(function* () {
+      const res = yield* Effect.either(
+        Effect.provide(testProg, mkTestLayer(Response.json(dummyJiraIssue))),
       );
 
       Either.match(res, {
@@ -67,16 +65,14 @@ describe('JiraClient', () => {
   );
 
   live('should return ParseError for invalid response', () =>
-    Effect.gen(function* ($) {
+    Effect.gen(function* () {
       const testIssue: Partial<JiraIssue> = {
         fields: {
           ...dummyJiraIssue.fields,
         },
       };
-      const res = yield* $(
-        Effect.either(
-          Effect.provide(testProg, mkTestLayer(Response.json(testIssue))),
-        ),
+      const res = yield* Effect.either(
+        Effect.provide(testProg, mkTestLayer(Response.json(testIssue))),
       );
 
       Either.match(res, {
@@ -93,11 +89,11 @@ describe('JiraClient', () => {
   );
 
   live('should handle 404 NOT_FOUND errors', () =>
-    Effect.gen(function* ($) {
+    Effect.gen(function* () {
       const failedResponse = new Response(null, {status: 404});
 
-      const res = yield* $(
-        Effect.either(Effect.provide(testProg, mkTestLayer(failedResponse))),
+      const res = yield* Effect.either(
+        Effect.provide(testProg, mkTestLayer(failedResponse)),
       );
 
       Either.match(res, {
@@ -114,11 +110,11 @@ describe('JiraClient', () => {
   );
 
   live('should return error for response with non 200 status', () =>
-    Effect.gen(function* ($) {
+    Effect.gen(function* () {
       const failedResponse = new Response(null, {status: 500});
 
-      const res = yield* $(
-        Effect.either(Effect.provide(testProg, mkTestLayer(failedResponse))),
+      const res = yield* Effect.either(
+        Effect.provide(testProg, mkTestLayer(failedResponse)),
       );
 
       Either.match(res, {

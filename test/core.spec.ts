@@ -1,5 +1,5 @@
 import {live} from '@effect/vitest';
-import {Chunk, Effect, Either, Option} from 'effect';
+import {Chunk, Effect, Either, Option, pipe} from 'effect';
 
 import {afterEach, describe, expect, vi} from 'vitest';
 import {
@@ -27,7 +27,7 @@ describe('core', () => {
     });
 
     live('should create feature branch', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockAppConfigService.getAppConfig.mockReturnValue(
           Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
         );
@@ -38,12 +38,10 @@ describe('core', () => {
           Effect.succeed(dummyJiraIssue),
         );
 
-        const result = yield* $(
-          Effect.either(
-            Effect.provide(
-              gitCreateJiraBranch('DUMMYAPP-123', Option.none(), false),
-              testLayer,
-            ),
+        const result = yield* Effect.either(
+          Effect.provide(
+            gitCreateJiraBranch('DUMMYAPP-123', Option.none(), false),
+            testLayer,
           ),
         );
 
@@ -75,7 +73,7 @@ describe('core', () => {
     );
 
     live('should create bugfix branch', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockAppConfigService.getAppConfig.mockReturnValue(
           Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
         );
@@ -94,12 +92,10 @@ describe('core', () => {
           }),
         );
 
-        const result = yield* $(
-          Effect.either(
-            Effect.provide(
-              gitCreateJiraBranch('DUMMYAPP-123', Option.none(), false),
-              testLayer,
-            ),
+        const result = yield* Effect.either(
+          Effect.provide(
+            gitCreateJiraBranch('DUMMYAPP-123', Option.none(), false),
+            testLayer,
           ),
         );
 
@@ -132,7 +128,7 @@ describe('core', () => {
     );
 
     live('should create feature branch from base branch', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockAppConfigService.getAppConfig.mockReturnValue(
           Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
         );
@@ -141,12 +137,10 @@ describe('core', () => {
           Effect.succeed(dummyJiraIssue),
         );
 
-        const result = yield* $(
-          Effect.either(
-            Effect.provide(
-              gitCreateJiraBranch('DUMMYAPP-123', Option.some('master'), false),
-              testLayer,
-            ),
+        const result = yield* Effect.either(
+          Effect.provide(
+            gitCreateJiraBranch('DUMMYAPP-123', Option.some('master'), false),
+            testLayer,
           ),
         );
 
@@ -184,7 +178,7 @@ describe('core', () => {
     );
 
     live('should reset existing branch', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockAppConfigService.getAppConfig.mockReturnValue(
           Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
         );
@@ -200,11 +194,9 @@ describe('core', () => {
           ),
         );
 
-        const result = yield* $(
-          Effect.provide(
-            gitCreateJiraBranch('DUMMYAPP-123', Option.none(), true),
-            testLayer,
-          ),
+        const result = yield* Effect.provide(
+          gitCreateJiraBranch('DUMMYAPP-123', Option.none(), true),
+          testLayer,
         );
 
         expect(result).toMatchInlineSnapshot(
@@ -226,7 +218,7 @@ describe('core', () => {
     );
 
     live('should create branch with reset for non existing branch', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockAppConfigService.getAppConfig.mockReturnValue(
           Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
         );
@@ -240,11 +232,9 @@ describe('core', () => {
           ),
         );
 
-        const result = yield* $(
-          Effect.provide(
-            gitCreateJiraBranch('DUMMYAPP-123', Option.none(), true),
-            testLayer,
-          ),
+        const result = yield* Effect.provide(
+          gitCreateJiraBranch('DUMMYAPP-123', Option.none(), true),
+          testLayer,
         );
 
         expect(result).toMatchInlineSnapshot(
@@ -270,7 +260,7 @@ describe('core', () => {
     );
 
     live('should switch to existing branch', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockAppConfigService.getAppConfig.mockSuccessValue({
           defaultJiraKeyPrefix: Option.none(),
         });
@@ -283,11 +273,9 @@ describe('core', () => {
           ),
         );
 
-        const result = yield* $(
-          Effect.provide(
-            gitCreateJiraBranch('DUMMYAPP-123', Option.none(), false),
-            testLayer,
-          ),
+        const result = yield* Effect.provide(
+          gitCreateJiraBranch('DUMMYAPP-123', Option.none(), false),
+          testLayer,
         );
 
         expect(result).toMatchInlineSnapshot(`
@@ -307,7 +295,7 @@ describe('core', () => {
     );
 
     live('should consider defaultJiraKeyPrefix', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockAppConfigService.getAppConfig.mockReturnValue(
           Effect.succeed({defaultJiraKeyPrefix: Option.some('DUMMYAPP')}),
         );
@@ -318,12 +306,10 @@ describe('core', () => {
           Effect.succeed(dummyJiraIssue),
         );
 
-        const result = yield* $(
-          Effect.either(
-            Effect.provide(
-              gitCreateJiraBranch('123', Option.none(), false),
-              testLayer,
-            ),
+        const result = yield* Effect.either(
+          Effect.provide(
+            gitCreateJiraBranch('123', Option.none(), false),
+            testLayer,
           ),
         );
 
@@ -358,7 +344,7 @@ describe('core', () => {
     );
 
     live('should allow overriding defaultJiraKeyPrefix', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockAppConfigService.getAppConfig.mockReturnValue(
           Effect.succeed({defaultJiraKeyPrefix: Option.some('OTHERAPP')}),
         );
@@ -369,12 +355,10 @@ describe('core', () => {
           Effect.succeed(dummyJiraIssue),
         );
 
-        const result = yield* $(
-          Effect.either(
-            Effect.provide(
-              gitCreateJiraBranch('DUMMYAPP-123', Option.none(), false),
-              testLayer,
-            ),
+        const result = yield* Effect.either(
+          Effect.provide(
+            gitCreateJiraBranch('DUMMYAPP-123', Option.none(), false),
+            testLayer,
           ),
         );
 
@@ -407,7 +391,7 @@ describe('core', () => {
     );
 
     live('should handle umlauts and other chars in summary', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockAppConfigService.getAppConfig.mockReturnValue(
           Effect.succeed({defaultJiraKeyPrefix: Option.some('OTHERAPP')}),
         );
@@ -424,12 +408,10 @@ describe('core', () => {
           }),
         );
 
-        const result = yield* $(
-          Effect.either(
-            Effect.provide(
-              gitCreateJiraBranch('DUMMYAPP-123', Option.none(), false),
-              testLayer,
-            ),
+        const result = yield* Effect.either(
+          Effect.provide(
+            gitCreateJiraBranch('DUMMYAPP-123', Option.none(), false),
+            testLayer,
           ),
         );
 
@@ -463,7 +445,7 @@ describe('core', () => {
   });
   describe('switchBranch', () => {
     live('should switch to existing branch', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockAppConfigService.getAppConfig.mockSuccessValue({
           defaultJiraKeyPrefix: Option.none(),
         });
@@ -475,8 +457,9 @@ describe('core', () => {
           ),
         );
 
-        const result = yield* $(
-          Effect.provide(switchBranch('DUMMYAPP-123'), testLayer),
+        const result = yield* Effect.provide(
+          switchBranch('DUMMYAPP-123'),
+          testLayer,
         );
 
         expect(result).toMatchInlineSnapshot(`
@@ -493,7 +476,7 @@ describe('core', () => {
     );
 
     live('should error on non existing branch', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockAppConfigService.getAppConfig.mockSuccessValue({
           defaultJiraKeyPrefix: Option.none(),
         });
@@ -503,7 +486,7 @@ describe('core', () => {
           ),
         );
 
-        yield* $(
+        yield* pipe(
           Effect.provide(switchBranch('DUMMYAPP-123'), testLayer),
           Effect.match({
             onSuccess: () => expect.unreachable('Should have failed'),
@@ -523,13 +506,13 @@ describe('core', () => {
 
   describe('ticketUrl', () => {
     live('should return appropriate url for given ticket key', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockAppConfigService.getAppConfig.mockSuccessValue({
           defaultJiraKeyPrefix: Option.some('MYAPP'),
           jiraApiUrl: 'https://gcjb.atlassian.com',
         });
 
-        const result = yield* $(Effect.provide(ticketUrl('123'), testLayer));
+        const result = yield* Effect.provide(ticketUrl('123'), testLayer);
 
         expect(result).toMatchInlineSnapshot(
           '"https://gcjb.atlassian.com/browse/MYAPP-123"',
@@ -540,7 +523,7 @@ describe('core', () => {
 
   describe('ticketUrlForCurrentBranch', () => {
     live('should extract ticket from branch an return appropriate url', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockAppConfigService.getAppConfig.mockSuccessValue({
           defaultJiraKeyPrefix: Option.some('MYAPP'),
           jiraApiUrl: 'https://gcjb.atlassian.com',
@@ -550,8 +533,9 @@ describe('core', () => {
           'feat/MYAPP-123-dummy-isssue-summary',
         );
 
-        const result = yield* $(
-          Effect.provide(ticketUrlForCurrentBranch(), testLayer),
+        const result = yield* Effect.provide(
+          ticketUrlForCurrentBranch(),
+          testLayer,
         );
 
         expect(result).toMatchInlineSnapshot(
@@ -563,14 +547,14 @@ describe('core', () => {
 
   describe('ticketInfo', () => {
     live('should return info for a given ticket', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockAppConfigService.getAppConfig.mockSuccessValue({
           defaultJiraKeyPrefix: Option.some('DUMMYAPP'),
         });
 
         mockJiraClient.getJiraIssue.mockSuccessValue(dummyJiraIssue);
 
-        const result = yield* $(Effect.provide(ticketInfo('123'), testLayer));
+        const result = yield* Effect.provide(ticketInfo('123'), testLayer);
 
         expect(mockJiraClient.getJiraIssue).toHaveBeenLastCalledWith(
           'DUMMYAPP-123',
@@ -582,7 +566,7 @@ describe('core', () => {
 
   describe('ticketInfoForCurrentBranch', () => {
     live('should extract ticket from branch and return issue info', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockAppConfigService.getAppConfig.mockSuccessValue({
           defaultJiraKeyPrefix: Option.some('DUMMYAPP'),
         });
@@ -593,8 +577,9 @@ describe('core', () => {
           'feat/DUMMYAPP-123-dummy-isssue-summary',
         );
 
-        const result = yield* $(
-          Effect.provide(ticketInfoForCurrentBranch(), testLayer),
+        const result = yield* Effect.provide(
+          ticketInfoForCurrentBranch(),
+          testLayer,
         );
 
         expect(mockJiraClient.getJiraIssue).toHaveBeenLastCalledWith(
@@ -607,7 +592,7 @@ describe('core', () => {
 
   describe('getAssociatedBranches', () => {
     live('should list branches possibly associated with a jira ticket', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockGitClient.listBranches.mockSuccessValue(
           Chunk.fromIterable([
             ...[
@@ -624,8 +609,9 @@ describe('core', () => {
           ]),
         );
 
-        const result = yield* $(
-          Effect.provide(getAssociatedBranches(), testLayer),
+        const result = yield* Effect.provide(
+          getAssociatedBranches(),
+          testLayer,
         );
 
         expect(result).toMatchInlineSnapshot(`

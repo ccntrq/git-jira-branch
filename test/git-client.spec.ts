@@ -12,9 +12,9 @@ import {GitClient, GitClientLive} from '../src/git-client';
 import {GitExecError} from '../src/types';
 import {type EffectMock, effectMock} from './util';
 
-const testProg = Effect.gen(function* ($) {
-  const gitClient = yield* $(GitClient);
-  yield* $(gitClient.createGitBranch('feat/dummy-branch', false));
+const testProg = Effect.gen(function* () {
+  const gitClient = yield* GitClient;
+  yield* gitClient.createGitBranch('feat/dummy-branch', false);
 });
 
 const mkTestProcess = (
@@ -61,10 +61,10 @@ describe('GitClient', () => {
   });
 
   live('createGitBranch should run appropriate git command', () =>
-    Effect.gen(function* ($) {
+    Effect.gen(function* () {
       executorMock.mockSuccessValueOnce(mkTestProcess(0));
 
-      yield* $(Effect.provide(testProg, testLayer));
+      yield* Effect.provide(testProg, testLayer);
 
       expect(executorMock).toHaveBeenCalledTimes(1);
       expect(executorMock.mock.calls[0]?.[0]).toMatchObject({
@@ -76,17 +76,15 @@ describe('GitClient', () => {
   );
 
   live('createGitBranch should run appropriate git command (with reset)', () =>
-    Effect.gen(function* ($) {
+    Effect.gen(function* () {
       executorMock.mockSuccessValueOnce(mkTestProcess(0));
 
-      yield* $(
-        Effect.provide(
-          Effect.gen(function* ($) {
-            const gitClient = yield* $(GitClient);
-            yield* $(gitClient.createGitBranch('feat/dummy-branch', true));
-          }),
-          testLayer,
-        ),
+      yield* Effect.provide(
+        Effect.gen(function* () {
+          const gitClient = yield* GitClient;
+          yield* gitClient.createGitBranch('feat/dummy-branch', true);
+        }),
+        testLayer,
       );
 
       expect(executorMock).toHaveBeenCalledTimes(1);
@@ -99,22 +97,18 @@ describe('GitClient', () => {
   );
 
   live('createGitBranchFrom should run git command with given basebranch', () =>
-    Effect.gen(function* ($) {
+    Effect.gen(function* () {
       executorMock.mockSuccessValueOnce(mkTestProcess(0));
 
-      yield* $(
-        Effect.provide(
-          Effect.gen(function* ($) {
-            const gitClient = yield* $(GitClient);
-            yield* $(
-              gitClient.createGitBranchFrom('master')(
-                'feat/dummy-branch',
-                false,
-              ),
-            );
-          }),
-          testLayer,
-        ),
+      yield* Effect.provide(
+        Effect.gen(function* () {
+          const gitClient = yield* GitClient;
+          yield* gitClient.createGitBranchFrom('master')(
+            'feat/dummy-branch',
+            false,
+          );
+        }),
+        testLayer,
       );
 
       expect(executorMock).toHaveBeenCalledTimes(1);
@@ -129,22 +123,18 @@ describe('GitClient', () => {
   live(
     'createGitBranchFrom should run appropriate git command (with reset)',
     () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         executorMock.mockSuccessValueOnce(mkTestProcess(0));
 
-        yield* $(
-          Effect.provide(
-            Effect.gen(function* ($) {
-              const gitClient = yield* $(GitClient);
-              yield* $(
-                gitClient.createGitBranchFrom('master')(
-                  'feat/dummy-branch',
-                  true,
-                ),
-              );
-            }),
-            testLayer,
-          ),
+        yield* Effect.provide(
+          Effect.gen(function* () {
+            const gitClient = yield* GitClient;
+            yield* gitClient.createGitBranchFrom('master')(
+              'feat/dummy-branch',
+              true,
+            );
+          }),
+          testLayer,
         );
 
         expect(executorMock).toHaveBeenCalledTimes(1);
@@ -157,7 +147,7 @@ describe('GitClient', () => {
   );
 
   live('listBranch should run appropriate git command and parse output', () =>
-    Effect.gen(function* ($) {
+    Effect.gen(function* () {
       const commandOutput = `  * 7-switch-to-existing-branches
   chore/enforce-conventional-commits
   develop
@@ -167,11 +157,9 @@ describe('GitClient', () => {
     `;
       executorMock.mockSuccessValueOnce(mkTestProcess(0, commandOutput));
 
-      const result = yield* $(
-        Effect.provide(
-          Effect.flatMap(GitClient, (gc) => gc.listBranches()),
-          testLayer,
-        ),
+      const result = yield* Effect.provide(
+        Effect.flatMap(GitClient, (gc) => gc.listBranches()),
+        testLayer,
       );
 
       expect(result).toMatchInlineSnapshot(`
@@ -216,16 +204,12 @@ describe('GitClient', () => {
   );
 
   live('switchBranch should run appropriate git command', () =>
-    Effect.gen(function* ($) {
+    Effect.gen(function* () {
       executorMock.mockSuccessValueOnce(mkTestProcess(0));
 
-      yield* $(
-        Effect.provide(
-          Effect.flatMap(GitClient, (gc) =>
-            gc.switchBranch('feat/dummy-branch'),
-          ),
-          testLayer,
-        ),
+      yield* Effect.provide(
+        Effect.flatMap(GitClient, (gc) => gc.switchBranch('feat/dummy-branch')),
+        testLayer,
       );
 
       expect(executorMock).toHaveBeenCalledTimes(1);
@@ -238,14 +222,12 @@ describe('GitClient', () => {
   );
 
   live('getCurrentBranch should run appropriate git command', () =>
-    Effect.gen(function* ($) {
+    Effect.gen(function* () {
       executorMock.mockSuccessValueOnce(mkTestProcess(0));
 
-      yield* $(
-        Effect.provide(
-          Effect.flatMap(GitClient, (gc) => gc.getCurrentBranch()),
-          testLayer,
-        ),
+      yield* Effect.provide(
+        Effect.flatMap(GitClient, (gc) => gc.getCurrentBranch()),
+        testLayer,
       );
 
       expect(executorMock).toHaveBeenCalledTimes(1);
@@ -258,13 +240,13 @@ describe('GitClient', () => {
   );
 
   live('should handle git command not found errors', () =>
-    Effect.gen(function* ($) {
+    Effect.gen(function* () {
       const errorMessage = 'fatal: Dummy git error';
       executorMock.mockSuccessValueOnce(
         mkTestProcess(128, undefined, errorMessage),
       );
 
-      const res = yield* $(Effect.either(Effect.provide(testProg, testLayer)));
+      const res = yield* Effect.either(Effect.provide(testProg, testLayer));
 
       Either.match(res, {
         onLeft: (e) =>
@@ -280,7 +262,7 @@ describe('GitClient', () => {
   );
 
   live('should handle git errors', () =>
-    Effect.gen(function* ($) {
+    Effect.gen(function* () {
       executorMock.mockFailValue(
         PlatformError.SystemError({
           message: 'git command not found',
@@ -288,7 +270,7 @@ describe('GitClient', () => {
         } as PlatformError.SystemError),
       );
 
-      const res = yield* $(Effect.either(Effect.provide(testProg, testLayer)));
+      const res = yield* Effect.either(Effect.provide(testProg, testLayer));
       Either.match(res, {
         onLeft: (e) =>
           expect(e).toMatchObject(
@@ -304,14 +286,14 @@ describe('GitClient', () => {
   );
 
   live('should handle BadArgument errors', () =>
-    Effect.gen(function* ($) {
+    Effect.gen(function* () {
       executorMock.mockFailValue(
         PlatformError.BadArgument({
           message: 'Dummy Message',
         } as PlatformError.BadArgument),
       );
 
-      const res = yield* $(Effect.either(Effect.provide(testProg, testLayer)));
+      const res = yield* Effect.either(Effect.provide(testProg, testLayer));
       Either.match(res, {
         onLeft: (e) =>
           expect(e).toMatchObject(
@@ -326,7 +308,7 @@ describe('GitClient', () => {
   );
 
   live('should handle command execution platform errors', () =>
-    Effect.gen(function* ($) {
+    Effect.gen(function* () {
       executorMock.mockFailValue(
         PlatformError.SystemError({
           message: 'Fail',
@@ -334,7 +316,7 @@ describe('GitClient', () => {
         } as PlatformError.SystemError),
       );
 
-      const res = yield* $(Effect.either(Effect.provide(testProg, testLayer)));
+      const res = yield* Effect.either(Effect.provide(testProg, testLayer));
       Either.match(res, {
         onLeft: (e) =>
           expect(e).toMatchObject(

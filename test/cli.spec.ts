@@ -112,12 +112,10 @@ describe('cli', () => {
     });
 
     live('should print version (--version)', () =>
-      Effect.gen(function* ($) {
-        yield* $(
-          Effect.provide(
-            pipe(withBaseArgs(['--version']), Effect.flatMap(cliEffect)),
-            cliTestLayer,
-          ),
+      Effect.gen(function* () {
+        yield* Effect.provide(
+          pipe(withBaseArgs(['--version']), Effect.flatMap(cliEffect)),
+          cliTestLayer,
         );
 
         expect(mockGitCreateJiraBranch).not.toHaveBeenCalled();
@@ -126,12 +124,10 @@ describe('cli', () => {
     );
 
     live('should print help (--help)', () =>
-      Effect.gen(function* ($) {
-        yield* $(
-          Effect.provide(
-            pipe(withBaseArgs(['--help']), Effect.flatMap(cliEffect)),
-            cliTestLayer,
-          ),
+      Effect.gen(function* () {
+        yield* Effect.provide(
+          pipe(withBaseArgs(['--help']), Effect.flatMap(cliEffect)),
+          cliTestLayer,
         );
 
         expect(mockGitCreateJiraBranch).not.toHaveBeenCalled();
@@ -151,18 +147,16 @@ describe('cli', () => {
     });
 
     live('should create branch with single argument', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockGitCreateJiraBranch.mockSuccessValue(
           CreatedBranch({branch: 'feat/FOOX-1234-description'}),
         );
-        yield* $(
-          Effect.provide(
-            pipe(
-              withBaseArgs(['create', 'FOOX-1234']),
-              Effect.flatMap(cliEffect),
-            ),
-            cliTestLayer,
+        yield* Effect.provide(
+          pipe(
+            withBaseArgs(['create', 'FOOX-1234']),
+            Effect.flatMap(cliEffect),
           ),
+          cliTestLayer,
         );
 
         expect(mockGitCreateJiraBranch).toHaveBeenCalledWith(
@@ -175,18 +169,16 @@ describe('cli', () => {
     );
 
     live('should inform about branch switch', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockGitCreateJiraBranch.mockSuccessValue(
           SwitchedBranch({branch: 'feat/FOOX-1234-description'}),
         );
-        yield* $(
-          Effect.provide(
-            pipe(
-              withBaseArgs(['create', 'FOOX-1234']),
-              Effect.flatMap(cliEffect),
-            ),
-            cliTestLayer,
+        yield* Effect.provide(
+          pipe(
+            withBaseArgs(['create', 'FOOX-1234']),
+            Effect.flatMap(cliEffect),
           ),
+          cliTestLayer,
         );
 
         expect(mockGitCreateJiraBranch).toHaveBeenCalledWith(
@@ -199,18 +191,16 @@ describe('cli', () => {
     );
 
     live('should handle basebranch argument (-b)', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockGitCreateJiraBranch.mockSuccessValue(
           CreatedBranch({branch: 'feat/FOOX-1234-description'}),
         );
-        yield* $(
-          Effect.provide(
-            pipe(
-              withBaseArgs(['create', '-b', 'master', 'FOOX-1234']),
-              Effect.flatMap(cliEffect),
-            ),
-            cliTestLayer,
+        yield* Effect.provide(
+          pipe(
+            withBaseArgs(['create', '-b', 'master', 'FOOX-1234']),
+            Effect.flatMap(cliEffect),
           ),
+          cliTestLayer,
         );
 
         expect(mockGitCreateJiraBranch).toHaveBeenCalledWith(
@@ -223,18 +213,16 @@ describe('cli', () => {
     );
 
     live('should handle reset option (-r)', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockGitCreateJiraBranch.mockSuccessValue(
           ResetBranch({branch: 'feat/FOOX-1234-description'}),
         );
-        yield* $(
-          Effect.provide(
-            pipe(
-              withBaseArgs(['create', '-r', 'FOOX-1234']),
-              Effect.flatMap(cliEffect),
-            ),
-            cliTestLayer,
+        yield* Effect.provide(
+          pipe(
+            withBaseArgs(['create', '-r', 'FOOX-1234']),
+            Effect.flatMap(cliEffect),
           ),
+          cliTestLayer,
         );
 
         expect(mockGitCreateJiraBranch).toHaveBeenCalledWith(
@@ -264,12 +252,10 @@ describe('cli', () => {
     );
 
     live('should print subcommand help (--help)', () =>
-      Effect.gen(function* ($) {
-        yield* $(
-          Effect.provide(
-            pipe(withBaseArgs(['create', '--help']), Effect.flatMap(cliEffect)),
-            cliTestLayer,
-          ),
+      Effect.gen(function* () {
+        yield* Effect.provide(
+          pipe(withBaseArgs(['create', '--help']), Effect.flatMap(cliEffect)),
+          cliTestLayer,
         );
 
         expect(mockGitCreateJiraBranch).not.toHaveBeenCalled();
@@ -306,18 +292,16 @@ describe('cli', () => {
     });
 
     live('should switch branch', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockSwitchBranch.mockSuccessValue(
           SwitchedBranch({branch: 'feat/FOOX-1234-description'}),
         );
-        yield* $(
-          Effect.provide(
-            pipe(
-              withBaseArgs(['switch', 'FOOX-1234']),
-              Effect.flatMap(cliEffect),
-            ),
-            cliTestLayer,
+        yield* Effect.provide(
+          pipe(
+            withBaseArgs(['switch', 'FOOX-1234']),
+            Effect.flatMap(cliEffect),
           ),
+          cliTestLayer,
         );
 
         expect(mockSwitchBranch).toHaveBeenCalledWith('FOOX-1234');
@@ -326,36 +310,32 @@ describe('cli', () => {
     );
 
     live('should handle branch not found error', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockSwitchBranch.mockFailValue(
           UsageError({
             message: `No branch associated with Jira ticket 'FOOX-1234'`,
           }),
         );
 
-        yield* $(
-          Effect.provide(
-            pipe(
-              withBaseArgs(['switch', 'FOOX-1234']),
-              Effect.flatMap(cliEffect),
-              Effect.match({
-                onFailure: () => expect(mockLog.mock.calls).toMatchSnapshot(),
-                onSuccess: () => expect.unreachable('Should have failed'),
-              }),
-            ),
-            cliTestLayer,
+        yield* Effect.provide(
+          pipe(
+            withBaseArgs(['switch', 'FOOX-1234']),
+            Effect.flatMap(cliEffect),
+            Effect.match({
+              onFailure: () => expect(mockLog.mock.calls).toMatchSnapshot(),
+              onSuccess: () => expect.unreachable('Should have failed'),
+            }),
           ),
+          cliTestLayer,
         );
       }),
     );
 
     live('should print subcommand help (--help)', () =>
-      Effect.gen(function* ($) {
-        yield* $(
-          Effect.provide(
-            pipe(withBaseArgs(['switch', '--help']), Effect.flatMap(cliEffect)),
-            cliTestLayer,
-          ),
+      Effect.gen(function* () {
+        yield* Effect.provide(
+          pipe(withBaseArgs(['switch', '--help']), Effect.flatMap(cliEffect)),
+          cliTestLayer,
         );
 
         expect(
@@ -374,16 +354,14 @@ describe('cli', () => {
     });
 
     live('should open url for current branch without arguments', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockTicketUrlForCurrentBranch.mockSuccessValue(
           'https://gcjb.atlassian.net/browse/GCJB-1234',
         );
         mockOpenUrl.mockSuccessValue();
-        yield* $(
-          Effect.provide(
-            pipe(withBaseArgs(['open']), Effect.flatMap(cliEffect)),
-            cliTestLayer,
-          ),
+        yield* Effect.provide(
+          pipe(withBaseArgs(['open']), Effect.flatMap(cliEffect)),
+          cliTestLayer,
         );
 
         expect(mockTicketUrlForCurrentBranch).toHaveBeenCalledWith();
@@ -393,16 +371,14 @@ describe('cli', () => {
     );
 
     live('should open url for given ticket', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockTicketUrl.mockSuccessValue(
           'https://gcjb.atlassian.net/browse/GCJB-1234',
         );
         mockOpenUrl.mockSuccessValue();
-        yield* $(
-          Effect.provide(
-            pipe(withBaseArgs(['open', '1234']), Effect.flatMap(cliEffect)),
-            cliTestLayer,
-          ),
+        yield* Effect.provide(
+          pipe(withBaseArgs(['open', '1234']), Effect.flatMap(cliEffect)),
+          cliTestLayer,
         );
 
         expect(mockTicketUrl).toHaveBeenCalledWith('1234');
@@ -412,12 +388,10 @@ describe('cli', () => {
     );
 
     live('should print subcommand help (--help)', () =>
-      Effect.gen(function* ($) {
-        yield* $(
-          Effect.provide(
-            pipe(withBaseArgs(['open', '--help']), Effect.flatMap(cliEffect)),
-            cliTestLayer,
-          ),
+      Effect.gen(function* () {
+        yield* Effect.provide(
+          pipe(withBaseArgs(['open', '--help']), Effect.flatMap(cliEffect)),
+          cliTestLayer,
         );
 
         expect(mockGitCreateJiraBranch).not.toHaveBeenCalled();
@@ -437,11 +411,11 @@ describe('cli', () => {
     });
 
     live('should render ticket info for current branch', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockTicketInfoForCurrentBranch.mockSuccessValue(dummyJiraIssue);
         mockFormatIssue.mockReturnValue('formatted issue');
 
-        yield* $(
+        yield* pipe(
           withBaseArgs(['info']),
           Effect.flatMap(cliEffect),
           Effect.provide(cliTestLayer),
@@ -454,11 +428,11 @@ describe('cli', () => {
     );
 
     live('should render ticket info for given branch', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         mockTicketInfo.mockSuccessValue(dummyJiraIssue);
         mockFormatIssue.mockReturnValue('formatted issue');
 
-        yield* $(
+        yield* pipe(
           withBaseArgs(['info', '1234']),
           Effect.flatMap(cliEffect),
           Effect.provide(cliTestLayer),
@@ -471,12 +445,10 @@ describe('cli', () => {
     );
 
     live('should print subcommand help (--help)', () =>
-      Effect.gen(function* ($) {
-        yield* $(
-          Effect.provide(
-            pipe(withBaseArgs(['info', '--help']), Effect.flatMap(cliEffect)),
-            cliTestLayer,
-          ),
+      Effect.gen(function* () {
+        yield* Effect.provide(
+          pipe(withBaseArgs(['info', '--help']), Effect.flatMap(cliEffect)),
+          cliTestLayer,
         );
 
         expect(mockGitCreateJiraBranch).not.toHaveBeenCalled();
@@ -496,7 +468,7 @@ describe('cli', () => {
     });
 
     live('should show associated branches', () =>
-      Effect.gen(function* ($) {
+      Effect.gen(function* () {
         const associated = Chunk.fromIterable([
           GitBranch({
             name: 'feat/DUMMYAPP-123-dummy-issue-summary',
@@ -510,7 +482,7 @@ describe('cli', () => {
         mockGetAssociatedBranches.mockSuccessValue(associated);
         mockFormatBranches.mockReturnValue('formatted branches');
 
-        yield* $(
+        yield* pipe(
           withBaseArgs(['list']),
           Effect.flatMap(cliEffect),
           Effect.provide(cliTestLayer),

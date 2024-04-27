@@ -1,5 +1,5 @@
 import {live} from '@effect/vitest';
-import {ConfigProvider, Effect, Either, Layer} from 'effect';
+import {ConfigProvider, Effect, Either, Layer, pipe} from 'effect';
 import * as Option from 'effect/Option';
 import {describe, expect} from 'vitest';
 import {AppConfigService} from '../src/app-config';
@@ -22,7 +22,7 @@ const mkTestLayer = (
 
 describe('AppConfigService', () => {
   live('should provide jira data center appconfig', () =>
-    Effect.gen(function* ($) {
+    Effect.gen(function* () {
       const configProvider = ConfigProvider.fromMap(
         new Map([
           ['JIRA_PAT', 'dummy-jira-pat'],
@@ -31,9 +31,7 @@ describe('AppConfigService', () => {
         ]),
       );
 
-      const env = yield* $(
-        Effect.provide(testProg, mkTestLayer(configProvider)),
-      );
+      const env = yield* Effect.provide(testProg, mkTestLayer(configProvider));
 
       expect(env).toEqual({
         defaultJiraKeyPrefix: Option.some('DUMMYAPP'),
@@ -46,7 +44,7 @@ describe('AppConfigService', () => {
   );
 
   live('should provide jira cloud appconfig', () =>
-    Effect.gen(function* ($) {
+    Effect.gen(function* () {
       const configProvider = ConfigProvider.fromMap(
         new Map([
           ['JIRA_API_TOKEN', 'dummy-jira-api-token'],
@@ -56,9 +54,7 @@ describe('AppConfigService', () => {
         ]),
       );
 
-      const env = yield* $(
-        Effect.provide(testProg, mkTestLayer(configProvider)),
-      );
+      const env = yield* Effect.provide(testProg, mkTestLayer(configProvider));
 
       expect(env).toEqual({
         defaultJiraKeyPrefix: Option.some('DUMMYAPP'),
@@ -72,7 +68,7 @@ describe('AppConfigService', () => {
   );
 
   live('should provide appconfig with missing optional values', () =>
-    Effect.gen(function* ($) {
+    Effect.gen(function* () {
       const configProvider = ConfigProvider.fromMap(
         new Map([
           ['JIRA_PAT', 'dummy-jira-pat'],
@@ -80,9 +76,7 @@ describe('AppConfigService', () => {
         ]),
       );
 
-      const env = yield* $(
-        Effect.provide(testProg, mkTestLayer(configProvider)),
-      );
+      const env = yield* Effect.provide(testProg, mkTestLayer(configProvider));
 
       expect(env).toEqual({
         defaultJiraKeyPrefix: Option.none(),
@@ -95,13 +89,13 @@ describe('AppConfigService', () => {
   );
 
   live('should report missing configuration values', () =>
-    Effect.gen(function* ($) {
+    Effect.gen(function* () {
       const configProvider = ConfigProvider.fromMap(
         new Map([['JIRA_API_URL', 'https://dummy-jira-instance.com']]),
       );
 
-      const result = yield* $(
-        Effect.either(Effect.provide(testProg, mkTestLayer(configProvider))),
+      const result = yield* Effect.either(
+        Effect.provide(testProg, mkTestLayer(configProvider)),
       );
       Either.match(result, {
         onLeft: (e) => expect(e).toMatchSnapshot(),
@@ -111,7 +105,7 @@ describe('AppConfigService', () => {
   );
 
   live('should validate config values', () =>
-    Effect.gen(function* ($) {
+    Effect.gen(function* () {
       const configProvider = ConfigProvider.fromMap(
         new Map([
           ['JIRA_API_TOKEN', ''],
@@ -121,7 +115,7 @@ describe('AppConfigService', () => {
         ]),
       );
 
-      yield* $(
+      yield* pipe(
         Effect.provide(testProg, mkTestLayer(configProvider)),
         Effect.match({
           onSuccess: () => expect.unreachable('Should have returned an error'),
