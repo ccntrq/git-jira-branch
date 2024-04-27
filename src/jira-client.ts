@@ -27,25 +27,23 @@ export const JiraClientLive = Layer.effect(
     Effect.map(([env, httpClient]) =>
       JiraClient.of({
         getJiraIssue: (issueId: string) =>
-          Effect.gen(function* (_) {
+          Effect.gen(function* () {
             const endPoint = `/rest/api/latest/issue/${issueId}`;
-            const {jiraAuth, jiraApiUrl} = yield* _(env.getAppConfig);
+            const {jiraAuth, jiraApiUrl} = yield* env.getAppConfig;
 
-            return yield* _(
-              Http.request
-                .get(jiraApiUrl + endPoint, {
-                  headers: {
-                    Authorization: buildJiraAuthorizationHeader(jiraAuth),
-                    Accept: 'application/json',
-                  },
-                })
-                .pipe(
-                  Http.client.filterStatusOk(httpClient),
-                  Effect.flatMap(Http.response.schemaBodyJson(JiraIssueSchema)),
-                  Effect.scoped,
-                  handleJiraClientErrors(issueId),
-                ),
-            );
+            return yield* Http.request
+              .get(jiraApiUrl + endPoint, {
+                headers: {
+                  Authorization: buildJiraAuthorizationHeader(jiraAuth),
+                  Accept: 'application/json',
+                },
+              })
+              .pipe(
+                Http.client.filterStatusOk(httpClient),
+                Effect.flatMap(Http.response.schemaBodyJson(JiraIssueSchema)),
+                Effect.scoped,
+                handleJiraClientErrors(issueId),
+              );
           }),
       }),
     ),

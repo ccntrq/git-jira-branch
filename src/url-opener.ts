@@ -6,20 +6,18 @@ import {UsageError} from './types';
 export const openUrl = (
   url: string,
 ): Effect.Effect<void, UsageError, CommandExecutor.CommandExecutor> =>
-  Effect.gen(function* ($) {
-    const platform = yield* $(getPlatform());
+  Effect.gen(function* () {
+    const platform = yield* getPlatform();
 
     if (platform === 'linux') {
-      return yield* $(xdgOpen(url));
+      return yield* xdgOpen(url);
     }
 
     // TODO: add support for opening urls on other platforms
-    return yield* $(
-      Effect.fail(
-        UsageError({
-          message: `Opening urls on ${platform} is not yet supported.`,
-        }),
-      ),
+    return yield* Effect.fail(
+      UsageError({
+        message: `Opening urls on ${platform} is not yet supported.`,
+      }),
     );
   });
 
