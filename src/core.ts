@@ -36,8 +36,11 @@ export const gitCreateJiraBranch = (
     const associatedBranch = yield* getAssociatedBranch(fullJiraKey);
 
     if (!reset && Option.isSome(associatedBranch)) {
-      yield* gitClient.switchBranch(associatedBranch.value.name);
-      return SwitchedBranch({branch: associatedBranch.value.name});
+      yield* Effect.fail(
+        UsageError({
+          message: `A branch for ticket '${fullJiraKey}' already exists: ${associatedBranch.value.name}`,
+        }),
+      );
     }
 
     const branchName = yield* pipe(
