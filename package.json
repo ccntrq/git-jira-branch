@@ -61,9 +61,9 @@
     "vitest": "^1.2.2"
   },
   "dependencies": {
-    "@effect/cli": "0.36.17",
-    "@effect/platform": "0.52.2",
-    "@effect/platform-node": "0.48.3",
+    "@effect/cli": "0.36.18",
+    "@effect/platform": "0.52.3",
+    "@effect/platform-node": "0.48.4",
     "@effect/printer": "0.33.11",
     "@effect/printer-ansi": "0.33.11",
     "@effect/schema": "0.66.14",
