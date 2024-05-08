@@ -64,9 +64,7 @@ const createCommand = pipe(
     `
 Fetches the given Jira ticket and creates an aproriately named branch for it.
 The branch type (bug or feat) is determined by the ticket type. The branch name
-is based on the ticket summary.
-If there already is a branch associated with the ticket, it will be switched to
-instead.`,
+is based on the ticket summary.`,
   ),
 );
 
