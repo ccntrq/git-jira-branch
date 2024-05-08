@@ -9,6 +9,27 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [2.0.0](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v1.4.3...git-jira-branch-v2.0.0) (2024-05-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* The create command was previously responsible for creating and switching branches. To prevent accidentally switching to an existing branch or accidentally creating a new one when switching was intended the new `switch` command was added in v1.4. This command should be used from now on. `create` will only create new branches and fail if a brach associated with the given ticket already exists (unless `--reset` is given)
+
+### Features
+
+* prevent create command from switching branches ([#316](https://github.com/ccntrq/git-jira-branch/issues/316)) ([16b0267](https://github.com/ccntrq/git-jira-branch/commit/16b0267ed3806b0bb6f89fd3ba95cfd2ded9e099))
+
+
+### Bug Fixes
+
+* **deps:** bump the production-dependencies group across 1 directory with 7 updates ([#312](https://github.com/ccntrq/git-jira-branch/issues/312)) ([35c6d6b](https://github.com/ccntrq/git-jira-branch/commit/35c6d6beae0203d819931ee06fd50f76c40e7ab0))
+* **deps:** bump the production-dependencies group with 3 updates ([#319](https://github.com/ccntrq/git-jira-branch/issues/319)) ([17b8769](https://github.com/ccntrq/git-jira-branch/commit/17b8769023ad85107c18e0721618caa3d1a85063))
+* **deps:** bump the production-dependencies group with 3 updates ([#321](https://github.com/ccntrq/git-jira-branch/issues/321)) ([dc411bc](https://github.com/ccntrq/git-jira-branch/commit/dc411bc4d111a4e40493a690e5b0d119c4883e27))
+* **deps:** bump the production-dependencies group with 4 updates ([#323](https://github.com/ccntrq/git-jira-branch/issues/323)) ([d38bfd6](https://github.com/ccntrq/git-jira-branch/commit/d38bfd63d5ed99249796d120e68d44d65d43a5e8))
+* **deps:** bump the production-dependencies group with 7 updates ([#314](https://github.com/ccntrq/git-jira-branch/issues/314)) ([8722c5b](https://github.com/ccntrq/git-jira-branch/commit/8722c5bb2bb3bdbc95021e70c2a3a7e2a89f3b19))
+* **deps:** bump the production-dependencies group with 7 updates ([#317](https://github.com/ccntrq/git-jira-branch/issues/317)) ([ae0f70e](https://github.com/ccntrq/git-jira-branch/commit/ae0f70e4641d9c95b8cf4fb1034a0c019e2715e5))
+
 ## [1.4.3](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v1.4.2...git-jira-branch-v1.4.3) (2024-04-29)
 
 
