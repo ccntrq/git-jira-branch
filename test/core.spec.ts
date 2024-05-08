@@ -259,7 +259,7 @@ describe('core', () => {
       }),
     );
 
-    live('should switch to existing branch', () =>
+    live('should fail on existing branch', () =>
       Effect.gen(function* () {
         mockAppConfigService.getAppConfig.mockSuccessValue({
           defaultJiraKeyPrefix: Option.none(),
@@ -273,23 +273,20 @@ describe('core', () => {
           ),
         );
 
-        const result = yield* Effect.provide(
-          gitCreateJiraBranch('DUMMYAPP-123', Option.none(), false),
+        yield* Effect.provide(
+          gitCreateJiraBranch('DUMMYAPP-123', Option.none(), false).pipe(
+            Effect.match({
+              onSuccess: () => expect.unreachable('Should have failed'),
+              onFailure: (e) =>
+                expect(e).toMatchInlineSnapshot(`
+                {
+                  "_tag": "UsageError",
+                  "message": "A branch for ticket 'DUMMYAPP-123' already exists: feat/DUMMYAPP-123-dummy-isssue-summary",
+                }
+              `),
+            }),
+          ),
           testLayer,
-        );
-
-        expect(result).toMatchInlineSnapshot(`
-          {
-            "_tag": "SwitchedBranch",
-            "branch": "feat/DUMMYAPP-123-dummy-isssue-summary",
-          }
-        `);
-
-        expect(mockAppConfigService.getAppConfig).toHaveBeenCalledTimes(1);
-        expect(mockGitClient.listBranches).toHaveBeenCalledTimes(1);
-        expect(mockGitClient.switchBranch).toHaveBeenCalledTimes(1);
-        expect(mockGitClient.switchBranch).toHaveBeenCalledWith(
-          'feat/DUMMYAPP-123-dummy-isssue-summary',
         );
       }),
     );

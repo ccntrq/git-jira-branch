@@ -71,20 +71,22 @@ describe('git-jira-branch', () => {
     );
   });
 
-  it('create subcommand switches to already existing branch for existing jira ticket', async () => {
-    const res = runApp(tmpDir, 'create', 'GCJB-1');
+  it('create subcommand fails for already existing branch', async () => {
+    try {
+      runApp(tmpDir, 'create', 'GCJB-1');
+      expect.unreachable('Should have thrown');
+      // biome-ignore lint/suspicious/noExplicitAny: any is okay in this test
+    } catch (error: any) {
+      expect(error?.stdout.toString()).toMatchInlineSnapshot(`
+        "[0;31mA branch for ticket 'GCJB-1' already exists: feat/GCJB-1-e2e-test-ticket-with-a-fancy-summary[0m
 
-    expect(res).toMatchInlineSnapshot(`
-      "Switched to already existing branch: 'feat/GCJB-1-e2e-test-ticket-with-a-fancy-summary'
-      "
-    `);
-    expect(currentBranch(tmpDir)).toMatchInlineSnapshot(
-      '"feat/GCJB-1-e2e-test-ticket-with-a-fancy-summary"',
-    );
+        "
+      `);
+      return;
+    }
   });
 
   it('create subcommand resets branch to given base ref', () => {
-    runApp(tmpDir, 'create', 'GCJB-1');
     expect(currentBranch(tmpDir)).toMatchInlineSnapshot(
       '"feat/GCJB-1-e2e-test-ticket-with-a-fancy-summary"',
     );
