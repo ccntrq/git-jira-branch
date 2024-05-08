@@ -6,7 +6,7 @@ import * as CommandExecutor from '@effect/platform/CommandExecutor';
 import * as PlatformError from '@effect/platform/Error';
 
 import {TextEncoder} from 'node:util';
-import type {Command} from '@effect/platform';
+import type {Command} from '@effect/platform/Command';
 import {NodeInspectSymbol} from 'effect/Inspectable';
 import {GitClient, GitClientLive} from '../src/git-client';
 import {GitExecError} from '../src/types';
@@ -40,7 +40,7 @@ const mkTestProcess = (
 
 describe('GitClient', () => {
   let executorMock: EffectMock<
-    [Command.Command],
+    [Command],
     CommandExecutor.Process,
     PlatformError.SystemError | PlatformError.BadArgument
   >;
