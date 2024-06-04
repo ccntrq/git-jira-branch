@@ -52,7 +52,7 @@
     "@commitlint/config-conventional": "^19.2.2",
     "@effect/vitest": "0.5.8",
     "@tsconfig/node20": "^20.1.4",
-    "@types/node": "^20.14.0",
+    "@types/node": "^20.14.1",
     "@vitest/coverage-v8": "^1.6.0",
     "@vitest/ui": "^1.2.2",
     "husky": "^9.0.11",
