@@ -9,6 +9,17 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [2.0.6](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v2.0.5...git-jira-branch-v2.0.6) (2024-06-19)
+
+
+### Bug Fixes
+
+* **deps:** bump braces from 3.0.2 to 3.0.3 ([#363](https://github.com/ccntrq/git-jira-branch/issues/363)) ([c01c91d](https://github.com/ccntrq/git-jira-branch/commit/c01c91d6f1e4acbdd5161174d3de67ee2500059a))
+* **deps:** bump the production-dependencies group with 4 updates ([#353](https://github.com/ccntrq/git-jira-branch/issues/353)) ([807b994](https://github.com/ccntrq/git-jira-branch/commit/807b994eb4403c585421e074272a3755c9dad962))
+* **deps:** bump the production-dependencies group with 7 updates ([#348](https://github.com/ccntrq/git-jira-branch/issues/348)) ([1c11b1a](https://github.com/ccntrq/git-jira-branch/commit/1c11b1ad0584ed38a56203aba18462ffd1ca138b))
+* **deps:** bump the production-dependencies group with 7 updates ([#351](https://github.com/ccntrq/git-jira-branch/issues/351)) ([e928004](https://github.com/ccntrq/git-jira-branch/commit/e92800415e8e3a73acd7dcd354ace7e9775900b5))
+* **deps:** bump ws from 8.17.0 to 8.17.1 ([#370](https://github.com/ccntrq/git-jira-branch/issues/370)) ([9f26686](https://github.com/ccntrq/git-jira-branch/commit/9f26686dc2687b42674a8b29431fce9573b031d4))
+
 ## [2.0.5](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v2.0.4...git-jira-branch-v2.0.5) (2024-05-28)
 
 
