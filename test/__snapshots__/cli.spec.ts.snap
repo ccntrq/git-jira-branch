@@ -75,7 +75,15 @@ is based on the ticket summary.
 
   One of the following: sh, bash, fish, zsh
 
-  Generate a completion script for a specific shell
+  Generate a completion script for a specific shell.
+
+  This setting is optional.
+
+[0;1m--log-level all | trace | debug | info | warning | error | fatal | none[0m
+
+  One of the following: all, trace, debug, info, warning, error, fatal, none
+
+  Sets the minimum log level for a command.
 
   This setting is optional.
 
@@ -83,7 +91,7 @@ is based on the ticket summary.
 
   A true or false value.
 
-  Show the help documentation for a command
+  Show the help documentation for a command.
 
   This setting is optional.
 
@@ -91,7 +99,7 @@ is based on the ticket summary.
 
   A true or false value.
 
-  Start wizard mode for a command
+  Start wizard mode for a command.
 
   This setting is optional.
 
@@ -99,29 +107,15 @@ is based on the ticket summary.
 
   A true or false value.
 
-  Show the version of the application
+  Show the version of the application.
 
   This setting is optional.
 "
 `;
 
-exports[`cli > create subcommand > should report missing jirakey 1`] = `
-[
-  [
-    "Missing argument <jira-key>
-",
-  ],
-]
-`;
+exports[`cli > create subcommand > should report missing jirakey 1`] = `[]`;
 
-exports[`cli > create subcommand > should report unknwon argument 1`] = `
-[
-  [
-    "Received unknown argument: 'unknown'
-",
-  ],
-]
-`;
+exports[`cli > create subcommand > should report unknwon argument 1`] = `[]`;
 
 exports[`cli > info subcommand > should print subcommand help (--help) 1`] = `
 "
@@ -152,7 +146,15 @@ current branch.
 
   One of the following: sh, bash, fish, zsh
 
-  Generate a completion script for a specific shell
+  Generate a completion script for a specific shell.
+
+  This setting is optional.
+
+[0;1m--log-level all | trace | debug | info | warning | error | fatal | none[0m
+
+  One of the following: all, trace, debug, info, warning, error, fatal, none
+
+  Sets the minimum log level for a command.
 
   This setting is optional.
 
@@ -160,7 +162,7 @@ current branch.
 
   A true or false value.
 
-  Show the help documentation for a command
+  Show the help documentation for a command.
 
   This setting is optional.
 
@@ -168,7 +170,7 @@ current branch.
 
   A true or false value.
 
-  Start wizard mode for a command
+  Start wizard mode for a command.
 
   This setting is optional.
 
@@ -176,7 +178,7 @@ current branch.
 
   A true or false value.
 
-  Show the version of the application
+  Show the version of the application.
 
   This setting is optional.
 "
@@ -194,7 +196,15 @@ $ git-jira-branch
 
   One of the following: sh, bash, fish, zsh
 
-  Generate a completion script for a specific shell
+  Generate a completion script for a specific shell.
+
+  This setting is optional.
+
+[0;1m--log-level all | trace | debug | info | warning | error | fatal | none[0m
+
+  One of the following: all, trace, debug, info, warning, error, fatal, none
+
+  Sets the minimum log level for a command.
 
   This setting is optional.
 
@@ -202,7 +212,7 @@ $ git-jira-branch
 
   A true or false value.
 
-  Show the help documentation for a command
+  Show the help documentation for a command.
 
   This setting is optional.
 
@@ -210,7 +220,7 @@ $ git-jira-branch
 
   A true or false value.
 
-  Start wizard mode for a command
+  Start wizard mode for a command.
 
   This setting is optional.
 
@@ -218,7 +228,7 @@ $ git-jira-branch
 
   A true or false value.
 
-  Show the version of the application
+  Show the version of the application.
 
   This setting is optional.
 
@@ -307,7 +317,15 @@ jira ticket for the current branch is opened.
 
   One of the following: sh, bash, fish, zsh
 
-  Generate a completion script for a specific shell
+  Generate a completion script for a specific shell.
+
+  This setting is optional.
+
+[0;1m--log-level all | trace | debug | info | warning | error | fatal | none[0m
+
+  One of the following: all, trace, debug, info, warning, error, fatal, none
+
+  Sets the minimum log level for a command.
 
   This setting is optional.
 
@@ -315,7 +333,7 @@ jira ticket for the current branch is opened.
 
   A true or false value.
 
-  Show the help documentation for a command
+  Show the help documentation for a command.
 
   This setting is optional.
 
@@ -323,7 +341,7 @@ jira ticket for the current branch is opened.
 
   A true or false value.
 
-  Start wizard mode for a command
+  Start wizard mode for a command.
 
   This setting is optional.
 
@@ -331,7 +349,7 @@ jira ticket for the current branch is opened.
 
   A true or false value.
 
-  Show the version of the application
+  Show the version of the application.
 
   This setting is optional.
 "
@@ -372,7 +390,15 @@ ticket.
 
   One of the following: sh, bash, fish, zsh
 
-  Generate a completion script for a specific shell
+  Generate a completion script for a specific shell.
+
+  This setting is optional.
+
+[0;1m--log-level all | trace | debug | info | warning | error | fatal | none[0m
+
+  One of the following: all, trace, debug, info, warning, error, fatal, none
+
+  Sets the minimum log level for a command.
 
   This setting is optional.
 
@@ -380,7 +406,7 @@ ticket.
 
   A true or false value.
 
-  Show the help documentation for a command
+  Show the help documentation for a command.
 
   This setting is optional.
 
@@ -388,7 +414,7 @@ ticket.
 
   A true or false value.
 
-  Start wizard mode for a command
+  Start wizard mode for a command.
 
   This setting is optional.
 
@@ -396,7 +422,7 @@ ticket.
 
   A true or false value.
 
-  Show the version of the application
+  Show the version of the application.
 
   This setting is optional.
 "

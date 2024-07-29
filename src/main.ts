@@ -2,9 +2,9 @@
 
 import * as NodeCommandExecutor from '@effect/platform-node/NodeCommandExecutor';
 import * as NodeFileSystem from '@effect/platform-node/NodeFileSystem';
-import * as Http from '@effect/platform/HttpClient';
 import {Cause, Console, Effect, Exit, Layer, pipe} from 'effect';
 
+import {HttpClient} from '@effect/platform';
 import {NodeContext} from '@effect/platform-node';
 import {AppConfigService} from './app-config';
 import {cliEffect} from './cli';
@@ -18,7 +18,7 @@ const commandExecutorLayer = NodeCommandExecutor.layer.pipe(
 const gitClientLayer = GitClientLive.pipe(Layer.provide(commandExecutorLayer));
 
 const jiraClientLayer = JiraClientLive.pipe(
-  Layer.provide(Http.client.layer),
+  Layer.provide(HttpClient.layer),
   Layer.provide(AppConfigService.Live),
 );
 

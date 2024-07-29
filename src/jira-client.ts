@@ -1,4 +1,9 @@
-import * as Http from '@effect/platform/HttpClient';
+import {
+  HttpClient,
+  type HttpClientError,
+  HttpClientRequest,
+  HttpClientResponse,
+} from '@effect/platform';
 import * as ArrayFormatter from '@effect/schema/ArrayFormatter';
 import type * as ParseResult from '@effect/schema/ParseResult';
 import {Context, Effect, Layer} from 'effect';
@@ -23,7 +28,7 @@ export class JiraClient extends Context.Tag('JiraClient')<
 
 export const JiraClientLive = Layer.effect(
   JiraClient,
-  Effect.all([AppConfigService, Http.client.Client]).pipe(
+  Effect.all([AppConfigService, HttpClient.HttpClient]).pipe(
     Effect.map(([env, httpClient]) =>
       JiraClient.of({
         getJiraIssue: (issueId: string) =>
@@ -31,19 +36,19 @@ export const JiraClientLive = Layer.effect(
             const endPoint = `/rest/api/latest/issue/${issueId}`;
             const {jiraAuth, jiraApiUrl} = yield* env.getAppConfig;
 
-            return yield* Http.request
-              .get(jiraApiUrl + endPoint, {
-                headers: {
-                  Authorization: buildJiraAuthorizationHeader(jiraAuth),
-                  Accept: 'application/json',
-                },
-              })
-              .pipe(
-                Http.client.filterStatusOk(httpClient),
-                Effect.flatMap(Http.response.schemaBodyJson(JiraIssueSchema)),
-                Effect.scoped,
-                handleJiraClientErrors(issueId),
-              );
+            return yield* HttpClientRequest.get(jiraApiUrl + endPoint, {
+              headers: {
+                Authorization: buildJiraAuthorizationHeader(jiraAuth),
+                Accept: 'application/json',
+              },
+            }).pipe(
+              HttpClient.filterStatusOk(httpClient),
+              Effect.flatMap(
+                HttpClientResponse.schemaBodyJson(JiraIssueSchema),
+              ),
+              Effect.scoped,
+              handleJiraClientErrors(issueId),
+            );
           }),
       }),
     ),
@@ -66,7 +71,7 @@ const handleJiraClientErrors =
   (
     eff: Effect.Effect<
       JiraIssue,
-      AppConfigError | ParseResult.ParseError | Http.error.HttpClientError
+      AppConfigError | ParseResult.ParseError | HttpClientError.HttpClientError
     >,
   ): Effect.Effect<JiraIssue, AppConfigError | JiraApiError> =>
     eff.pipe(
@@ -85,7 +90,7 @@ const handleJiraClientErrors =
       Effect.catchTag('RequestError', (e) =>
         Effect.fail(
           JiraApiError({
-            message: `Failed to make ticket request to Jira. Reason: ${e.reason}`,
+            message: `Failed to make ticket request to Jira: ${e.message}`,
           }),
         ),
       ),
@@ -95,9 +100,7 @@ const handleJiraClientErrors =
             message:
               e.response.status === 404
                 ? `Jira returned status 404. Make sure the ticket with id ${issueId} exists.`
-                : `Jira Ticket request returned failure. Reason: ${e.reason}${
-                    typeof e.error === 'string' ? ` (${e.error})` : ''
-                  } StatusCode: ${e.response.status}`,
+                : `Jira Ticket request failed: ${e.message}`,
           }),
         ),
       ),
