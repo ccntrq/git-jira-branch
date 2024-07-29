@@ -1,4 +1,3 @@
-import * as Http from '@effect/platform/HttpClient';
 import {live} from '@effect/vitest';
 import {ConfigProvider, Effect, Either, Layer} from 'effect';
 
@@ -6,6 +5,7 @@ import {AppConfigService} from '../src/app-config';
 import {JiraClient, JiraClientLive} from '../src/jira-client';
 import {JiraApiError, type JiraIssue} from '../src/types';
 
+import {HttpClient, HttpClientResponse} from '@effect/platform';
 import {describe, expect} from 'vitest';
 import {dummyJiraIssue} from './dummies/dummyJiraIssue';
 
@@ -25,17 +25,19 @@ const appConfigTest = AppConfigService.Live.pipe(
 
 const mkHttpMock = (
   response: Response,
-): Layer.Layer<Http.client.Client.Default> =>
+): Layer.Layer<HttpClient.HttpClient.Default> =>
   Layer.succeed(
-    Http.client.Client,
-    Http.client.makeDefault((req) =>
-      Effect.succeed(Http.response.fromWeb(req, response)),
+    HttpClient.HttpClient,
+    HttpClient.makeDefault((req) =>
+      Effect.succeed(HttpClientResponse.fromWeb(req, response)),
     ),
   );
 
 const mkTestLayer = (
   response: Response,
-): Layer.Layer<AppConfigService | Http.client.Client.Default | JiraClient> => {
+): Layer.Layer<
+  AppConfigService | HttpClient.HttpClient.Default | JiraClient
+> => {
   const baseTestLayer = Layer.merge(appConfigTest, mkHttpMock(response));
   return Layer.merge(
     baseTestLayer,
@@ -122,7 +124,7 @@ describe('JiraClient', () => {
           expect(e).toEqual(
             JiraApiError({
               message:
-                'Jira Ticket request returned failure. Reason: StatusCode (non 2xx status code) StatusCode: 500',
+                'Jira Ticket request failed: StatusCode: non 2xx status code (500 GET https://dummy-jira-instance.com/rest/api/latest/issue/DUMMYAPP-123)',
             }),
           ),
         onRight: (_) => expect.unreachable('Should have returned an error.'),
