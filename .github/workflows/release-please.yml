@@ -20,10 +20,10 @@ jobs:
       - id: checkout
         uses: actions/checkout@v4
         if: ${{ steps.release.outputs.release_created }}
-      - id: setup-node-and-npm
+      - id: setup-node-and-pnpm
         if: ${{ steps.release.outputs.release_created }}
-        uses: ./.github/actions/setup-node-and-npm-dependencies
-      - run: npm publish
+        uses: ./.github/actions/setup-node-and-pnpm-dependencies
+      - run: pnpm publish
         if: ${{ steps.release.outputs.release_created }}
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_DEPLOY_TOKEN}}

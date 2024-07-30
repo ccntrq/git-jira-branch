@@ -31,18 +31,18 @@
     "/dist"
   ],
   "scripts": {
-    "start": "npm run build && node dist/main.js",
+    "start": "pnpm build && node dist/main.js",
     "build": "tsc --build src",
     "clean": "rimraf dist/ coverage/",
-    "prepack": "npm run clean && npm run build",
+    "prepack": "pnpm clean && pnpm build",
     "prepare": "husky install",
     "test": "vitest run --exclude=e2e-test",
     "test:watch": "vitest --exclude=e2e-test",
     "test:type-check": "tsc -p tsconfig.test.json",
-    "pretest": "npm run test:type-check",
+    "pretest": "pnpm test:type-check",
     "e2e-test": "vitest run --exclude=test",
     "e2e-test:type-check": "tsc -p tsconfig.e2e-test.json",
-    "pree2e-test": "npm run e2e-test:type-check",
+    "pree2e-test": "pnpm e2e-test:type-check",
     "lint": "biome check .",
     "lint:fix": "biome check . --apply"
   },

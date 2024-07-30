@@ -10,10 +10,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - id: setup-node-and-npm
-        uses: ./.github/actions/setup-node-and-npm-dependencies
+      - id: setup-node-and-pnpm
+        uses: ./.github/actions/setup-node-and-pnpm-dependencies
       - name: Lint code
-        run: npm run lint
+        run: pnpm lint
 
   lint-commits:
     runs-on: ubuntu-latest
@@ -22,8 +22,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # for commitlint
-      - id: setup-node-and-npm
-        uses: ./.github/actions/setup-node-and-npm-dependencies
+      - id: setup-node-and-pnpm
+        uses: ./.github/actions/setup-node-and-pnpm-dependencies
       - name: Lint commits (last commit)
         if: github.event_name == 'push'
         run: npx commitlint --from HEAD~1 --to HEAD --verbose
@@ -40,15 +40,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - id: setup-node-and-npm
-        uses: ./.github/actions/setup-node-and-npm-dependencies
+      - id: setup-node-and-pnpm
+        uses: ./.github/actions/setup-node-and-pnpm-dependencies
         with:
           node-version: ${{ matrix.version }}
           runner-os: ${{ matrix.os }}
       - name: Build
-        run: npm run build
+        run: pnpm build
       - name: Run tests
-        run: npm run test --  --coverage.enabled --coverage.provider=v8 --coverage.reporter=json-summary --coverage.reporter=json
+        run: pnpm test --  --coverage.enabled --coverage.provider=v8 --coverage.reporter=json-summary --coverage.reporter=json
       - name: Upload coverage
         if: github.event_name == 'pull_request' && matrix.version == 20
         uses: davelosert/vitest-coverage-report-action@v2

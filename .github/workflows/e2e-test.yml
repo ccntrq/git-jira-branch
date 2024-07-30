@@ -15,17 +15,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - id: setup-node-and-npm
-        uses: ./.github/actions/setup-node-and-npm-dependencies
+      - id: setup-node-and-pnpm
+        uses: ./.github/actions/setup-node-and-pnpm-dependencies
         with:
           node-version: ${{ matrix.version }}
           runner-os: ${{ matrix.os }}
       - name: Build
-        run: npm run build
+        run: pnpm build
       - name: Pack
-        run: npm pack
+        run: pnpm pack
       - name: Install
-        run: npm install -g git-jira-branch-*.tgz
+        run: npm install -g ./git-jira-branch-*.tgz
         shell: bash
       - name: Run E2E tests
         env:
@@ -33,4 +33,4 @@ jobs:
           JIRA_USER_EMAIL: ${{ secrets.GCJB_USER_EMAIL }}
           JIRA_API_URL: ${{ vars.GCJB_JIRA_API_URL }}
           JIRA_KEY_PREFIX: ${{ vars.GCJB_JIRA_KEY_PREFIX }}
-        run: npm run e2e-test
+        run: pnpm e2e-test
