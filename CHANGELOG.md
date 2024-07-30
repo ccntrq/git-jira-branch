@@ -9,6 +9,13 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [2.0.8](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v2.0.7...git-jira-branch-v2.0.8) (2024-07-30)
+
+
+### Bug Fixes
+
+* switch from npm to pnpm ([#422](https://github.com/ccntrq/git-jira-branch/issues/422)) ([9b9207b](https://github.com/ccntrq/git-jira-branch/commit/9b9207b1deb1d115d713c6805f26dfdf845531e6))
+
 ## [2.0.7](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v2.0.6...git-jira-branch-v2.0.7) (2024-07-30)
 
 
