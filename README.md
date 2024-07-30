@@ -216,7 +216,7 @@ This project was started as an excuse to explore the
 
 It uses the Jira API to fetch the details for a ticket and calls out directly to `git` for branch creation.
 
-Tests were written using [`vitest`](https://vitest.dev). The testsuite can be run using `npm run test`.
+Tests were written using [`vitest`](https://vitest.dev). The testsuite can be run using `pnpm test`.
 
 ## <a name='License'></a>License
 
