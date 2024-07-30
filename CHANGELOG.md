@@ -9,6 +9,16 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [2.0.7](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v2.0.6...git-jira-branch-v2.0.7) (2024-07-30)
+
+
+### Bug Fixes
+
+* **deps:** bump the production-dependencies group across 1 directory with 7 updates ([b18cb6e](https://github.com/ccntrq/git-jira-branch/commit/b18cb6e800e212c46daa7666696b6ff30921c14a))
+* **deps:** bump the production-dependencies group with 7 updates ([#420](https://github.com/ccntrq/git-jira-branch/issues/420)) ([ce6d29b](https://github.com/ccntrq/git-jira-branch/commit/ce6d29b879131d65f452694f3f13a9ba51618fbb))
+* **deps:** bump undici from 6.18.0 to 6.19.2 ([#397](https://github.com/ccntrq/git-jira-branch/issues/397)) ([6b8d0b3](https://github.com/ccntrq/git-jira-branch/commit/6b8d0b33c66ebaa2f3fe12ac478bcb01797484b2))
+* improve jira client errors ([b18cb6e](https://github.com/ccntrq/git-jira-branch/commit/b18cb6e800e212c46daa7666696b6ff30921c14a))
+
 ## [2.0.6](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v2.0.5...git-jira-branch-v2.0.6) (2024-06-19)
 
 
