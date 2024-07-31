@@ -2,9 +2,10 @@ import * as Command from '@effect/platform/Command';
 import * as CommandExecutor from '@effect/platform/CommandExecutor';
 import {Chunk, Context, Effect, Layer, Sink, Stream, pipe} from 'effect';
 
-import {GitBranch, GitExecError} from './types';
+import {catchIf} from 'effect/Effect';
+import {BranchNotMerged, GitBranch, GitExecError} from './types';
 
-type GitClientEffect<A> = Effect.Effect<A, GitExecError, never>;
+type GitClientEffect<A, B = never> = Effect.Effect<A, B | GitExecError, never>;
 
 export class GitClient extends Context.Tag('GitClient')<
   GitClient,
@@ -19,6 +20,10 @@ export class GitClient extends Context.Tag('GitClient')<
       baseBranch: string,
     ) => (branchName: string, reset: boolean) => GitClientEffect<void>;
     readonly switchBranch: (branchName: string) => GitClientEffect<void>;
+    readonly deleteBranch: (
+      branchName: string,
+      force: boolean,
+    ) => GitClientEffect<void, BranchNotMerged>;
   }
 >() {}
 
@@ -134,6 +139,29 @@ const switchBranch =
       Effect.scoped,
     );
 
+const deleteBranch =
+  (commandExecutor: CommandExecutor.CommandExecutor) =>
+  (
+    branchName: string,
+    force: boolean,
+  ): GitClientEffect<void, BranchNotMerged> =>
+    pipe(
+      Command.make('git', 'branch', force ? '-D' : '-d', branchName),
+      runGitCommand(commandExecutor),
+      catchIf(
+        (e) => !!e.message.match(/is not fully merged/),
+        (e) =>
+          Effect.fail(
+            new BranchNotMerged({
+              originalMessage: e.message,
+              branch: branchName,
+            }),
+          ),
+      ),
+      Effect.flatMap(() => Effect.void),
+      Effect.scoped,
+    );
+
 export const GitClientLive = Layer.effect(
   GitClient,
   Effect.map(CommandExecutor.CommandExecutor, (commandExecutor) =>
@@ -143,6 +171,7 @@ export const GitClientLive = Layer.effect(
       createGitBranchFrom: createGitBranchFrom(commandExecutor),
       createGitBranch: createGitBranch(commandExecutor),
       switchBranch: switchBranch(commandExecutor),
+      deleteBranch: deleteBranch(commandExecutor),
     }),
   ),
 );

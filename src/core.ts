@@ -8,7 +8,9 @@ import {GitClient} from './git-client';
 import {JiraClient} from './jira-client';
 import {
   type AppConfigError,
+  type BranchNotMerged,
   CreatedBranch,
+  DeletedBranch,
   type GitBranch,
   type GitCreateJiraBranchResult,
   type GitExecError,
@@ -82,6 +84,38 @@ export const switchBranch = (
           Effect.flatMap(GitClient, (_) => _.switchBranch(branch.name)).pipe(
             Effect.map((_) => SwitchedBranch({branch: branch.name})),
           ),
+        ),
+        Effect.catchIf(isNoSuchElementException, () =>
+          Effect.fail(
+            UsageError({
+              message: `No branch associated with Jira ticket '${fullJiraKey}'`,
+            }),
+          ),
+        ),
+      ),
+    ),
+  );
+
+export const deleteBranch = (
+  jiraKey: string,
+  force: boolean,
+): Effect.Effect<
+  DeletedBranch,
+  AppConfigError | GitExecError | UsageError | BranchNotMerged,
+  AppConfigService | GitClient
+> =>
+  pipe(
+    jiraKey,
+    fullKey,
+    Effect.flatMap((fullJiraKey) =>
+      pipe(
+        fullJiraKey,
+        getAssociatedBranch,
+        Effect.flatten,
+        Effect.flatMap((branch) =>
+          Effect.flatMap(GitClient, (_) =>
+            _.deleteBranch(branch.name, force),
+          ).pipe(Effect.map((_) => DeletedBranch({branch: branch.name}))),
         ),
         Effect.catchIf(isNoSuchElementException, () =>
           Effect.fail(
