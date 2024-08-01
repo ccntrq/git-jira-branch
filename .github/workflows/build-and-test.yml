@@ -26,10 +26,10 @@ jobs:
         uses: ./.github/actions/setup-node-and-pnpm-dependencies
       - name: Lint commits (last commit)
         if: github.event_name == 'push'
-        run: npx commitlint --from HEAD~1 --to HEAD --verbose
+        run: pnpm commitlint --from HEAD~1 --to HEAD --verbose
       - name: Lint commits (pr)
         if: github.event_name == 'pull_request'
-        run: npx commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
+        run: pnpm commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
 
   build-and-test:
     strategy:
