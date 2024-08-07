@@ -243,6 +243,9 @@ is based on the ticket summary.
 Switches to an already existing branch that is associated with the given Jira
 ticket.
 
+  - delete [--force] <jira-key>                            
+Deletes the branch associated with the given Jira Ticket.
+
   - open [<jira-key>]                                      
 Opens the given Jira ticket in your default browser. If no ticket is given the
 jira ticket for the current branch is opened.

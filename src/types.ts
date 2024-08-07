@@ -83,15 +83,17 @@ export type JiraIssue = Schema.Schema.Type<typeof JiraIssueSchema>;
 export type GitCreateJiraBranchResult = Data.TaggedEnum<{
   CreatedBranch: {branch: string};
   SwitchedBranch: {branch: string};
+  DeletedBranch: {branch: string};
   ResetBranch: {branch: string};
 }>;
 
-export const {CreatedBranch, SwitchedBranch, ResetBranch} =
+export const {CreatedBranch, SwitchedBranch, DeletedBranch, ResetBranch} =
   Data.taggedEnum<GitCreateJiraBranchResult>();
 
 export type SwitchedBranch = ReturnType<typeof SwitchedBranch>;
 export type CreatedBranch = ReturnType<typeof CreatedBranch>;
 export type ResetBranch = ReturnType<typeof ResetBranch>;
+export type DeletedBranch = ReturnType<typeof DeletedBranch>;
 
 export const matchGitCreateJiraBranchResult: {
   <A>(
@@ -99,12 +101,14 @@ export const matchGitCreateJiraBranchResult: {
     matcher: {
       onCreatedBranch: (branch: CreatedBranch) => A;
       onSwitchedBranch: (branch: SwitchedBranch) => A;
+      onDeletedBranch: (branch: DeletedBranch) => A;
       onResetBranch: (branch: ResetBranch) => A;
     },
   ): A;
   <A>(matcher: {
     onCreatedBranch: (branch: CreatedBranch) => A;
     onSwitchedBranch: (branch: SwitchedBranch) => A;
+    onDeletedBranch: (branch: DeletedBranch) => A;
     onResetBranch: (branch: ResetBranch) => A;
   }): (result: GitCreateJiraBranchResult) => A;
 } = dual(
@@ -114,6 +118,7 @@ export const matchGitCreateJiraBranchResult: {
     matcher: {
       onCreatedBranch: (branch: CreatedBranch) => A;
       onSwitchedBranch: (branch: SwitchedBranch) => A;
+      onDeletedBranch: (branch: DeletedBranch) => A;
       onResetBranch: (branch: ResetBranch) => A;
     },
   ): A =>
@@ -122,6 +127,7 @@ export const matchGitCreateJiraBranchResult: {
       Match.tag('CreatedBranch', (res) => matcher.onCreatedBranch(res)),
       Match.tag('SwitchedBranch', (res) => matcher.onSwitchedBranch(res)),
       Match.tag('ResetBranch', (res) => matcher.onResetBranch(res)),
+      Match.tag('DeletedBranch', (res) => matcher.onDeletedBranch(res)),
       Match.exhaustive,
     )(result) as A,
 );
@@ -173,3 +179,13 @@ export interface JiraApiError extends GitJiraBranchError.Proto {
   readonly _tag: 'JiraApiError';
 }
 export const JiraApiError = makeError<JiraApiError>('JiraApiError');
+
+// New Errors
+
+export class BranchNotMerged extends Schema.TaggedError<BranchNotMerged>()(
+  'BranchNotMerged',
+  {
+    branch: Schema.String,
+    originalMessage: Schema.String,
+  },
+) {}

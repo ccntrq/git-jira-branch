@@ -9,10 +9,12 @@ import type * as CommandExecutor from '@effect/platform/CommandExecutor';
 import {Console, Effect, Option, pipe} from 'effect';
 import {compose} from 'effect/Function';
 
+import {catchTag} from 'effect/Effect';
 import * as packageJson from '../package.json';
 import type {AppConfigService} from './app-config';
 import {formatBranches} from './branch-formatter';
 import {
+  deleteBranch,
   getAssociatedBranches,
   gitCreateJiraBranch,
   switchBranch,
@@ -25,8 +27,12 @@ import type {GitClient} from './git-client';
 import {formatIssue} from './issue-formatter';
 import type {JiraClient} from './jira-client';
 import {
+  type AppConfigError,
+  type DeletedBranch,
+  type GitExecError,
   type GitJiraBranchError,
   type SwitchedBranch,
+  UsageError,
   matchGitCreateJiraBranchResult,
 } from './types';
 import {openUrl} from './url-opener';
@@ -86,6 +92,46 @@ const switchCommand = pipe(
     `
 Switches to an already existing branch that is associated with the given Jira
 ticket.`,
+  ),
+);
+
+const deleteCommand: Command.Command<
+  'delete',
+  AppConfigService | GitClient,
+  AppConfigError | UsageError | GitExecError,
+  {readonly jiraKey: string; readonly force: boolean}
+> = pipe(
+  Command.make(
+    'delete',
+    {
+      jiraKey: Args.withDescription(
+        Args.text({name: 'jira-key'}),
+        'The Jira ticket key associated with the branch to delete (e.g. FOOX-1234)',
+      ),
+      force: Options.withDescription(
+        Options.boolean('force'),
+        'Force branch deletion - use to delete not fully merged branches',
+      ),
+    },
+    ({jiraKey, force}) =>
+      deleteBranch(jiraKey, force).pipe(
+        Effect.flatMap((res: DeletedBranch) =>
+          pipe(res, formatDeletedBranch, Console.log),
+        ),
+        catchTag('BranchNotMerged', (e) =>
+          Effect.fail(
+            UsageError({
+              message: `Branch not fully merged '${e.branch}'. 
+- try with \`--force\`              
+              `,
+            }),
+          ),
+        ),
+      ),
+  ),
+  Command.withDescription(
+    `
+Deletes the branch associated with the given Jira Ticket.`,
   ),
 );
 
@@ -164,6 +210,7 @@ const mainCommand = gitJiraBranch.pipe(
   Command.withSubcommands([
     createCommand,
     switchCommand,
+    deleteCommand,
     openCommand,
     infoCommand,
     listCommand,
@@ -203,9 +250,13 @@ export const cliEffect = (
 const formatSwitchedBranch = (switchedBranch: SwitchedBranch): string =>
   `Switched to already existing branch: '${switchedBranch.branch}'`;
 
+const formatDeletedBranch = (deletedBranch: DeletedBranch): string =>
+  `Deleted branch: '${deletedBranch.branch}'`;
+
 const formatGitCreateJiraBranchResult = matchGitCreateJiraBranchResult({
   onCreatedBranch: ({branch}) => `Successfully created branch: '${branch}'`,
   onSwitchedBranch: formatSwitchedBranch,
+  onDeletedBranch: formatDeletedBranch,
   onResetBranch: ({branch}) => `Reset branch: '${branch}'`,
 });
 
