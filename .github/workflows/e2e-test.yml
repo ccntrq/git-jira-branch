@@ -27,7 +27,7 @@ jobs:
       - name: Pack
         run: pnpm pack
       - name: Install
-        run: npm install -g ./git-jira-branch-*.tgz
+        run: pnpm install -g $(pwd)/git-jira-branch-*.tgz
         shell: bash
       - name: Run E2E tests
         env:
