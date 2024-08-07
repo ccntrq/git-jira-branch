@@ -3,6 +3,8 @@ name: 🧪 E2E Test
 on:
   pull_request:
   push:
+    branches:
+       - master
 
 jobs:
   e2e-test:
