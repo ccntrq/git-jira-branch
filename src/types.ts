@@ -179,13 +179,3 @@ export interface JiraApiError extends GitJiraBranchError.Proto {
   readonly _tag: 'JiraApiError';
 }
 export const JiraApiError = makeError<JiraApiError>('JiraApiError');
-
-// New Errors
-
-export class BranchNotMerged extends Schema.TaggedError<BranchNotMerged>()(
-  'BranchNotMerged',
-  {
-    branch: Schema.String,
-    originalMessage: Schema.String,
-  },
-) {}

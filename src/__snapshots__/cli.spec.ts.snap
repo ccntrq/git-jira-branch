@@ -1,0 +1,77 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`cli > main command > should print help (--help) 1`] = `
+"
+[0;1mUSAGE[0m
+
+$ git-jira-branch
+
+[0;1mOPTIONS[0m
+
+[0;1m--completions sh | bash | fish | zsh[0m
+
+  One of the following: sh, bash, fish, zsh
+
+  Generate a completion script for a specific shell.
+
+  This setting is optional.
+
+[0;1m--log-level all | trace | debug | info | warning | error | fatal | none[0m
+
+  One of the following: all, trace, debug, info, warning, error, fatal, none
+
+  Sets the minimum log level for a command.
+
+  This setting is optional.
+
+[0;1m(-h, --help)[0m
+
+  A true or false value.
+
+  Show the help documentation for a command.
+
+  This setting is optional.
+
+[0;1m--wizard[0m
+
+  A true or false value.
+
+  Start wizard mode for a command.
+
+  This setting is optional.
+
+[0;1m--version[0m
+
+  A true or false value.
+
+  Show the version of the application.
+
+  This setting is optional.
+
+[0;1mCOMMANDS[0m
+
+  - create [(-b, --base text)] [(-r, --reset)] <jira-key>  
+Fetches the given Jira ticket and creates an aproriately named branch for it.
+The branch type (bug or feat) is determined by the ticket type. The branch name
+is based on the ticket summary.
+
+  - switch <jira-key>                                      
+Switches to an already existing branch that is associated with the given Jira
+ticket.
+
+  - delete [--force] <jira-key>                            
+Deletes the branch associated with the given Jira Ticket.
+
+  - open [<jira-key>]                                      
+Opens the given Jira ticket in your default browser. If no ticket is given the
+jira ticket for the current branch is opened.
+
+  - info [<jira-key>]                                      
+Displays information for the given Jira ticket on your terminal. If no ticket is
+provided, it presents information for the Jira ticket associated with the
+current branch.
+
+  - list                                                   
+Lists all branches that appear to be associated with a Jira ticket.
+"
+`;

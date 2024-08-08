@@ -6,10 +6,10 @@ import {Cause, Console, Effect, Exit, Layer, pipe} from 'effect';
 
 import {HttpClient} from '@effect/platform';
 import {NodeContext} from '@effect/platform-node';
-import {AppConfigService} from './app-config';
 import {cliEffect} from './cli';
-import {GitClientLive} from './git-client';
-import {JiraClientLive} from './jira-client';
+import {AppConfigService} from './services/app-config';
+import {GitClientLive} from './services/git-client';
+import {JiraClientLive} from './services/jira-client';
 
 const commandExecutorLayer = NodeCommandExecutor.layer.pipe(
   Layer.provide(NodeFileSystem.layer),
