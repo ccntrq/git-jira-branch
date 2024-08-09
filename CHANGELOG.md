@@ -9,6 +9,23 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [2.1.0](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v2.0.8...git-jira-branch-v2.1.0) (2024-08-09)
+
+
+### Features
+
+* add command to delete jira branches ([#432](https://github.com/ccntrq/git-jira-branch/issues/432)) ([2d92606](https://github.com/ccntrq/git-jira-branch/commit/2d92606f3a323a5b389bdeb192aa255aa950bdbd))
+* drop requirement on Jira env vars in non jira dependent commands ([ed6ab33](https://github.com/ccntrq/git-jira-branch/commit/ed6ab33788fd47159b92242a35d080b2fe33f393))
+
+
+### Bug Fixes
+
+* **deps:** bump the production-dependencies group with 3 updates ([#424](https://github.com/ccntrq/git-jira-branch/issues/424)) ([1934f60](https://github.com/ccntrq/git-jira-branch/commit/1934f60e3e4a8c5beab45ccc8a7b710e69d4de27))
+* **deps:** bump the production-dependencies group with 3 updates ([#436](https://github.com/ccntrq/git-jira-branch/issues/436)) ([07ace2e](https://github.com/ccntrq/git-jira-branch/commit/07ace2e07da9ebdf2b3bbbf3fb955c62281e37aa))
+* **deps:** bump the production-dependencies group with 4 updates ([#426](https://github.com/ccntrq/git-jira-branch/issues/426)) ([3c79191](https://github.com/ccntrq/git-jira-branch/commit/3c7919101a6b12a8d0a972de094aaba5930127b8))
+* **deps:** bump the production-dependencies group with 7 updates ([#430](https://github.com/ccntrq/git-jira-branch/issues/430)) ([5b86cc3](https://github.com/ccntrq/git-jira-branch/commit/5b86cc399e721731b29874879d8fa87bb4325aa6))
+* **deps:** bump the production-dependencies group with 7 updates ([#438](https://github.com/ccntrq/git-jira-branch/issues/438)) ([e3a564e](https://github.com/ccntrq/git-jira-branch/commit/e3a564e970b7dcfd7814c31722fb1b7c9bce1546))
+
 ## [2.0.8](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v2.0.7...git-jira-branch-v2.0.8) (2024-07-30)
 
 
