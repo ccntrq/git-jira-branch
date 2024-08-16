@@ -2,7 +2,10 @@
 
 exports[`git-jira-branch info > info subcommand prints ticket info for current branch 1`] = `
 "[0;4m[0;1;4mGCJB-1[0;4m - E2E Test ticket with a fancy summary [0m
-[0;4m[0;1;4mTask[0;4m | [0;1;4mStatus:[0;4m To Do | [0;1;4mCreator:[0;4m Alexander Pankoff | [0;1;4mAssignee:[0;4m Alexander Pankoff[0m
+[0;4m[0;1;4mFeature[0;4m
+  | [0;1;4mStatus:[0;4m To Do
+  | [0;1;4mCreator:[0;4m Alexander Pankoff
+  | [0;1;4mAssignee:[0;4m Alexander Pankoff[0m
 
 *!!\\!IMPORTANT\\!!!*  - Do not modify this ticket without updating
 {{git-jira-branch}} E2E tests aswell!
@@ -31,7 +34,10 @@ valuable information whatsoever.
 
 exports[`git-jira-branch info > prints ticket info for given ticket 1`] = `
 "[0;4m[0;1;4mGCJB-1[0;4m - E2E Test ticket with a fancy summary [0m
-[0;4m[0;1;4mTask[0;4m | [0;1;4mStatus:[0;4m To Do | [0;1;4mCreator:[0;4m Alexander Pankoff | [0;1;4mAssignee:[0;4m Alexander Pankoff[0m
+[0;4m[0;1;4mFeature[0;4m
+  | [0;1;4mStatus:[0;4m To Do
+  | [0;1;4mCreator:[0;4m Alexander Pankoff
+  | [0;1;4mAssignee:[0;4m Alexander Pankoff[0m
 
 *!!\\!IMPORTANT\\!!!*  - Do not modify this ticket without updating
 {{git-jira-branch}} E2E tests aswell!

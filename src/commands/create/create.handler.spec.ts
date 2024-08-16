@@ -28,7 +28,12 @@ describe('gitCreateJiraBranch', () => {
 
       const result = yield* Effect.either(
         Effect.provide(
-          gitCreateJiraBranch('DUMMYAPP-123', Option.none(), false),
+          gitCreateJiraBranch(
+            'DUMMYAPP-123',
+            Option.none(),
+            Option.none(),
+            false,
+          ),
           testLayer,
         ),
       );
@@ -78,7 +83,12 @@ describe('gitCreateJiraBranch', () => {
 
       const result = yield* Effect.either(
         Effect.provide(
-          gitCreateJiraBranch('DUMMYAPP-123', Option.none(), false),
+          gitCreateJiraBranch(
+            'DUMMYAPP-123',
+            Option.none(),
+            Option.none(),
+            false,
+          ),
           testLayer,
         ),
       );
@@ -109,6 +119,42 @@ describe('gitCreateJiraBranch', () => {
     }),
   );
 
+  live('should use custom type', () =>
+    Effect.gen(function* () {
+      mockAppConfigService.getAppConfig.mockReturnValue(
+        Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
+      );
+      mockGitClient.createGitBranch.mockReturnValue(Effect.succeed(undefined));
+      mockJiraClient.getJiraIssue.mockReturnValue(
+        Effect.succeed(dummyJiraIssue),
+      );
+
+      yield* Effect.provide(
+        gitCreateJiraBranch(
+          'DUMMYAPP-123',
+          Option.some('custom'),
+          Option.none(),
+          false,
+        ),
+        testLayer,
+      ).pipe(
+        Effect.match({
+          onFailure: (e) =>
+            expect.unreachable(
+              `Should have created branch. Got error instead: ${e}`,
+            ),
+          onSuccess: (result) =>
+            expect(result).toMatchInlineSnapshot(`
+              {
+                "_tag": "CreatedBranch",
+                "branch": "custom/DUMMYAPP-123-dummy-isssue-summary",
+              }
+            `),
+        }),
+      );
+    }),
+  );
+
   live('should create feature branch from base branch', () =>
     Effect.gen(function* () {
       mockAppConfigService.getAppConfig.mockReturnValue(
@@ -121,7 +167,12 @@ describe('gitCreateJiraBranch', () => {
 
       const result = yield* Effect.either(
         Effect.provide(
-          gitCreateJiraBranch('DUMMYAPP-123', Option.some('master'), false),
+          gitCreateJiraBranch(
+            'DUMMYAPP-123',
+            Option.none(),
+            Option.some('master'),
+            false,
+          ),
           testLayer,
         ),
       );
@@ -173,7 +224,7 @@ describe('gitCreateJiraBranch', () => {
       );
 
       const result = yield* Effect.provide(
-        gitCreateJiraBranch('DUMMYAPP-123', Option.none(), true),
+        gitCreateJiraBranch('DUMMYAPP-123', Option.none(), Option.none(), true),
         testLayer,
       );
 
@@ -211,7 +262,7 @@ describe('gitCreateJiraBranch', () => {
       );
 
       const result = yield* Effect.provide(
-        gitCreateJiraBranch('DUMMYAPP-123', Option.none(), true),
+        gitCreateJiraBranch('DUMMYAPP-123', Option.none(), Option.none(), true),
         testLayer,
       );
 
@@ -250,7 +301,12 @@ describe('gitCreateJiraBranch', () => {
       );
 
       yield* Effect.provide(
-        gitCreateJiraBranch('DUMMYAPP-123', Option.none(), false).pipe(
+        gitCreateJiraBranch(
+          'DUMMYAPP-123',
+          Option.none(),
+          Option.none(),
+          false,
+        ).pipe(
           Effect.match({
             onSuccess: () => expect.unreachable('Should have failed'),
             onFailure: (e) =>
@@ -279,7 +335,7 @@ describe('gitCreateJiraBranch', () => {
 
       const result = yield* Effect.either(
         Effect.provide(
-          gitCreateJiraBranch('123', Option.none(), false),
+          gitCreateJiraBranch('123', Option.none(), Option.none(), false),
           testLayer,
         ),
       );
@@ -324,7 +380,12 @@ describe('gitCreateJiraBranch', () => {
 
       const result = yield* Effect.either(
         Effect.provide(
-          gitCreateJiraBranch('DUMMYAPP-123', Option.none(), false),
+          gitCreateJiraBranch(
+            'DUMMYAPP-123',
+            Option.none(),
+            Option.none(),
+            false,
+          ),
           testLayer,
         ),
       );
@@ -373,7 +434,12 @@ describe('gitCreateJiraBranch', () => {
 
       const result = yield* Effect.either(
         Effect.provide(
-          gitCreateJiraBranch('DUMMYAPP-123', Option.none(), false),
+          gitCreateJiraBranch(
+            'DUMMYAPP-123',
+            Option.none(),
+            Option.none(),
+            false,
+          ),
           testLayer,
         ),
       );

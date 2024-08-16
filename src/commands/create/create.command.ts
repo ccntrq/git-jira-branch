@@ -13,6 +13,10 @@ export const create = pipe(
           Options.optional(Options.withAlias(Options.text('base'), 'b')),
           'Base revision to create the new branch from (a branch name, tag or commit SHA)',
         ),
+        type: Options.withDescription(
+          Options.optional(Options.withAlias(Options.text('type'), 't')),
+          `Type of branch to create (e.g. 'feat', 'fix', 'task')`,
+        ),
         reset: Options.withDescription(
           Options.withAlias(Options.boolean('reset'), 'r'),
           'Reset the branch if it already exists',
@@ -25,7 +29,12 @@ export const create = pipe(
     },
     ({options, jiraKey}) => {
       return Effect.flatMap(
-        gitCreateJiraBranch(jiraKey, options.baseBranch, options.reset),
+        gitCreateJiraBranch(
+          jiraKey,
+          options.type,
+          options.baseBranch,
+          options.reset,
+        ),
         compose(formatGitCreateJiraBranchResult, Console.log),
       );
     },

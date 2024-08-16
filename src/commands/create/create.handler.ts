@@ -18,6 +18,7 @@ import {slugify} from '../../utils/slugger';
 
 export const gitCreateJiraBranch = (
   jiraKey: string,
+  type: Option.Option<string>,
   baseBranch: Option.Option<string>,
   reset: boolean,
 ): Effect.Effect<
@@ -45,7 +46,7 @@ export const gitCreateJiraBranch = (
         onNone: () =>
           pipe(
             jiraClient.getJiraIssue(fullKey),
-            Effect.map((issue) => jiraIssueToBranchName(issue)),
+            Effect.map((issue) => jiraIssueToBranchName(issue, type)),
           ),
         onSome: (branch) => Effect.succeed(branch.name),
       }),
@@ -59,14 +60,23 @@ export const gitCreateJiraBranch = (
     return (resetBranch ? ResetBranch : CreatedBranch)({branch: branchName});
   });
 
-const jiraIssueToBranchName = (issue: JiraIssue): string => {
-  const branchtype = jiraIssuetypeBranchtype(issue.fields.issuetype);
+const jiraIssueToBranchName = (
+  issue: JiraIssue,
+  type: Option.Option<string>,
+): string => {
+  const branchtype = Option.getOrElse(type, () =>
+    jiraIssuetypeBranchtype(issue.fields.issuetype),
+  );
   return `${branchtype}/${issue.key}-${slugify(issue.fields.summary)}`;
 };
 
 const jiraIssuetypeBranchtype = (issuetype: JiraIssuetype): string => {
   if (issuetype.name.match(/bug/i)) {
     return 'fix';
+  }
+
+  if (issuetype.name.match(/task|aufgabe/i)) {
+    return 'task';
   }
 
   return 'feat';
