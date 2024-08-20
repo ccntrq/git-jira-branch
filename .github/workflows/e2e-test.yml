@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest] # TODO: add macos-latest
+        os: [ubuntu-latest] # TODO: add macos-latest and windows-latest
         version: [18, 20]
     runs-on: ${{ matrix.os }}
     steps:

@@ -59,9 +59,9 @@ export const cliEffect = (
         // handled and printed by the cli library already
         return Effect.void;
       }
-      return printDocs(HelpDoc.p(Span.error(e.message)));
+      return printErrors(HelpDoc.p(Span.error(e.message)));
     }),
   );
 
-const printDocs = (doc: HelpDoc.HelpDoc): Effect.Effect<void> =>
-  Console.log(HelpDoc.toAnsiText(doc));
+const printErrors = (doc: HelpDoc.HelpDoc): Effect.Effect<void> =>
+  Console.error(HelpDoc.toAnsiText(doc));
