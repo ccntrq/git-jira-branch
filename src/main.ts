@@ -8,6 +8,7 @@ import {HttpClient} from '@effect/platform';
 import {NodeContext} from '@effect/platform-node';
 import {cliEffect} from './cli';
 import {AppConfigService} from './services/app-config';
+import {CustomizationsService} from './services/customizations';
 import {GitClientLive} from './services/git-client';
 import {JiraClientLive} from './services/jira-client';
 
@@ -26,6 +27,7 @@ const mainLive = Layer.mergeAll(
   commandExecutorLayer,
   gitClientLayer,
   AppConfigService.Live,
+  CustomizationsService.Live.pipe(Layer.provide(NodeFileSystem.layer)),
   jiraClientLayer,
   NodeContext.layer,
 );
@@ -35,10 +37,10 @@ const mainEffect = pipe(
   Effect.flatMap(cliEffect),
   Effect.provide(mainLive),
   Effect.catchAllDefect((defect) => {
-    return Console.log(
+    return Console.error(
       Cause.isRuntimeException(defect)
         ? `RuntimeException defect caught: ${defect.message}`
-        : `Unknown defect caught: ${JSON.stringify(defect)}`,
+        : `Unknown defect caught: ${defect}.`,
     ).pipe(Effect.andThen(Effect.fail('Defect')));
   }),
 );

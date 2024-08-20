@@ -15,6 +15,10 @@ import {open} from './commands/open/open.command';
 import {switchCommand} from './commands/switch/switch.command';
 import type {NoAssociatedBranch} from './schema/no-associated-branch';
 import type {AppConfigService} from './services/app-config';
+import type {
+  CustomizationsError,
+  CustomizationsService,
+} from './services/customizations';
 import type {GitClient} from './services/git-client';
 import type {JiraClient} from './services/jira-client';
 import type {GitJiraBranchError} from './types';
@@ -43,11 +47,15 @@ export const cliEffect = (
   args: Array<string>,
 ): Effect.Effect<
   void,
-  GitJiraBranchError | ValidationError.ValidationError | NoAssociatedBranch,
+  | GitJiraBranchError
+  | ValidationError.ValidationError
+  | NoAssociatedBranch
+  | CustomizationsError,
   | CliApp.Environment
   | GitClient
   | AppConfigService
   | JiraClient
+  | CustomizationsService
   | CommandExecutor.CommandExecutor
 > =>
   Command.run(

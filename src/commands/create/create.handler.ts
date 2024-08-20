@@ -1,6 +1,10 @@
 import {Effect, Option, pipe} from 'effect';
 import {constant} from 'effect/Function';
 import type {AppConfigService} from '../../services/app-config';
+import {
+  type CustomizationsError,
+  CustomizationsService,
+} from '../../services/customizations';
 import {GitClient} from '../../services/git-client';
 import {JiraClient} from '../../services/jira-client';
 import {
@@ -23,8 +27,8 @@ export const gitCreateJiraBranch = (
   reset: boolean,
 ): Effect.Effect<
   GitCreateJiraBranchResult,
-  GitJiraBranchError,
-  AppConfigService | GitClient | JiraClient
+  GitJiraBranchError | CustomizationsError,
+  AppConfigService | GitClient | JiraClient | CustomizationsService
 > =>
   Effect.gen(function* () {
     const [gitClient, jiraClient] = yield* Effect.all([GitClient, JiraClient]);
@@ -46,11 +50,12 @@ export const gitCreateJiraBranch = (
         onNone: () =>
           pipe(
             jiraClient.getJiraIssue(fullKey),
-            Effect.map((issue) => jiraIssueToBranchName(issue, type)),
+            Effect.flatMap((issue) => jiraIssueToBranchName(issue, type)),
           ),
         onSome: (branch) => Effect.succeed(branch.name),
       }),
     );
+
     const resetBranch = reset && Option.isSome(associatedBranch);
     yield* Option.match(baseBranch, {
       onNone: constant(gitClient.createGitBranch),
@@ -60,24 +65,28 @@ export const gitCreateJiraBranch = (
     return (resetBranch ? ResetBranch : CreatedBranch)({branch: branchName});
   });
 
-const jiraIssueToBranchName = (
-  issue: JiraIssue,
-  type: Option.Option<string>,
-): string => {
-  const branchtype = Option.getOrElse(type, () =>
-    jiraIssuetypeBranchtype(issue.fields.issuetype),
-  );
-  return `${branchtype}/${issue.key}-${slugify(issue.fields.summary)}`;
-};
+const jiraIssueToBranchName = (issue: JiraIssue, type: Option.Option<string>) =>
+  Option.map(type, (t) => Effect.succeed(t))
+    .pipe(
+      Option.getOrElse(() => jiraIssuetypeBranchtype(issue.fields.issuetype)),
+    )
+    .pipe(
+      Effect.map(
+        (branchtype) =>
+          `${branchtype}/${issue.key}-${slugify(issue.fields.summary)}`,
+      ),
+    );
 
-const jiraIssuetypeBranchtype = (issuetype: JiraIssuetype): string => {
-  if (issuetype.name.match(/bug/i)) {
-    return 'fix';
-  }
+const jiraIssuetypeBranchtype = (issuetype: JiraIssuetype) =>
+  Effect.gen(function* () {
+    const customizations = yield* Effect.flatMap(
+      CustomizationsService,
+      (cs) => cs.customizations,
+    );
 
-  if (issuetype.name.match(/task|aufgabe/i)) {
-    return 'task';
-  }
-
-  return 'feat';
-};
+    return pipe(
+      customizations.issuetypeToBranchtype.get(issuetype.name.toLowerCase()),
+      Option.fromNullable,
+      Option.getOrElse(() => customizations.defaultBranchtype),
+    );
+  });
