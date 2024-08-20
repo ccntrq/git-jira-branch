@@ -1,13 +1,17 @@
-name: 'Setup node, pnpm and dependencies'
+name: "Setup node, pnpm and dependencies"
 inputs:
   node-version:
-    description: 'Node version to use'
+    description: "Node version to use"
     required: true
     default: 20
   runner-os:
-    description: 'Runner os to use'
+    description: "Runner os to use"
     required: true
-    default: 'ubuntu-latest'
+    default: "ubuntu-latest"
+  cache:
+    description: "Cache to use"
+    required: true
+    default: "pnpm"
 runs:
   using: "composite"
   steps:
@@ -20,8 +24,8 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
-        registry-url: 'https://registry.npmjs.org'
-        cache: pnpm
+        registry-url: "https://registry.npmjs.org"
+        cache: ${{ inputs.cache }}
     - name: Install dependencies
       run: pnpm i
       shell: bash
