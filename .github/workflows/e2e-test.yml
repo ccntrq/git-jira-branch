@@ -23,8 +23,6 @@ jobs:
           node-version: ${{ matrix.version }}
           runner-os: ${{ matrix.os }}
           cache: ''
-      - name: Build
-        run: pnpm build
       - name: Pack
         run: pnpm pack
       - name: Install
