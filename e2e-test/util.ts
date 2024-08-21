@@ -16,6 +16,7 @@ export const setupTmpDir = async (): Promise<
   console.debug(`Setting up e2e env in ${tmpDir}`);
 
   execSync('git init', {cwd: tmpDir});
+  execSync('git branch -m master', {cwd: tmpDir});
 
   execSync('git config user.email "lester-tester@example.com"', {
     cwd: tmpDir,
