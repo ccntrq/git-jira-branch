@@ -61,12 +61,12 @@
     "vitest": "^2.0.5"
   },
   "dependencies": {
-    "@effect/cli": "0.41.4",
-    "@effect/platform": "0.62.4",
-    "@effect/platform-node": "0.57.4",
-    "@effect/printer": "0.34.7",
-    "@effect/printer-ansi": "0.34.7",
-    "@effect/schema": "0.71.3",
-    "effect": "3.6.7"
+    "@effect/cli": "0.42.0",
+    "@effect/platform": "0.63.0",
+    "@effect/platform-node": "0.58.0",
+    "@effect/printer": "0.35.0",
+    "@effect/printer-ansi": "0.35.0",
+    "@effect/schema": "0.72.0",
+    "effect": "3.7.0"
   }
 }
