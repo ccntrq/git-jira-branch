@@ -1,19 +1,21 @@
 import {Chunk, Effect, Option, pipe} from 'effect';
 import {constFalse} from 'effect/Function';
 import {GitClient} from '../services/git-client';
-import type {GitBranch, GitExecError} from '../types';
+import {AssociatedBranch, type GitExecError} from '../types';
 import {jiraKeyFromBranch} from './jira-key-from-branch';
 
 export const getAssociatedBranches = (): Effect.Effect<
-  Chunk.Chunk<GitBranch>,
+  Chunk.Chunk<AssociatedBranch>,
   GitExecError,
   GitClient
 > =>
   GitClient.pipe(
     Effect.flatMap((_) => _.listBranches()),
     Effect.map((branches) =>
-      Chunk.filter(branches, (branch) =>
-        Option.isSome(jiraKeyFromBranch(branch.name)),
+      Chunk.filterMap(branches, (branch) =>
+        Option.map(jiraKeyFromBranch(branch.name), (jiraKey) =>
+          AssociatedBranch({...branch, jiraKey}),
+        ),
       ),
     ),
   );

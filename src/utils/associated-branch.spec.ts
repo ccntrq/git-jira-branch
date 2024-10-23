@@ -27,24 +27,27 @@ describe('getAssociatedBranches', () => {
       const result = yield* Effect.provide(getAssociatedBranches(), testLayer);
 
       expect(result).toMatchInlineSnapshot(`
-          {
-            "_id": "Chunk",
-            "values": [
-              {
-                "isCurrent": false,
-                "name": "feat/DUMMYAPP-123-dummy-isssue-summary",
-              },
-              {
-                "isCurrent": false,
-                "name": "DUMMYAPP-121-asociated",
-              },
-              {
-                "isCurrent": true,
-                "name": "fix/DUMMYAPP-122-another-isssue-summary",
-              },
-            ],
-          }
-        `);
+        {
+          "_id": "Chunk",
+          "values": [
+            {
+              "isCurrent": false,
+              "jiraKey": "DUMMYAPP-123",
+              "name": "feat/DUMMYAPP-123-dummy-isssue-summary",
+            },
+            {
+              "isCurrent": false,
+              "jiraKey": "DUMMYAPP-121",
+              "name": "DUMMYAPP-121-asociated",
+            },
+            {
+              "isCurrent": true,
+              "jiraKey": "DUMMYAPP-122",
+              "name": "fix/DUMMYAPP-122-another-isssue-summary",
+            },
+          ],
+        }
+      `);
     }),
   );
 });
