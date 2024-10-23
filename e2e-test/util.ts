@@ -40,11 +40,12 @@ export const runApp = (dir: Directory, ...args: Array<string>): string => {
 export const spawnApp = (
   dir: Directory,
   ...args: Array<string>
-): SpawnSyncReturns<Buffer> => {
+): SpawnSyncReturns<string> => {
   const cmd = `git-jira-branch ${args.join(' ')}`;
   return spawnSync(cmd, {
     cwd: dir,
     shell: true,
+    encoding: 'utf8',
   });
 };
 

@@ -3,7 +3,6 @@ import {
   type Directory,
   createBranch,
   createCommit,
-  runApp,
   setupTmpDir,
   spawnApp,
   switchBranch,
@@ -12,7 +11,7 @@ import {
 describe('git-jira-branch tidy', () => {
   let tmpDir: Directory;
   const tidyCommand = (...args: Array<string>) =>
-    runApp(tmpDir, 'tidy', ...args);
+    spawnApp(tmpDir, 'tidy', ...args);
 
   beforeEach(async () => {
     const [dir, cleanup] = await setupTmpDir();
@@ -22,7 +21,7 @@ describe('git-jira-branch tidy', () => {
 
   it('starts app and outputs help', async () => {
     const res = tidyCommand('--help');
-    expect(res).toMatch(/git-jira-branch/);
+    expect(res.stdout).toMatch(/git-jira-branch/);
   });
 
   it('tidies fully merged branch', async () => {
@@ -31,11 +30,15 @@ describe('git-jira-branch tidy', () => {
     createBranch(tmpDir, 'feat/GCJB-3-done-ticket');
     switchBranch(tmpDir, 'master');
     // test
-    expect(tidyCommand()).toMatchInlineSnapshot(`
-      "Deleted branches: [
+    expect(tidyCommand().output).toMatchInlineSnapshot(`
+      [
+        null,
+        "Deleted branches: [
       feat/GCJB-3-done-ticket
       ]
-      "
+      ",
+        "",
+      ]
     `);
   });
 
@@ -46,14 +49,15 @@ describe('git-jira-branch tidy', () => {
     createCommit(tmpDir, 'not fully merged');
     switchBranch(tmpDir, 'master');
     // test
-    const res = spawnApp(tmpDir, 'tidy');
-    expect(res.stdout.toString()).toMatchInlineSnapshot(`
-      "No branches deleted.
-      "
-    `);
-    expect(res.stderr.toString()).toMatchInlineSnapshot(`
-      "Branch for ticket 'GCJB-3' 'feat/GCJB-3-done-ticket' is not fully merged. If you are sure you want to delete run with '-f'
-      "
+    const res = spawnApp(tmpDir, 'tidy').output;
+    expect(res).toMatchInlineSnapshot(`
+      [
+        null,
+        "No branches deleted.
+      ",
+        "Branch for ticket 'GCJB-3' 'feat/GCJB-3-done-ticket' is not fully merged. If you are sure you want to delete run with '-f'
+      ",
+      ]
     `);
   });
 
@@ -64,11 +68,15 @@ describe('git-jira-branch tidy', () => {
     createCommit(tmpDir, 'not fully merged');
     switchBranch(tmpDir, 'master');
     // test
-    expect(tidyCommand('--force')).toMatchInlineSnapshot(`
-      "Deleted branches: [
+    expect(tidyCommand('--force').output).toMatchInlineSnapshot(`
+      [
+        null,
+        "Deleted branches: [
       feat/GCJB-3-done-ticket
       ]
-      "
+      ",
+        "",
+      ]
     `);
   });
 });
