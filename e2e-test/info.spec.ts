@@ -12,18 +12,18 @@ describe('git-jira-branch info', () => {
     return cleanup;
   });
   it('starts app and outputs help', async () => {
-    const res = infoCommand('--help');
+    const res = await infoCommand('--help');
     expect(res).toMatch(/git-jira-branch/);
   });
 
-  it('prints ticket info for given ticket', () => {
-    const result = infoCommand('1');
+  it('prints ticket info for given ticket', async () => {
+    const result = await infoCommand('1');
     expect(result).toMatchSnapshot();
   });
 
-  it('info subcommand prints ticket info for current branch', () => {
+  it('info subcommand prints ticket info for current branch', async () => {
     createBranch(tmpDir, 'feat/GCJB-1-e2e-test-ticket-with-a-fancy-summary');
-    const result = infoCommand();
+    const result = await infoCommand();
     expect(result).toMatchSnapshot();
   });
 });

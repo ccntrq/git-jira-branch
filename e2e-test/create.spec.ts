@@ -21,12 +21,12 @@ describe('git-jira-branch create', () => {
   });
 
   it('outputs help', async () => {
-    const res = createCommand('--help');
+    const res = await createCommand('--help');
     expect(res).toMatch(/git-jira-branch/);
   });
 
-  it('creates new branch for existing jira ticket', () => {
-    const res = createCommand('GCJB-1');
+  it('creates new branch for existing jira ticket', async () => {
+    const res = await createCommand('GCJB-1');
 
     expect(res).toMatchInlineSnapshot(`
       "Successfully created branch: 'feat/GCJB-1-e2e-test-ticket-with-a-fancy-summary'
@@ -38,9 +38,9 @@ describe('git-jira-branch create', () => {
     );
   });
 
-  it('create subcommand prints error for non existing jira ticket', () => {
+  it('create subcommand prints error for non existing jira ticket', async () => {
     try {
-      createCommand('NOPROJECT-1');
+      await createCommand('NOPROJECT-1');
       expect.unreachable('Should have thrown');
     } catch (error) {
       expect(error).toMatchInlineSnapshot(`
@@ -57,7 +57,7 @@ describe('git-jira-branch create', () => {
     createBranch(tmpDir, 'feat/GCJB-1-already-exists');
 
     try {
-      createCommand('GCJB-1');
+      await createCommand('GCJB-1');
       expect.unreachable('Should have thrown');
     } catch (e) {
       expect(e).toMatchInlineSnapshot(`
@@ -75,7 +75,7 @@ describe('git-jira-branch create', () => {
 
     expect(
       createCommand('--reset', '-b', 'master', 'GCJB-1'),
-    ).toMatchInlineSnapshot(`
+    ).resolves.toMatchInlineSnapshot(`
       "Reset branch: 'feat/GCJB-1-already-exists'
       "
     `);
@@ -83,6 +83,6 @@ describe('git-jira-branch create', () => {
     const lastCommitMsg2 = execSync('git log -1 --pretty=%B', {cwd: tmpDir})
       .toString()
       .trim();
-    expect(lastCommitMsg2).toMatchInlineSnapshot('"init"');
+    expect(lastCommitMsg2).toMatchInlineSnapshot(`"To be reset"`);
   });
 });

@@ -19,14 +19,14 @@ describe('git-jira-branch switch', () => {
   });
 
   it('outputs help', async () => {
-    const res = switchCommand('--help');
+    const res = await switchCommand('--help');
     expect(res).toMatch(/git-jira-branch/);
   });
 
   it('switches to already existing branch', async () => {
     createBranch(tmpDir, 'feat/GCJB-1-e2e-test-ticket-with-a-fancy-summary');
 
-    const res = switchCommand('GCJB-1');
+    const res = await switchCommand('GCJB-1');
 
     expect(res).toMatchInlineSnapshot(`
       "Switched to already existing branch: 'feat/GCJB-1-e2e-test-ticket-with-a-fancy-summary'
@@ -39,7 +39,7 @@ describe('git-jira-branch switch', () => {
 
   it('switch subcommand fails on non existing branches', async () => {
     try {
-      const _res = switchCommand('GCJB-5');
+      const _res = await switchCommand('GCJB-5');
       expect.unreachable('Should have thrown');
     } catch (error) {
       expect(error).toMatchInlineSnapshot(`

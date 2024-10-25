@@ -1,9 +1,26 @@
-import {type SpawnSyncReturns, execSync, spawnSync} from 'node:child_process';
+import type {ExecOptions} from 'node:child_process';
+import {exec, execSync} from 'node:child_process';
 import {rmSync} from 'node:fs';
 import {mkdtemp} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {Brand} from 'effect';
+
+function execPromise(
+  command: string,
+  options: ExecOptions,
+): Promise<{stdout: string; stderr: string}> {
+  return new Promise((resolve, reject) => {
+    exec(command, {...options, encoding: 'utf-8'}, (error, stdout, stderr) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+
+      resolve({stdout, stderr});
+    });
+  });
+}
 
 export type Directory = string & Brand.Brand<'Directory'>;
 export const Directory = Brand.nominal<Directory>();
@@ -32,21 +49,22 @@ export const setupTmpDir = async (): Promise<
   return [Directory(tmpDir), cleanup] as const;
 };
 
-export const runApp = (dir: Directory, ...args: Array<string>): string => {
-  const cmd = `git-jira-branch ${args.join(' ')}`;
-  return execSync(cmd, {cwd: dir}).toString();
-};
-
-export const spawnApp = (
+export const runApp = async (
   dir: Directory,
   ...args: Array<string>
-): SpawnSyncReturns<string> => {
+): Promise<string> => {
   const cmd = `git-jira-branch ${args.join(' ')}`;
-  return spawnSync(cmd, {
-    cwd: dir,
-    shell: true,
-    encoding: 'utf8',
-  });
+  const res = await execPromise(cmd, {cwd: dir});
+  return res.stdout;
+};
+
+export const execApp = async (
+  dir: Directory,
+  ...args: Array<string>
+): Promise<{stdout: string; stderr: string}> => {
+  const cmd = `git-jira-branch ${args.join(' ')}`;
+  const res = await execPromise(cmd, {cwd: dir});
+  return res;
 };
 
 export const currentBranch = (dir: Directory): string =>

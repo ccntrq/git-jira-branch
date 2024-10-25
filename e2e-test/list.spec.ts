@@ -19,7 +19,7 @@ describe('git-jira-branch list', () => {
   });
 
   it('starts app and outputs help', async () => {
-    const res = listCommand('--help');
+    const res = await listCommand('--help');
     expect(res).toMatch(/git-jira-branch/);
   });
 
@@ -28,7 +28,7 @@ describe('git-jira-branch list', () => {
     createBranch(tmpDir, 'feat/GCJB-2-test-ticket-2');
     createBranch(tmpDir, 'feat/GCJB-3-test-ticket-3-current');
 
-    expect(listCommand).toMatchSnapshot();
+    expect(listCommand()).resolves.toMatchSnapshot();
   });
 
   it('list subcommand prints associated branches without current', () => {
@@ -37,6 +37,6 @@ describe('git-jira-branch list', () => {
     createBranch(tmpDir, 'feat/GCJB-3-test-ticket-3');
     switchBranch(tmpDir, 'master');
 
-    expect(listCommand()).toMatchSnapshot();
+    expect(listCommand()).resolves.toMatchSnapshot();
   });
 });

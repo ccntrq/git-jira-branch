@@ -20,7 +20,7 @@ describe('git-jira-branch delete', () => {
   });
 
   it('starts app and outputs help', async () => {
-    const res = deleteCommand('--help');
+    const res = await deleteCommand('--help');
     expect(res).toMatch(/git-jira-branch/);
   });
   it('deletes fully merged branch', async () => {
@@ -28,7 +28,7 @@ describe('git-jira-branch delete', () => {
     createBranch(tmpDir, 'feat/GCJB-1111-test-branch');
     switchBranch(tmpDir, 'master');
     // test
-    expect(deleteCommand('1111')).toMatchInlineSnapshot(`
+    expect(deleteCommand('1111')).resolves.toMatchInlineSnapshot(`
       "Deleted branch: 'feat/GCJB-1111-test-branch'
       "
     `);
@@ -41,7 +41,7 @@ describe('git-jira-branch delete', () => {
     switchBranch(tmpDir, 'master');
     // test
     try {
-      deleteCommand('1111');
+      await deleteCommand('1111');
       expect.unreachable('Should have failed');
     } catch (e) {
       expect(e).toMatchInlineSnapshot(
@@ -63,7 +63,7 @@ describe('git-jira-branch delete', () => {
     createCommit(tmpDir, 'Test commit');
     switchBranch(tmpDir, 'master');
     // test
-    expect(deleteCommand('--force', '1111')).toMatchInlineSnapshot(`
+    expect(deleteCommand('--force', '1111')).resolves.toMatchInlineSnapshot(`
       "Deleted branch: 'feat/GCJB-1111-test-branch'
       "
     `);
