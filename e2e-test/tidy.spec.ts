@@ -30,7 +30,8 @@ describe('git-jira-branch tidy', () => {
     createBranch(tmpDir, 'feat/GCJB-3-done-ticket');
     switchBranch(tmpDir, 'master');
     // test
-    expect(tidyCommand()).resolves.toMatchInlineSnapshot(`
+    const res = await tidyCommand();
+    expect(res).toMatchInlineSnapshot(`
       {
         "stderr": "",
         "stdout": "Deleted branches: [
