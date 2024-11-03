@@ -15,7 +15,7 @@ export const create = pipe(
         ),
         type: Options.withDescription(
           Options.optional(Options.withAlias(Options.text('type'), 't')),
-          `Type of branch to create (e.g. 'feat', 'fix', 'task')`,
+          `Type of branch to create (e.g. 'feat', 'fix', 'task', 'empty'). Provide 'empty' will create a branch without a type prefix.`,
         ),
         reset: Options.withDescription(
           Options.withAlias(Options.boolean('reset'), 'r'),
