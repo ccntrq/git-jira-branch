@@ -31,6 +31,7 @@ $ git jira-branch create MYAPP-1234
     - [For Jira Cloud](#ForJiraCloud)
     - [For Jira Data Center](#ForJiraDataCenter)
   - [Setup shell completions](#Setupshellcompletions)
+- [Contributors](#Contributors)
 - [Technologies used](#Technologiesused)
 - [License](#License)
 
@@ -200,6 +201,11 @@ git-jira-branch --completions bash > ~/.git-jira-branch-bash-completions
 echo "source \$HOME/.git-jira-branch-bash-completions" >> ~/.bashrc
 source ~/.bashrc
 ```
+
+## <a name='Contributors'></a>Contributors
+
+- Alexander Pankoff ([@ccntrq](https://github.com/ccntrq))
+- Taylor Falk ([@taytayp](https://github.com/taytayp) [@tfalkarkea](https://github.com/tfalkarkea))
 
 ## <a name='Technologiesused'></a>Technologies used
 
