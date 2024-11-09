@@ -1,4 +1,4 @@
-import {execSync} from 'node:child_process';
+import {type SpawnSyncReturns, execSync, spawnSync} from 'node:child_process';
 import {rmSync} from 'node:fs';
 import {mkdtemp} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
@@ -35,6 +35,17 @@ export const setupTmpDir = async (): Promise<
 export const runApp = (dir: Directory, ...args: Array<string>): string => {
   const cmd = `git-jira-branch ${args.join(' ')}`;
   return execSync(cmd, {cwd: dir}).toString();
+};
+
+export const spawnApp = (
+  dir: Directory,
+  ...args: Array<string>
+): SpawnSyncReturns<Buffer> => {
+  const cmd = `git-jira-branch ${args.join(' ')}`;
+  return spawnSync(cmd, {
+    cwd: dir,
+    shell: true,
+  });
 };
 
 export const currentBranch = (dir: Directory): string =>

@@ -13,6 +13,7 @@ import {info} from './commands/info/info.command';
 import {list} from './commands/list/list.command';
 import {open} from './commands/open/open.command';
 import {switchCommand} from './commands/switch/switch.command';
+import {tidy} from './commands/tidy/tidy.command';
 import type {NoAssociatedBranch} from './schema/no-associated-branch';
 import type {AppConfigService} from './services/app-config';
 import type {GitClient} from './services/git-client';
@@ -30,6 +31,7 @@ const mainCommand = gitJiraBranch.pipe(
     open,
     info,
     list,
+    tidy,
   ]),
 );
 

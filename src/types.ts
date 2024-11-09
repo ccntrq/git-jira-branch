@@ -51,6 +51,12 @@ export interface GitBranch {
 
 export const GitBranch = Data.case<GitBranch>();
 
+export interface AssociatedBranch extends GitBranch {
+  jiraKey: string;
+}
+
+export const AssociatedBranch = Data.case<AssociatedBranch>();
+
 export const JiraIssuetypeSchema = Schema.Struct({
   name: Schema.String,
 });
