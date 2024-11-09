@@ -484,7 +484,7 @@ describe('gitCreateJiraBranch', () => {
         Effect.provide(
           gitCreateJiraBranch(
             'DUMMYAPP-123',
-            Option.some('empty'),
+            Option.some(''),
             Option.none(),
             false,
           ),

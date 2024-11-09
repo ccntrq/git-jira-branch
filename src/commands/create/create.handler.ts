@@ -67,7 +67,7 @@ const jiraIssueToBranchName = (
   const branchtype = Option.getOrElse(type, () =>
     jiraIssuetypeBranchtype(issue.fields.issuetype),
   );
-  const prefix = branchtype === 'empty' ? '' : `${branchtype}/`;
+  const prefix = branchtype.length === 0 ? '' : `${branchtype}/`;
   return `${prefix}${issue.key}-${slugify(issue.fields.summary)}`;
 };
 
