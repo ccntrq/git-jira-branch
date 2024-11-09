@@ -469,4 +469,51 @@ describe('gitCreateJiraBranch', () => {
       expect(mockGitClient.createGitBranchFrom).not.toHaveBeenCalled();
     }),
   );
+
+  live('should create branch with no type', () =>
+    Effect.gen(function* () {
+      mockAppConfigService.getAppConfig.mockReturnValue(
+        Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
+      );
+      mockGitClient.createGitBranch.mockReturnValue(Effect.succeed(undefined));
+      mockJiraClient.getJiraIssue.mockReturnValue(
+        Effect.succeed(dummyJiraIssue),
+      );
+
+      const result = yield* Effect.either(
+        Effect.provide(
+          gitCreateJiraBranch(
+            'DUMMYAPP-123',
+            Option.some(''),
+            Option.none(),
+            false,
+          ),
+          testLayer,
+        ),
+      );
+
+      Either.match(result, {
+        onLeft: (e) =>
+          expect.unreachable(
+            `Should have created branch. Got error instead: ${e}`,
+          ),
+        onRight: (result) =>
+          expect(result).toMatchInlineSnapshot(`
+          {
+            "_tag": "CreatedBranch",
+            "branch": "DUMMYAPP-123-dummy-isssue-summary",
+          }
+        `),
+      });
+
+      expect(mockAppConfigService.getAppConfig).toHaveBeenCalledTimes(1);
+      expect(mockJiraClient.getJiraIssue).toHaveBeenCalledTimes(1);
+      expect(mockJiraClient.getJiraIssue).toHaveBeenCalledWith('DUMMYAPP-123');
+      expect(mockGitClient.createGitBranch).toHaveBeenCalledTimes(1);
+      expect(mockGitClient.createGitBranch).toHaveBeenCalledWith(
+        'DUMMYAPP-123-dummy-isssue-summary',
+        false,
+      );
+    }),
+  );
 });
