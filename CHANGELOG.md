@@ -9,6 +9,21 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [2.2.0](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v2.1.0...git-jira-branch-v2.2.0) (2024-11-09)
+
+
+### Features
+
+* add tidy command that removes branches for finished tickets ([#509](https://github.com/ccntrq/git-jira-branch/issues/509)) ([e061186](https://github.com/ccntrq/git-jira-branch/commit/e061186bb31e11f9b2a99eab852ddeae15771808)), closes [#257](https://github.com/ccntrq/git-jira-branch/issues/257)
+* **create:** allow creation of branches without a type prefix ([#525](https://github.com/ccntrq/git-jira-branch/issues/525)) ([de3daa4](https://github.com/ccntrq/git-jira-branch/commit/de3daa41336091f696b44db671fa3e100cfba957))
+
+
+### Bug Fixes
+
+* **deps:** bump the production-dependencies group with 3 updates ([#465](https://github.com/ccntrq/git-jira-branch/issues/465)) ([cbe5d74](https://github.com/ccntrq/git-jira-branch/commit/cbe5d743eb5df87464e920a18ef8f821fb312f1a))
+* **deps:** bump the production-dependencies group with 7 updates ([#459](https://github.com/ccntrq/git-jira-branch/issues/459)) ([5acb477](https://github.com/ccntrq/git-jira-branch/commit/5acb477ae1bfc20ff10484a907272baea88596af))
+* **deps:** bump the production-dependencies group with 7 updates ([#462](https://github.com/ccntrq/git-jira-branch/issues/462)) ([30d2431](https://github.com/ccntrq/git-jira-branch/commit/30d2431903a87ed53a4ff077cc52c85d5c44db75))
+
 ## [2.1.0](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v2.0.8...git-jira-branch-v2.1.0) (2024-08-29)
 
 
