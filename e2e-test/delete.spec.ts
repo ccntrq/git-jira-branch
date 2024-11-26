@@ -28,7 +28,7 @@ describe('git-jira-branch delete', () => {
     createBranch(tmpDir, 'feat/GCJB-1111-test-branch');
     switchBranch(tmpDir, 'master');
     // test
-    expect(deleteCommand('1111')).resolves.toMatchInlineSnapshot(`
+    await expect(deleteCommand('1111')).resolves.toMatchInlineSnapshot(`
       "Deleted branch: 'feat/GCJB-1111-test-branch'
       "
     `);
@@ -63,7 +63,9 @@ describe('git-jira-branch delete', () => {
     createCommit(tmpDir, 'Test commit');
     switchBranch(tmpDir, 'master');
     // test
-    expect(deleteCommand('--force', '1111')).resolves.toMatchInlineSnapshot(`
+    await expect(
+      deleteCommand('--force', '1111'),
+    ).resolves.toMatchInlineSnapshot(`
       "Deleted branch: 'feat/GCJB-1111-test-branch'
       "
     `);

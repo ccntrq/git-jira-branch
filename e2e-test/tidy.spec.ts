@@ -67,7 +67,7 @@ describe('git-jira-branch tidy', () => {
     createCommit(tmpDir, 'not fully merged');
     switchBranch(tmpDir, 'master');
     // test
-    expect(tidyCommand('--force')).resolves.toMatchInlineSnapshot(`
+    await expect(tidyCommand('--force')).resolves.toMatchInlineSnapshot(`
       {
         "stderr": "",
         "stdout": "Deleted branches: [

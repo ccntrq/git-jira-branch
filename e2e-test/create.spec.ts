@@ -69,11 +69,11 @@ describe('git-jira-branch create', () => {
     }
   });
 
-  it('create subcommand resets branch to given base ref', () => {
+  it('create subcommand resets branch to given base ref', async () => {
     createBranch(tmpDir, 'feat/GCJB-1-already-exists');
     createCommit(tmpDir, 'To be reset');
 
-    expect(
+    await expect(
       createCommand('--reset', '-b', 'master', 'GCJB-1'),
     ).resolves.toMatchInlineSnapshot(`
       "Reset branch: 'feat/GCJB-1-already-exists'
