@@ -1,6 +1,11 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`git-jira-branch list > list subcommand prints associated branches with current 1`] = `[Function]`;
+exports[`git-jira-branch list > list subcommand prints associated branches with current 1`] = `
+"  feat/GCJB-1-test-ticket-1
+  feat/GCJB-2-test-ticket-2
+* [0;32mfeat/GCJB-3-test-ticket-3-current[0m
+"
+`;
 
 exports[`git-jira-branch list > list subcommand prints associated branches without current 1`] = `
 "feat/GCJB-1-test-ticket-1

@@ -11,7 +11,7 @@ describe('git-jira-branch', () => {
   });
 
   it('starts app and outputs help', async () => {
-    const res = runApp(tmpDir, '--help');
+    const res = await runApp(tmpDir, '--help');
     expect(res).toMatch(/git-jira-branch/);
   });
 });

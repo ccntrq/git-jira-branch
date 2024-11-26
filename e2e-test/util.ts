@@ -1,9 +1,26 @@
-import {type SpawnSyncReturns, execSync, spawnSync} from 'node:child_process';
+import type {ExecOptions} from 'node:child_process';
+import {exec} from 'node:child_process';
 import {rmSync} from 'node:fs';
 import {mkdtemp} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {Brand} from 'effect';
+
+function execPromise(
+  command: string,
+  options: ExecOptions,
+): Promise<{stdout: string; stderr: string}> {
+  return new Promise((resolve, reject) => {
+    exec(command, {...options, encoding: 'utf-8'}, (error, stdout, stderr) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+
+      resolve({stdout, stderr});
+    });
+  });
+}
 
 export type Directory = string & Brand.Brand<'Directory'>;
 export const Directory = Brand.nominal<Directory>();
@@ -15,13 +32,13 @@ export const setupTmpDir = async (): Promise<
   // biome-ignore lint/nursery/noConsole: log statement okay in this test
   console.debug(`Setting up e2e env in ${tmpDir}`);
 
-  execSync('git init', {cwd: tmpDir});
+  await execPromise('git init', {cwd: tmpDir});
 
-  execSync('git config user.email "lester-tester@example.com"', {
+  await execPromise('git config user.email "lester-tester@example.com"', {
     cwd: tmpDir,
   });
-  execSync('git config user.name "Lester Tester"', {cwd: tmpDir});
-  execSync('git commit -m "init" --allow-empty', {cwd: tmpDir});
+  await execPromise('git config user.name "Lester Tester"', {cwd: tmpDir});
+  await execPromise('git commit -m "init" --allow-empty', {cwd: tmpDir});
 
   const cleanup = () => {
     // biome-ignore lint/nursery/noConsole: log statement okay in test
@@ -32,38 +49,43 @@ export const setupTmpDir = async (): Promise<
   return [Directory(tmpDir), cleanup] as const;
 };
 
-export const runApp = (dir: Directory, ...args: Array<string>): string => {
-  const cmd = `git-jira-branch ${args.join(' ')}`;
-  return execSync(cmd, {cwd: dir}).toString();
-};
-
-export const spawnApp = (
+export const runApp = async (
   dir: Directory,
   ...args: Array<string>
-): SpawnSyncReturns<Buffer> => {
+): Promise<string> => {
   const cmd = `git-jira-branch ${args.join(' ')}`;
-  return spawnSync(cmd, {
-    cwd: dir,
-    shell: true,
-  });
+  const res = await execPromise(cmd, {cwd: dir});
+  return res.stdout;
 };
 
-export const currentBranch = (dir: Directory): string =>
-  execSync('git branch --show-current', {cwd: dir}) //
-    .toString()
-    .trim();
+export const execApp = async (
+  dir: Directory,
+  ...args: Array<string>
+): Promise<{stdout: string; stderr: string}> => {
+  const cmd = `git-jira-branch ${args.join(' ')}`;
+  const res = await execPromise(cmd, {cwd: dir});
+  return res;
+};
 
-export const createBranch = (dir: Directory, name: string): string =>
-  execSync(`git checkout -b ${name}`, {cwd: dir}) //
-    .toString()
-    .trim();
+export const currentBranch = (dir: Directory): Promise<string> =>
+  execPromise('git branch --show-current', {cwd: dir}).then((out) =>
+    out.stdout.trim(),
+  );
 
-export const switchBranch = (dir: Directory, name: string): string =>
-  execSync(`git switch ${name}`, {cwd: dir}) //
-    .toString()
-    .trim();
+export const createBranch = (dir: Directory, name: string): Promise<string> =>
+  execPromise(`git checkout -b ${name}`, {cwd: dir}).then((out) =>
+    out.stdout.trim(),
+  );
 
-export const createCommit = (dir: Directory, message: string): string =>
-  execSync(`git commit -m "${message}" --allow-empty`, {cwd: dir}) //
-    .toString()
-    .trim();
+export const switchBranch = (dir: Directory, name: string): Promise<string> =>
+  execPromise(`git switch ${name}`, {cwd: dir}).then((out) =>
+    out.stdout.trim(),
+  );
+
+export const createCommit = (
+  dir: Directory,
+  message: string,
+): Promise<string> =>
+  execPromise(`git commit -m "${message}" --allow-empty`, {cwd: dir}).then(
+    (out) => out.stdout.trim(),
+  );
