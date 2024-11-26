@@ -23,19 +23,19 @@ describe('git-jira-branch list', () => {
     expect(res).toMatch(/git-jira-branch/);
   });
 
-  it('list subcommand prints associated branches with current', () => {
-    createBranch(tmpDir, 'feat/GCJB-1-test-ticket-1');
-    createBranch(tmpDir, 'feat/GCJB-2-test-ticket-2');
-    createBranch(tmpDir, 'feat/GCJB-3-test-ticket-3-current');
+  it('list subcommand prints associated branches with current', async () => {
+    await createBranch(tmpDir, 'feat/GCJB-1-test-ticket-1');
+    await createBranch(tmpDir, 'feat/GCJB-2-test-ticket-2');
+    await createBranch(tmpDir, 'feat/GCJB-3-test-ticket-3-current');
 
     return expect(listCommand()).resolves.toMatchSnapshot();
   });
 
-  it('list subcommand prints associated branches without current', () => {
-    createBranch(tmpDir, 'feat/GCJB-1-test-ticket-1');
-    createBranch(tmpDir, 'feat/GCJB-2-test-ticket-2');
-    createBranch(tmpDir, 'feat/GCJB-3-test-ticket-3');
-    switchBranch(tmpDir, 'master');
+  it('list subcommand prints associated branches without current', async () => {
+    await createBranch(tmpDir, 'feat/GCJB-1-test-ticket-1');
+    await createBranch(tmpDir, 'feat/GCJB-2-test-ticket-2');
+    await createBranch(tmpDir, 'feat/GCJB-3-test-ticket-3');
+    await switchBranch(tmpDir, 'master');
 
     return expect(listCommand()).resolves.toMatchSnapshot();
   });

@@ -24,7 +24,10 @@ describe('git-jira-branch switch', () => {
   });
 
   it('switches to already existing branch', async () => {
-    createBranch(tmpDir, 'feat/GCJB-1-e2e-test-ticket-with-a-fancy-summary');
+    await createBranch(
+      tmpDir,
+      'feat/GCJB-1-e2e-test-ticket-with-a-fancy-summary',
+    );
 
     const res = await switchCommand('GCJB-1');
 
@@ -32,7 +35,7 @@ describe('git-jira-branch switch', () => {
       "Switched to already existing branch: 'feat/GCJB-1-e2e-test-ticket-with-a-fancy-summary'
       "
     `);
-    expect(currentBranch(tmpDir)).toMatchInlineSnapshot(
+    await expect(currentBranch(tmpDir)).resolves.toMatchInlineSnapshot(
       '"feat/GCJB-1-e2e-test-ticket-with-a-fancy-summary"',
     );
   });

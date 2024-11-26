@@ -33,7 +33,7 @@ describe('git-jira-branch create', () => {
       "
     `);
 
-    expect(currentBranch(tmpDir)).toMatchInlineSnapshot(
+    await expect(currentBranch(tmpDir)).resolves.toMatchInlineSnapshot(
       '"feat/GCJB-1-e2e-test-ticket-with-a-fancy-summary"',
     );
   });
@@ -54,7 +54,7 @@ describe('git-jira-branch create', () => {
   });
 
   it('create subcommand fails for already existing branch', async () => {
-    createBranch(tmpDir, 'feat/GCJB-1-already-exists');
+    await createBranch(tmpDir, 'feat/GCJB-1-already-exists');
 
     try {
       await createCommand('GCJB-1');
@@ -70,8 +70,8 @@ describe('git-jira-branch create', () => {
   });
 
   it('create subcommand resets branch to given base ref', async () => {
-    createBranch(tmpDir, 'feat/GCJB-1-already-exists');
-    createCommit(tmpDir, 'To be reset');
+    await createBranch(tmpDir, 'feat/GCJB-1-already-exists');
+    await createCommit(tmpDir, 'To be reset');
 
     await expect(
       createCommand('--reset', '-b', 'master', 'GCJB-1'),
@@ -83,6 +83,6 @@ describe('git-jira-branch create', () => {
     const lastCommitMsg2 = execSync('git log -1 --pretty=%B', {cwd: tmpDir})
       .toString()
       .trim();
-    expect(lastCommitMsg2).toMatchInlineSnapshot(`"To be reset"`);
+    expect(lastCommitMsg2).toMatchInlineSnapshot(`"init"`);
   });
 });

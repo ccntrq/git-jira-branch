@@ -26,9 +26,9 @@ describe('git-jira-branch tidy', () => {
 
   it('tidies fully merged branch', async () => {
     // setup
-    createBranch(tmpDir, 'feat/GCJB-1-test-branch');
-    createBranch(tmpDir, 'feat/GCJB-3-done-ticket');
-    switchBranch(tmpDir, 'master');
+    await createBranch(tmpDir, 'feat/GCJB-1-test-branch');
+    await createBranch(tmpDir, 'feat/GCJB-3-done-ticket');
+    await switchBranch(tmpDir, 'master');
     // test
     const res = await tidyCommand();
     expect(res).toMatchInlineSnapshot(`
@@ -44,10 +44,10 @@ describe('git-jira-branch tidy', () => {
 
   it("doesn't tidy not fully merged branch", async () => {
     // setup
-    createBranch(tmpDir, 'feat/GCJB-1-test-branch');
-    createBranch(tmpDir, 'feat/GCJB-3-done-ticket');
-    createCommit(tmpDir, 'not fully merged');
-    switchBranch(tmpDir, 'master');
+    await createBranch(tmpDir, 'feat/GCJB-1-test-branch');
+    await createBranch(tmpDir, 'feat/GCJB-3-done-ticket');
+    await createCommit(tmpDir, 'not fully merged');
+    await switchBranch(tmpDir, 'master');
     // test
     const res = await tidyCommand();
     expect(res).toMatchInlineSnapshot(`
@@ -62,10 +62,10 @@ describe('git-jira-branch tidy', () => {
 
   it('tidies not fully merged branch with --force', async () => {
     // setup
-    createBranch(tmpDir, 'feat/GCJB-1-test-branch');
-    createBranch(tmpDir, 'feat/GCJB-3-done-ticket');
-    createCommit(tmpDir, 'not fully merged');
-    switchBranch(tmpDir, 'master');
+    await createBranch(tmpDir, 'feat/GCJB-1-test-branch');
+    await createBranch(tmpDir, 'feat/GCJB-3-done-ticket');
+    await createCommit(tmpDir, 'not fully merged');
+    await switchBranch(tmpDir, 'master');
     // test
     await expect(tidyCommand('--force')).resolves.toMatchInlineSnapshot(`
       {

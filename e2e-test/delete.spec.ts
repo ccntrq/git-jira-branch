@@ -25,8 +25,8 @@ describe('git-jira-branch delete', () => {
   });
   it('deletes fully merged branch', async () => {
     // setup
-    createBranch(tmpDir, 'feat/GCJB-1111-test-branch');
-    switchBranch(tmpDir, 'master');
+    await createBranch(tmpDir, 'feat/GCJB-1111-test-branch');
+    await switchBranch(tmpDir, 'master');
     // test
     await expect(deleteCommand('1111')).resolves.toMatchInlineSnapshot(`
       "Deleted branch: 'feat/GCJB-1111-test-branch'
@@ -36,9 +36,9 @@ describe('git-jira-branch delete', () => {
 
   it("doesn't delete not fully merged branch without --force", async () => {
     // setup
-    createBranch(tmpDir, 'feat/GCJB-1111-test-branch');
-    createCommit(tmpDir, 'Test commit');
-    switchBranch(tmpDir, 'master');
+    await createBranch(tmpDir, 'feat/GCJB-1111-test-branch');
+    await createCommit(tmpDir, 'Test commit');
+    await switchBranch(tmpDir, 'master');
     // test
     try {
       await deleteCommand('1111');
@@ -59,9 +59,9 @@ describe('git-jira-branch delete', () => {
 
   it('deletes not fully merged branch with --force', async () => {
     // setup
-    createBranch(tmpDir, 'feat/GCJB-1111-test-branch');
-    createCommit(tmpDir, 'Test commit');
-    switchBranch(tmpDir, 'master');
+    await createBranch(tmpDir, 'feat/GCJB-1111-test-branch');
+    await createCommit(tmpDir, 'Test commit');
+    await switchBranch(tmpDir, 'master');
     // test
     await expect(
       deleteCommand('--force', '1111'),

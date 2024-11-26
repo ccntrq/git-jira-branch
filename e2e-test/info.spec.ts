@@ -22,7 +22,10 @@ describe('git-jira-branch info', () => {
   });
 
   it('info subcommand prints ticket info for current branch', async () => {
-    createBranch(tmpDir, 'feat/GCJB-1-e2e-test-ticket-with-a-fancy-summary');
+    await createBranch(
+      tmpDir,
+      'feat/GCJB-1-e2e-test-ticket-with-a-fancy-summary',
+    );
     const result = await infoCommand();
     expect(result).toMatchSnapshot();
   });
