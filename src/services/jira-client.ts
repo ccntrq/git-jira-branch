@@ -4,10 +4,9 @@ import {
   HttpClientRequest,
   HttpClientResponse,
 } from '@effect/platform';
-import * as ArrayFormatter from '@effect/schema/ArrayFormatter';
-import type * as ParseResult from '@effect/schema/ParseResult';
-import {Context, Effect, Layer} from 'effect';
+import {Context, Effect, Layer, type ParseResult, pipe} from 'effect';
 
+import {ArrayFormatter} from 'effect/ParseResult';
 import {
   type AppConfigError,
   JiraApiError,
@@ -36,13 +35,16 @@ export const JiraClientLive = Layer.effect(
             const endPoint = `/rest/api/latest/issue/${issueId}`;
             const {jiraAuth, jiraApiUrl} = yield* env.getAppConfig;
 
-            return yield* HttpClientRequest.get(jiraApiUrl + endPoint, {
-              headers: {
-                Authorization: buildJiraAuthorizationHeader(jiraAuth),
-                Accept: 'application/json',
-              },
-            }).pipe(
-              HttpClient.filterStatusOk(httpClient),
+            const filteredClient = HttpClient.filterStatusOk(httpClient);
+
+            return yield* pipe(
+              HttpClientRequest.get(jiraApiUrl + endPoint, {
+                headers: {
+                  Authorization: buildJiraAuthorizationHeader(jiraAuth),
+                  Accept: 'application/json',
+                },
+              }),
+              filteredClient.execute,
               Effect.flatMap(
                 HttpClientResponse.schemaBodyJson(JiraIssueSchema),
               ),

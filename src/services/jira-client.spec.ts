@@ -23,21 +23,17 @@ const appConfigTest = AppConfigService.Live.pipe(
   ),
 );
 
-const mkHttpMock = (
-  response: Response,
-): Layer.Layer<HttpClient.HttpClient.Default> =>
+const mkHttpMock = (response: Response): Layer.Layer<HttpClient.HttpClient> =>
   Layer.succeed(
     HttpClient.HttpClient,
-    HttpClient.makeDefault((req) =>
+    HttpClient.make((req) =>
       Effect.succeed(HttpClientResponse.fromWeb(req, response)),
     ),
   );
 
 const mkTestLayer = (
   response: Response,
-): Layer.Layer<
-  AppConfigService | HttpClient.HttpClient.Default | JiraClient
-> => {
+): Layer.Layer<AppConfigService | HttpClient.HttpClient | JiraClient> => {
   const baseTestLayer = Layer.merge(appConfigTest, mkHttpMock(response));
   return Layer.merge(
     baseTestLayer,
