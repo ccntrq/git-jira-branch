@@ -1,4 +1,4 @@
-import {Schema} from '@effect/schema';
+import {Schema} from 'effect';
 
 export class BranchNotMerged extends Schema.TaggedError<BranchNotMerged>()(
   'BranchNotMerged',

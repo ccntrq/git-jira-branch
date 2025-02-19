@@ -1,4 +1,4 @@
-import {Schema} from '@effect/schema';
+import {Schema} from 'effect';
 
 export class NoAssociatedBranch extends Schema.TaggedError<NoAssociatedBranch>()(
   'NoAssociatedBranch',
