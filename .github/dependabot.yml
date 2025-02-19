@@ -1,8 +1,6 @@
 version: 2
 updates:
-  # Enable version updates for npm
   - package-ecosystem: 'npm'
-    # Look for `package.json` and `lock` files in the `root` directory
     directory: '/'
     versioning-strategy: increase
     groups:
@@ -18,7 +16,6 @@ updates:
       prefix: fix
       prefix-development: chore
       include: scope
-
 
   - package-ecosystem: 'github-actions'
     directory: '/'
