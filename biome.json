@@ -37,11 +37,9 @@
       "complexity": {
         "useSimplifiedLogicExpression": "error"
       },
-      "nursery": {
-        "noConsole": "error"
-      },
       "suspicious": {
-        "noEmptyBlockStatements": "error"
+        "noEmptyBlockStatements": "error",
+        "noConsole": "error"
       }
     }
   }

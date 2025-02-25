@@ -92,7 +92,6 @@ const configErrorToAppConfigError = (configError: ConfigError.ConfigError) =>
     (message) => AppConfigError({message}),
   );
 
-// biome-ignore lint/complexity/noStaticOnlyClass: okay for AppConfigService
 export class AppConfigService extends Context.Tag('AppConfigService')<
   AppConfigService,
   {
