@@ -12,7 +12,7 @@ export const setupTmpDir = async (): Promise<
   readonly [Directory, () => void]
 > => {
   const tmpDir = await mkdtemp(join(tmpdir(), 'git-jira-branch-e2e-'));
-  // biome-ignore lint/nursery/noConsole: log statement okay in this test
+  // biome-ignore lint/suspicious/noConsole: log statement okay in this test
   console.debug(`Setting up e2e env in ${tmpDir}`);
 
   execSync('git init', {cwd: tmpDir});
@@ -24,7 +24,7 @@ export const setupTmpDir = async (): Promise<
   execSync('git commit -m "init" --allow-empty', {cwd: tmpDir});
 
   const cleanup = () => {
-    // biome-ignore lint/nursery/noConsole: log statement okay in test
+    // biome-ignore lint/suspicious/noConsole: log statement okay in test
     console.debug(`Cleaning up e2e env in ${tmpDir}`);
     rmSync(tmpDir, {force: true, recursive: true});
   };
