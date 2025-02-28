@@ -38,16 +38,16 @@ importers:
         version: 19.7.1
       '@effect/vitest':
         specifier: 0.19.2
-        version: 0.19.2(effect@3.13.4)(vitest@3.0.7)
-      '@tsconfig/node20':
-        specifier: ^20.1.4
-        version: 20.1.4
+        version: 0.19.2(effect@3.13.4)(vitest@3.0.7(@types/node@22.13.5)(@vitest/ui@3.0.7)(jiti@2.4.2)(yaml@2.7.0))
+      '@tsconfig/node22':
+        specifier: ^22.0.0
+        version: 22.0.0
       '@types/node':
         specifier: ^22.13.5
         version: 22.13.5
       '@vitest/coverage-v8':
         specifier: ^3.0.7
-        version: 3.0.7(vitest@3.0.7)
+        version: 3.0.7(vitest@3.0.7(@types/node@22.13.5)(@vitest/ui@3.0.7)(jiti@2.4.2)(yaml@2.7.0))
       '@vitest/ui':
         specifier: ^3.0.7
         version: 3.0.7(vitest@3.0.7)
@@ -628,8 +628,8 @@ packages:
   '@standard-schema/spec@1.0.0':
     resolution: {integrity: sha512-m2bOd0f2RT9k8QJx1JN85cZYyH1RqFBdlwtkSlf4tBDYLCiiZnv1fIIwacK6cqwXavOydf0NPToMQgpKq+dVlA==}
 
-  '@tsconfig/node20@20.1.4':
-    resolution: {integrity: sha512-sqgsT69YFeLWf5NtJ4Xq/xAF8p4ZQHlmGW74Nu2tD4+g5fAsposc4ZfaaPixVu4y01BEiDCWLRDCvDM5JOsRxg==}
+  '@tsconfig/node22@22.0.0':
+    resolution: {integrity: sha512-twLQ77zevtxobBOD4ToAtVmuYrpeYUh3qh+TEp+08IWhpsrIflVHqQ1F1CiPxQGL7doCdBIOOCF+1Tm833faNg==}
 
   '@types/conventional-commits-parser@5.0.1':
     resolution: {integrity: sha512-7uz5EHdzz2TqoMfV7ee61Egf5y6NkcO4FB/1iCCQnbeiI1F3xzv3vK5dBCXUCLQgGYS+mUeigK1iKQzvED+QnQ==}
@@ -1729,7 +1729,7 @@ snapshots:
     dependencies:
       effect: 3.13.4
 
-  '@effect/vitest@0.19.2(effect@3.13.4)(vitest@3.0.7)':
+  '@effect/vitest@0.19.2(effect@3.13.4)(vitest@3.0.7(@types/node@22.13.5)(@vitest/ui@3.0.7)(jiti@2.4.2)(yaml@2.7.0))':
     dependencies:
       effect: 3.13.4
       vitest: 3.0.7(@types/node@22.13.5)(@vitest/ui@3.0.7)(jiti@2.4.2)(yaml@2.7.0)
@@ -1961,7 +1961,7 @@ snapshots:
 
   '@standard-schema/spec@1.0.0': {}
 
-  '@tsconfig/node20@20.1.4': {}
+  '@tsconfig/node22@22.0.0': {}
 
   '@types/conventional-commits-parser@5.0.1':
     dependencies:
@@ -1973,7 +1973,7 @@ snapshots:
     dependencies:
       undici-types: 6.20.0
 
-  '@vitest/coverage-v8@3.0.7(vitest@3.0.7)':
+  '@vitest/coverage-v8@3.0.7(vitest@3.0.7(@types/node@22.13.5)(@vitest/ui@3.0.7)(jiti@2.4.2)(yaml@2.7.0))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 1.0.2
