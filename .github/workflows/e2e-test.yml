@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: ${{ matrix.version }}
           runner-os: ${{ matrix.os }}
-          cache: ''
+          cache: 'pnpm'
       - name: Build
         run: pnpm build
       - name: Pack
