@@ -9,6 +9,17 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [2.2.4](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v2.2.3...git-jira-branch-v2.2.4) (2025-03-12)
+
+
+### Bug Fixes
+
+* **deps:** bump the production-dependencies group with 6 updates ([#584](https://github.com/ccntrq/git-jira-branch/issues/584)) ([c1e328b](https://github.com/ccntrq/git-jira-branch/commit/c1e328b05c55bf0247c5e5ba5a79e64d5fdb1578))
+* **deps:** bump the production-dependencies group with 6 updates ([#587](https://github.com/ccntrq/git-jira-branch/issues/587)) ([cd65586](https://github.com/ccntrq/git-jira-branch/commit/cd65586b4ede0575cd45c34788da404b539e74c2))
+* **deps:** bump the production-dependencies group with 6 updates ([#589](https://github.com/ccntrq/git-jira-branch/issues/589)) ([3810ffd](https://github.com/ccntrq/git-jira-branch/commit/3810ffd8b74e5fa60c9ef241151acc9adf64784b))
+* **deps:** bump the production-dependencies group with 6 updates ([#591](https://github.com/ccntrq/git-jira-branch/issues/591)) ([c5739e1](https://github.com/ccntrq/git-jira-branch/commit/c5739e173b4bd5b524963c0d0e7ca21f3b546995))
+* **deps:** bump the production-dependencies group with 6 updates ([#593](https://github.com/ccntrq/git-jira-branch/issues/593)) ([298fe1a](https://github.com/ccntrq/git-jira-branch/commit/298fe1af476b4aed4046be33c5564e75fb22a7d8))
+
 ## [2.2.3](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v2.2.2...git-jira-branch-v2.2.3) (2025-02-28)
 
 
