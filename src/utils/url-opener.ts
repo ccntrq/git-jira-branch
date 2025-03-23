@@ -8,27 +8,33 @@ export const openUrl = (
 ): Effect.Effect<void, UsageError, CommandExecutor.CommandExecutor> =>
   Effect.gen(function* () {
     const platform = yield* getPlatform();
+    const command =
+      platform === 'linux'
+        ? 'xdg-open'
+        : platform === 'darwin'
+          ? 'open'
+          : platform === 'win32'
+            ? 'start'
+            : null;
 
-    if (platform === 'linux') {
-      return yield* xdgOpen(url);
+    if (!command) {
+      return yield* Effect.fail(
+        UsageError({message: `Unsupported platform: ${platform}`}),
+      );
     }
 
-    // TODO: add support for opening urls on other platforms
-    return yield* Effect.fail(
-      UsageError({
-        message: `Opening urls on ${platform} is not yet supported.`,
-      }),
-    );
+    return yield* openCommand(command, url);
   });
 
 const getPlatform = (): Effect.Effect<NodeJS.Platform> =>
   Effect.succeed(process.platform);
 
-const xdgOpen = (
+const openCommand = (
+  command: string,
   url: string,
 ): Effect.Effect<void, UsageError, CommandExecutor.CommandExecutor> =>
   pipe(
-    ShellCommand.make('xdg-open', url),
+    ShellCommand.make(command, url),
     ShellCommand.exitCode,
     Effect.mapError(() =>
       UsageError({message: 'Browser could not be opened.'}),
