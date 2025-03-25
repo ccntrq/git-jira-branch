@@ -63,7 +63,7 @@
   "dependencies": {
     "@effect/cli": "0.59.1",
     "@effect/platform": "0.80.1",
-    "@effect/platform-node": "0.76.3",
+    "@effect/platform-node": "0.76.4",
     "@effect/printer": "0.42.1",
     "@effect/printer-ansi": "0.42.1",
     "effect": "3.14.1"
