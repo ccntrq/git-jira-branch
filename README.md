@@ -205,6 +205,7 @@ source ~/.bashrc
 ## <a name='Contributors'></a>Contributors
 
 - Alexander Pankoff ([@ccntrq](https://github.com/ccntrq))
+- Jakob Friedrich ([@jakobtfr](https://github.com/jakobtfr))
 - Taylor Falk ([@taytayp](https://github.com/taytayp) [@tfalkarkea](https://github.com/tfalkarkea))
 
 ## <a name='Technologiesused'></a>Technologies used
