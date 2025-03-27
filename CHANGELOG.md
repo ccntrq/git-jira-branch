@@ -9,6 +9,13 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [2.3.0](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v2.2.4...git-jira-branch-v2.3.0) (2025-03-27)
+
+
+### Features
+
+* add support for opening urls on other platforms ([#608](https://github.com/ccntrq/git-jira-branch/issues/608)) ([e034e2f](https://github.com/ccntrq/git-jira-branch/commit/e034e2fd1d6ecc36567ddccbd09669eead0d9a20))
+
 ## [2.2.4](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v2.2.3...git-jira-branch-v2.2.4) (2025-03-26)
 
 
