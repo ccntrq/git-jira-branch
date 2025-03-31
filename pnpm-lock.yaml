@@ -37,8 +37,8 @@ importers:
         specifier: ^19.8.0
         version: 19.8.0
       '@effect/vitest':
-        specifier: 0.20.2
-        version: 0.20.2(effect@3.14.3)(vitest@3.0.9)
+        specifier: 0.20.3
+        version: 0.20.3(effect@3.14.3)(vitest@3.0.9)
       '@tsconfig/node22':
         specifier: ^22.0.1
         version: 22.0.1
@@ -299,10 +299,10 @@ packages:
     peerDependencies:
       effect: ^3.14.1
 
-  '@effect/vitest@0.20.2':
-    resolution: {integrity: sha512-aWCRddLcm1z2JgwTmjM6AdJ/vU09mUj2CkPgfHFhURj8NP6fD9RdNZplPyr3+2XUdfsptFV3TD46gAsw6SEohQ==}
+  '@effect/vitest@0.20.3':
+    resolution: {integrity: sha512-cYeJUlfM4XqDWE1kLGUdIuW3vyJLVKlDXegyESXdmPijKIJhL/IOucHnGB19vA92jW7dkw9Vcp6jxxtGjU8WeQ==}
     peerDependencies:
-      effect: ^3.14.2
+      effect: ^3.14.3
       vitest: ^3.0.0
 
   '@esbuild/aix-ppc64@0.25.1':
@@ -1859,7 +1859,7 @@ snapshots:
     dependencies:
       effect: 3.14.3
 
-  '@effect/vitest@0.20.2(effect@3.14.3)(vitest@3.0.9)':
+  '@effect/vitest@0.20.3(effect@3.14.3)(vitest@3.0.9)':
     dependencies:
       effect: 3.14.3
       vitest: 3.0.9(@types/node@22.13.14)(@vitest/ui@3.0.9)(jiti@2.4.2)(yaml@2.7.1)
