@@ -50,14 +50,14 @@
     "@biomejs/biome": "1.9.4",
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",
-    "@effect/vitest": "0.20.5",
+    "@effect/vitest": "0.20.6",
     "@tsconfig/node22": "^22.0.1",
     "@types/node": "^22.14.0",
     "@vitest/coverage-v8": "^3.1.1",
     "@vitest/ui": "^3.1.1",
-    "lefthook": "^1.11.6",
+    "lefthook": "^1.11.7",
     "rimraf": "^6.0.1",
-    "typescript": "^5.8.2",
+    "typescript": "^5.8.3",
     "vitest": "^3.1.1"
   },
   "dependencies": {
