@@ -1,6 +1,6 @@
 {
   "name": "git-jira-branch",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "description": "Manage branches for your Jira tickets",
   "license": "MIT",
   "repository": {
