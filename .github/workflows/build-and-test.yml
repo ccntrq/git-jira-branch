@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - id: setup-node-and-pnpm
         uses: ./.github/actions/setup-node-and-pnpm-dependencies
       - name: Lint code
@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0 # for commitlint
       - id: setup-node-and-pnpm
@@ -41,7 +41,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - id: setup-node-and-pnpm
         uses: ./.github/actions/setup-node-and-pnpm-dependencies
         with:

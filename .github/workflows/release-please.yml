@@ -18,7 +18,7 @@ jobs:
           default-branch: master
           token: ${{ secrets.RELEASE_PLEASE_PAT }}
       - id: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         if: ${{ steps.release.outputs.release_created }}
       - id: setup-node-and-pnpm
         if: ${{ steps.release.outputs.release_created }}
