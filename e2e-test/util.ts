@@ -1,8 +1,14 @@
-import {execSync, type SpawnSyncReturns, spawnSync} from 'node:child_process';
+import {
+  execFileSync,
+  execSync,
+  type SpawnSyncReturns,
+  spawnSync,
+} from 'node:child_process';
 import {rmSync} from 'node:fs';
 import {mkdtemp} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {Brand} from 'effect';
 
 export type Directory = string & Brand.Brand<'Directory'>;
@@ -32,20 +38,64 @@ export const setupTmpDir = async (): Promise<
   return [Directory(tmpDir), cleanup] as const;
 };
 
-export const runApp = (dir: Directory, ...args: Array<string>): string => {
-  const cmd = `git-jira-branch ${args.join(' ')}`;
-  return execSync(cmd, {cwd: dir}).toString();
+const defaultBinarySpec = {
+  command: process.execPath,
+  args: [fileURLToPath(new URL('../dist/main.js', import.meta.url))],
+} as const;
+
+const tokenize = (command: string): Array<string> =>
+  command
+    .match(/"[^"]*"|'[^']*'|\S+/g)
+    ?.map((part) => part.replace(/^['"]|['"]$/g, '')) ?? [];
+
+const resolveBinarySpec = (): {
+  command: string;
+  args: Array<string>;
+  display: string;
+} => {
+  const override = process.env.GIT_JB_BIN?.trim();
+  if (override && override.length > 0) {
+    const [command, ...rest] = tokenize(override);
+    if (command) {
+      return {command, args: rest, display: override};
+    }
+  }
+  return {
+    command: defaultBinarySpec.command,
+    args: [...defaultBinarySpec.args],
+    display: 'git-jira-branch',
+  };
 };
+
+const binarySpec = resolveBinarySpec();
+
+export const runApp = (dir: Directory, ...args: Array<string>): string =>
+  execFileSyncWithFriendlyMessage(binarySpec, dir, args).toString();
 
 export const spawnApp = (
   dir: Directory,
   ...args: Array<string>
-): SpawnSyncReturns<Buffer> => {
-  const cmd = `git-jira-branch ${args.join(' ')}`;
-  return spawnSync(cmd, {
+): SpawnSyncReturns<Buffer> =>
+  spawnSync(binarySpec.command, [...binarySpec.args, ...args], {
     cwd: dir,
-    shell: true,
   });
+
+const execFileSyncWithFriendlyMessage = (
+  spec: {command: string; args: Array<string>; display: string},
+  cwd: Directory,
+  args: Array<string>,
+): Buffer => {
+  const commandArgs = [...spec.args, ...args];
+  const actualCommand = [spec.command, ...commandArgs].join(' ');
+  const displayCommand = [spec.display, ...args].join(' ').trim();
+  try {
+    return execFileSync(spec.command, commandArgs, {cwd});
+  } catch (error) {
+    if (error instanceof Error && actualCommand.length > 0 && displayCommand) {
+      error.message = error.message.replace(actualCommand, displayCommand);
+    }
+    throw error;
+  }
 };
 
 export const currentBranch = (dir: Directory): string =>

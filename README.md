@@ -27,10 +27,12 @@ $ git jira-branch create MYAPP-1234
   - [`wizard` mode](#wizardmode)
 - [Setup](#Setup)
   - [Install](#Install)
-  - [Configuration](#Configuration)
+- [Configuration](#Configuration)
     - [For Jira Cloud](#ForJiraCloud)
     - [For Jira Data Center](#ForJiraDataCenter)
   - [Setup shell completions](#Setupshellcompletions)
+- [Development](#Development)
+  - [Run E2E tests against local sources](#RunE2Etestsagainstlocalsources)
 - [Contributors](#Contributors)
 - [Technologies used](#Technologiesused)
 - [License](#License)
@@ -201,6 +203,19 @@ git-jira-branch --completions bash > ~/.git-jira-branch-bash-completions
 echo "source \$HOME/.git-jira-branch-bash-completions" >> ~/.bashrc
 source ~/.bashrc
 ```
+
+## <a name='Development'></a>Development
+
+### <a name='RunE2Etestsagainstlocalsources'></a>Run E2E tests against local sources
+
+Running `pnpm e2e-test` locally type-checks, rebuilds the CLI, and then executes
+the freshly built binary (`node dist/main.js`) against the fixtures, so no extra
+setup is required.
+
+In CI you can call `pnpm e2e-test:ci`, which defaults to
+`GIT_JB_BIN=git-jira-branch` unless you override the variable before invoking
+the command. This lets you choose whether the suite exercises the published
+package or a specific binary path.
 
 ## <a name='Contributors'></a>Contributors
 
