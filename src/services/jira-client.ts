@@ -13,8 +13,8 @@ import {
   type JiraAuth,
   type JiraIssue,
   JiraIssueSchema,
-} from '../types';
-import {AppConfigService} from './app-config';
+} from '../types.js';
+import {AppConfigService} from './app-config.js';
 
 export class JiraClient extends Context.Tag('JiraClient')<
   JiraClient,

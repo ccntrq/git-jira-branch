@@ -1,8 +1,8 @@
 import {Chunk, Effect, Option, pipe} from 'effect';
 import {constFalse} from 'effect/Function';
-import {GitClient} from '../services/git-client';
-import {AssociatedBranch, type GitExecError} from '../types';
-import {jiraKeyFromBranch} from './jira-key-from-branch';
+import {GitClient} from '../services/git-client.js';
+import {AssociatedBranch, type GitExecError} from '../types.js';
+import {jiraKeyFromBranch} from './jira-key-from-branch.js';
 
 export const getAssociatedBranches = (): Effect.Effect<
   Chunk.Chunk<AssociatedBranch>,

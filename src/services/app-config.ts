@@ -23,7 +23,7 @@ import {
   JiraKeyPrefix,
   JiraPat,
   JiraUserEmail,
-} from '../types';
+} from '../types.js';
 
 const mapBrandOrFail =
   <T extends Brand.Brand<string>>(brand: Brand.Brand.Constructor<T>) =>

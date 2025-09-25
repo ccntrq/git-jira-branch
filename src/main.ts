@@ -6,10 +6,10 @@ import * as NodeFileSystem from '@effect/platform-node/NodeFileSystem';
 import * as NodePath from '@effect/platform-node/NodePath';
 import * as NodeTerminal from '@effect/platform-node/NodeTerminal';
 import {Cause, Console, Effect, Exit, Layer, pipe} from 'effect';
-import {cliEffect} from './cli';
-import {AppConfigService} from './services/app-config';
-import {GitClientLive} from './services/git-client';
-import {JiraClientLive} from './services/jira-client';
+import {cliEffect} from './cli.js';
+import {AppConfigService} from './services/app-config.js';
+import {GitClientLive} from './services/git-client.js';
+import {JiraClientLive} from './services/jira-client.js';
 
 const fileSystemLayer = NodeFileSystem.layer;
 

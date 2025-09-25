@@ -5,7 +5,7 @@ import {
   type Directory,
   runApp,
   setupTmpDir,
-} from './util';
+} from './util.js';
 
 describe('git-jira-branch switch', () => {
   let tmpDir: Directory;

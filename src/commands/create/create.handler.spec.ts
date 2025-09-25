@@ -1,15 +1,15 @@
 import {live} from '@effect/vitest';
 import {Chunk, Effect, Either, Option} from 'effect';
 import {beforeEach, describe, expect, vi} from 'vitest';
-import {dummyJiraIssue} from '../../test/dummies/dummyJiraIssue';
+import {dummyJiraIssue} from '../../test/dummies/dummyJiraIssue.js';
 import {
   mockAppConfigService,
   mockGitClient,
   mockJiraClient,
   testLayer,
-} from '../../test/mock-implementations';
-import {GitBranch} from '../../types';
-import {gitCreateJiraBranch} from './create.handler';
+} from '../../test/mock-implementations.js';
+import {GitBranch} from '../../types.js';
+import {gitCreateJiraBranch} from './create.handler.js';
 
 describe('gitCreateJiraBranch', () => {
   beforeEach(() => {

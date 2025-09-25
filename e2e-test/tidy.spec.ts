@@ -7,7 +7,7 @@ import {
   setupTmpDir,
   spawnApp,
   switchBranch,
-} from './util';
+} from './util.js';
 
 describe('git-jira-branch tidy', () => {
   let tmpDir: Directory;

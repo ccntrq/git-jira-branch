@@ -6,9 +6,9 @@ import {live} from '@effect/vitest';
 import {Effect, Either, Layer, Sink, Stream} from 'effect';
 import {NodeInspectSymbol} from 'effect/Inspectable';
 import {afterEach, beforeEach, describe, expect, vi} from 'vitest';
-import {type EffectMock, effectMock} from '../test/util';
-import {GitExecError} from '../types';
-import {GitClient, GitClientLive} from './git-client';
+import {type EffectMock, effectMock} from '../test/util.js';
+import {GitExecError} from '../types.js';
+import {GitClient, GitClientLive} from './git-client.js';
 
 const testProg = Effect.gen(function* () {
   const gitClient = yield* GitClient;

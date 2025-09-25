@@ -3,8 +3,8 @@ import * as CommandExecutor from '@effect/platform/CommandExecutor';
 import {Chunk, Context, Effect, Layer, pipe, Sink, Stream} from 'effect';
 
 import {catchIf} from 'effect/Effect';
-import {BranchNotMerged} from '../schema/branch-not-merged';
-import {GitBranch, GitExecError} from '../types';
+import {BranchNotMerged} from '../schema/branch-not-merged.js';
+import {GitBranch, GitExecError} from '../types.js';
 
 type GitClientEffect<A, B = never> = Effect.Effect<A, B | GitExecError, never>;
 

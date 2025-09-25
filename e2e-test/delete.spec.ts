@@ -6,7 +6,7 @@ import {
   runApp,
   setupTmpDir,
   switchBranch,
-} from './util';
+} from './util.js';
 
 describe('git-jira-branch delete', () => {
   let tmpDir: Directory;

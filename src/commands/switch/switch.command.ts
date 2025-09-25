@@ -1,8 +1,8 @@
 import {Args, Command} from '@effect/cli';
 import {Console, Effect, pipe} from 'effect';
 import {compose} from 'effect/Function';
-import {formatSwitchedBranch} from '../../utils/result-formatter';
-import {switchBranch} from './switch.handler';
+import {formatSwitchedBranch} from '../../utils/result-formatter.js';
+import {switchBranch} from './switch.handler.js';
 
 export const switchCommand = pipe(
   Command.make(

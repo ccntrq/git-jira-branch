@@ -1,8 +1,8 @@
 import {Args, Command, Options} from '@effect/cli';
 import {Console, Effect, pipe} from 'effect';
 import {compose} from 'effect/Function';
-import {formatGitCreateJiraBranchResult} from '../../utils/result-formatter';
-import {gitCreateJiraBranch} from './create.handler';
+import {formatGitCreateJiraBranchResult} from '../../utils/result-formatter.js';
+import {gitCreateJiraBranch} from './create.handler.js';
 
 export const create = pipe(
   Command.make(

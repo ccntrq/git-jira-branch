@@ -1,7 +1,7 @@
 import * as ShellCommand from '@effect/platform/Command';
 import type * as CommandExecutor from '@effect/platform/CommandExecutor';
 import {Effect, Option, pipe} from 'effect';
-import {UsageError} from '../types';
+import {UsageError} from '../types.js';
 
 export const openUrl = (
   url: string,

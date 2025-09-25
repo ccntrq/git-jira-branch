@@ -1,7 +1,7 @@
 import {Command} from '@effect/cli';
 import {Console, Effect, pipe} from 'effect';
-import {getAssociatedBranches} from '../../utils/associated-branch';
-import {formatBranches} from '../../utils/branch-formatter';
+import {getAssociatedBranches} from '../../utils/associated-branch.js';
+import {formatBranches} from '../../utils/branch-formatter.js';
 
 export const list = pipe(
   Command.make('list', {}, () =>

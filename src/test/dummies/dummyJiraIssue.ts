@@ -1,4 +1,4 @@
-import type {JiraIssue} from '../../types';
+import type {JiraIssue} from '../../types.js';
 
 export const dummyJiraIssue: JiraIssue = {
   key: 'DUMMYAPP-123',

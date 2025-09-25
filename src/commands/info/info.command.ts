@@ -1,7 +1,7 @@
 import {Args, Command} from '@effect/cli';
 import {Console, Effect, Option, pipe} from 'effect';
-import {formatIssue} from '../../utils/issue-formatter';
-import {ticketInfo, ticketInfoForCurrentBranch} from './info.handler';
+import {formatIssue} from '../../utils/issue-formatter.js';
+import {ticketInfo, ticketInfoForCurrentBranch} from './info.handler.js';
 
 export const info = pipe(
   Command.make(

@@ -1,7 +1,7 @@
 import {Chunk} from 'effect';
 import {describe, expect, it} from 'vitest';
-import {GitBranch} from '../types';
-import {formatBranches} from './branch-formatter';
+import {GitBranch} from '../types.js';
+import {formatBranches} from './branch-formatter.js';
 
 describe('branch-formatter', () => {
   describe('formatBranches', () => {

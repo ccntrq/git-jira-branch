@@ -1,7 +1,7 @@
 import {Chunk, Array as EArray, Effect, Option, pipe} from 'effect';
-import {JiraClient} from '../../services/jira-client';
-import {getAssociatedBranches} from '../../utils/associated-branch';
-import {deleteBranch} from '../delete/delete.handler';
+import {JiraClient} from '../../services/jira-client.js';
+import {getAssociatedBranches} from '../../utils/associated-branch.js';
+import {deleteBranch} from '../delete/delete.handler.js';
 
 export const tidyUpBranches = (force: boolean) =>
   Effect.gen(function* () {

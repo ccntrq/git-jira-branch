@@ -1,8 +1,8 @@
 import {Effect, Option, pipe} from 'effect';
 import {constant} from 'effect/Function';
-import type {AppConfigService} from '../../services/app-config';
-import {GitClient} from '../../services/git-client';
-import {JiraClient} from '../../services/jira-client';
+import type {AppConfigService} from '../../services/app-config.js';
+import {GitClient} from '../../services/git-client.js';
+import {JiraClient} from '../../services/jira-client.js';
 import {
   CreatedBranch,
   type GitCreateJiraBranchResult,
@@ -11,10 +11,10 @@ import {
   type JiraIssuetype,
   ResetBranch,
   UsageError,
-} from '../../types';
-import {getAssociatedBranch} from '../../utils/associated-branch';
-import {fullJiraKey} from '../../utils/jira-key';
-import {slugify} from '../../utils/slugger';
+} from '../../types.js';
+import {getAssociatedBranch} from '../../utils/associated-branch.js';
+import {fullJiraKey} from '../../utils/jira-key.js';
+import {slugify} from '../../utils/slugger.js';
 
 export const gitCreateJiraBranch = (
   jiraKey: string,

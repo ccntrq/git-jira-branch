@@ -1,5 +1,5 @@
 import {beforeEach, describe, expect, it} from 'vitest';
-import {type Directory, runApp, setupTmpDir} from './util';
+import {type Directory, runApp, setupTmpDir} from './util.js';
 
 describe('git-jira-branch', () => {
   let tmpDir: Directory;

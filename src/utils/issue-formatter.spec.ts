@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'vitest';
-import {dummyJiraIssue} from '../test/dummies/dummyJiraIssue';
-import {formatIssue} from './issue-formatter';
+import {dummyJiraIssue} from '../test/dummies/dummyJiraIssue.js';
+import {formatIssue} from './issue-formatter.js';
 
 describe('issue-formatter', () => {
   describe('formatIssue', () => {

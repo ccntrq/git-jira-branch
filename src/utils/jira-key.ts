@@ -1,7 +1,7 @@
 import {Effect} from 'effect';
 import {isNone} from 'effect/Option';
-import {AppConfigService} from '../services/app-config';
-import type {AppConfigError} from '../types';
+import {AppConfigService} from '../services/app-config.js';
+import type {AppConfigError} from '../types.js';
 
 export const fullJiraKey = (
   jiraKey: string,
