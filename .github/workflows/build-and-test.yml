@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - id: setup-node-and-pnpm
         uses: ./.github/actions/setup-node-and-pnpm-dependencies
       - name: Lint code
@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0 # for commitlint
       - id: setup-node-and-pnpm
@@ -41,7 +41,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - id: setup-node-and-pnpm
         uses: ./.github/actions/setup-node-and-pnpm-dependencies
         with:
@@ -53,6 +53,6 @@ jobs:
         run: pnpm test --  --coverage.enabled --coverage.provider=v8 --coverage.reporter=json-summary --coverage.reporter=json
       - name: Upload coverage
         if: github.event_name == 'pull_request' && matrix.version == 20
-        uses: davelosert/vitest-coverage-report-action@v2
+        uses: davelosert/vitest-coverage-report-action@8ab049ff5a2c6e78f78af446329379b318544a1a # v2.8.3
         with:
           file-coverage-mode: 'all'
