@@ -1,17 +1,20 @@
 #!/usr/bin/env node
 
 import {FetchHttpClient} from '@effect/platform';
-import {NodeContext} from '@effect/platform-node';
 import * as NodeCommandExecutor from '@effect/platform-node/NodeCommandExecutor';
 import * as NodeFileSystem from '@effect/platform-node/NodeFileSystem';
+import * as NodePath from '@effect/platform-node/NodePath';
+import * as NodeTerminal from '@effect/platform-node/NodeTerminal';
 import {Cause, Console, Effect, Exit, Layer, pipe} from 'effect';
 import {cliEffect} from './cli';
 import {AppConfigService} from './services/app-config';
 import {GitClientLive} from './services/git-client';
 import {JiraClientLive} from './services/jira-client';
 
+const fileSystemLayer = NodeFileSystem.layer;
+
 const commandExecutorLayer = NodeCommandExecutor.layer.pipe(
-  Layer.provide(NodeFileSystem.layer),
+  Layer.provide(fileSystemLayer),
 );
 
 const gitClientLayer = GitClientLive.pipe(Layer.provide(commandExecutorLayer));
@@ -22,11 +25,13 @@ const jiraClientLayer = JiraClientLive.pipe(
 );
 
 const mainLive = Layer.mergeAll(
+  fileSystemLayer,
   commandExecutorLayer,
-  gitClientLayer,
+  NodePath.layer,
+  NodeTerminal.layer,
   AppConfigService.Live,
+  gitClientLayer,
   jiraClientLayer,
-  NodeContext.layer,
 );
 
 const mainEffect = pipe(
@@ -44,6 +49,6 @@ const mainEffect = pipe(
 
 Effect.runPromiseExit(mainEffect).then((exit) => {
   if (Exit.isFailure(exit)) {
-    process.exit(1);
+    process.exitCode = 1;
   }
 });
