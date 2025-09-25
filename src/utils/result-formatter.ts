@@ -1,7 +1,7 @@
 import {
   type DeletedBranch,
-  type SwitchedBranch,
   matchGitCreateJiraBranchResult,
+  type SwitchedBranch,
 } from '../types';
 
 export const formatSwitchedBranch = (switchedBranch: SwitchedBranch): string =>

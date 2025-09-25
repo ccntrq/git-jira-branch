@@ -1,9 +1,8 @@
-import type {JiraIssue} from '../types';
-
 import {Doc} from '@effect/printer';
 import {bold, underlined} from '@effect/printer-ansi/Ansi';
 import {render} from '@effect/printer-ansi/AnsiDoc';
 import {pipe} from 'effect';
+import type {JiraIssue} from '../types';
 
 export const formatIssue = (issue: JiraIssue): string => {
   const heading = pipe(

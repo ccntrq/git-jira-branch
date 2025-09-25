@@ -1,9 +1,7 @@
 import {live} from '@effect/vitest';
 import {Effect, pipe} from 'effect';
-
-import {cliEffect} from './cli';
-
 import {afterEach, describe, expect, vi} from 'vitest';
+import {cliEffect} from './cli';
 import {cliTestLayer} from './test/mock-implementations';
 
 const mockLog = vi.spyOn(console, 'log').mockImplementation(() => undefined);

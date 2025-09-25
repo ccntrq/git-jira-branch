@@ -1,4 +1,4 @@
-import {Brand, Data, Match, type Option, Schema, pipe} from 'effect';
+import {Brand, Data, Match, type Option, pipe, Schema} from 'effect';
 import {dual} from 'effect/Function';
 
 export type JiraApiUrl = string & Brand.Brand<'JiraApiUrl'>;

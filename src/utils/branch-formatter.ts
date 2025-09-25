@@ -1,9 +1,8 @@
-import type {GitBranch} from '../types';
-
 import {Doc} from '@effect/printer';
 import {green} from '@effect/printer-ansi/Ansi';
 import {render} from '@effect/printer-ansi/AnsiDoc';
 import {Chunk, pipe} from 'effect';
+import type {GitBranch} from '../types';
 
 export const formatBranches = (branches: Chunk.Chunk<GitBranch>): string => {
   const hasCurrent = Chunk.some(branches, (_) => _.isCurrent);

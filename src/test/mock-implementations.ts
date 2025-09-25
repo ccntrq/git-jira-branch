@@ -1,4 +1,7 @@
-import {NodeContext} from '@effect/platform-node';
+import * as CommandExecutor from '@effect/platform/CommandExecutor';
+import * as NodeFileSystem from '@effect/platform-node/NodeFileSystem';
+import * as NodePath from '@effect/platform-node/NodePath';
+import * as NodeTerminal from '@effect/platform-node/NodeTerminal';
 import {Chunk, Effect, Layer} from 'effect';
 
 import {AppConfigService} from '../services/app-config';
@@ -19,6 +22,10 @@ export const mockGitClient = {
 export const mockAppConfigService = {getAppConfig: effectMock()};
 export const mockJiraClient = {getJiraIssue: effectMock()};
 
+const noopCommandExecutor = CommandExecutor.makeExecutor(() =>
+  Effect.dieMessage('CommandExecutor should not be used in tests'),
+);
+
 export const testLayer = Layer.mergeAll(
   Layer.succeed(GitClient, GitClient.of(mockGitClient)),
   Layer.succeed(
@@ -33,6 +40,12 @@ export const testLayer = Layer.mergeAll(
     }),
   ),
   Layer.succeed(JiraClient, JiraClient.of(mockJiraClient)),
+  Layer.succeed(CommandExecutor.CommandExecutor, noopCommandExecutor),
 );
 
-export const cliTestLayer = Layer.mergeAll(testLayer, NodeContext.layer);
+export const cliTestLayer = Layer.mergeAll(
+  testLayer,
+  NodePath.layer,
+  NodeTerminal.layer,
+  NodeFileSystem.layer,
+);

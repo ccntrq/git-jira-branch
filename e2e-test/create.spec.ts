@@ -1,10 +1,10 @@
 import {execSync} from 'node:child_process';
 import {beforeEach, describe, expect, it} from 'vitest';
 import {
-  type Directory,
   createBranch,
   createCommit,
   currentBranch,
+  type Directory,
   runApp,
   setupTmpDir,
 } from './util';

@@ -1,6 +1,6 @@
 import * as Command from '@effect/platform/Command';
 import * as CommandExecutor from '@effect/platform/CommandExecutor';
-import {Chunk, Context, Effect, Layer, Sink, Stream, pipe} from 'effect';
+import {Chunk, Context, Effect, Layer, pipe, Sink, Stream} from 'effect';
 
 import {catchIf} from 'effect/Effect';
 import {BranchNotMerged} from '../schema/branch-not-merged';
