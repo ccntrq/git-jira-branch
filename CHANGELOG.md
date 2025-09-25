@@ -9,6 +9,15 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [2.3.2](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v2.3.1...git-jira-branch-v2.3.2) (2025-09-25)
+
+
+### Bug Fixes
+
+* **deps:** Update dependencies
+* **deps:** Update node
+* **deps:** Drop support for node v18
+
 ## [2.3.1](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v2.3.0...git-jira-branch-v2.3.1) (2025-04-08)
 
 
