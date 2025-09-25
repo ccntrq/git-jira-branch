@@ -1,4 +1,4 @@
-import {type SpawnSyncReturns, execSync, spawnSync} from 'node:child_process';
+import {execSync, type SpawnSyncReturns, spawnSync} from 'node:child_process';
 import {rmSync} from 'node:fs';
 import {mkdtemp} from 'node:fs/promises';
 import {tmpdir} from 'node:os';

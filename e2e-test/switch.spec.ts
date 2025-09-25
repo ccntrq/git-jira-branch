@@ -1,8 +1,8 @@
 import {beforeEach, describe, expect, it} from 'vitest';
 import {
-  type Directory,
   createBranch,
   currentBranch,
+  type Directory,
   runApp,
   setupTmpDir,
 } from './util';

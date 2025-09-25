@@ -1,11 +1,10 @@
 #!/usr/bin/env node
 
+import {FetchHttpClient} from '@effect/platform';
+import {NodeContext} from '@effect/platform-node';
 import * as NodeCommandExecutor from '@effect/platform-node/NodeCommandExecutor';
 import * as NodeFileSystem from '@effect/platform-node/NodeFileSystem';
 import {Cause, Console, Effect, Exit, Layer, pipe} from 'effect';
-
-import {FetchHttpClient} from '@effect/platform';
-import {NodeContext} from '@effect/platform-node';
 import {cliEffect} from './cli';
 import {AppConfigService} from './services/app-config';
 import {GitClientLive} from './services/git-client';

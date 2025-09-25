@@ -1,13 +1,11 @@
+import {HttpClient, HttpClientResponse} from '@effect/platform';
 import {live} from '@effect/vitest';
 import {ConfigProvider, Effect, Either, Layer} from 'effect';
-
+import {describe, expect} from 'vitest';
+import {dummyJiraIssue} from '../test/dummies/dummyJiraIssue';
 import {JiraApiError, type JiraIssue} from '../types';
 import {AppConfigService} from './app-config';
 import {JiraClient, JiraClientLive} from './jira-client';
-
-import {HttpClient, HttpClientResponse} from '@effect/platform';
-import {describe, expect} from 'vitest';
-import {dummyJiraIssue} from '../test/dummies/dummyJiraIssue';
 
 const appConfigTest = AppConfigService.Live.pipe(
   Layer.provide(
