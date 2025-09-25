@@ -11,11 +11,11 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-      - uses: google-github-actions/release-please-action@v4
+      - uses: googleapis/release-please-action@v4
         id: release
         with:
           command: manifest
-          default-branch: master
+          target-branch: master
           token: ${{ secrets.RELEASE_PLEASE_PAT }}
       - id: checkout
         uses: actions/checkout@v4
