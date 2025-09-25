@@ -48,8 +48,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.4",
-    "@commitlint/cli": "^19.8.1",
-    "@commitlint/config-conventional": "^19.8.1",
+    "@commitlint/cli": "^20.0.0",
+    "@commitlint/config-conventional": "^20.0.0",
     "@effect/vitest": "0.25.1",
     "@tsconfig/node22": "^22.0.2",
     "@types/node": "^24.5.2",
