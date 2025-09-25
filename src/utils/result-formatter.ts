@@ -2,7 +2,7 @@ import {
   type DeletedBranch,
   matchGitCreateJiraBranchResult,
   type SwitchedBranch,
-} from '../types';
+} from '../types.js';
 
 export const formatSwitchedBranch = (switchedBranch: SwitchedBranch): string =>
   `Switched to already existing branch: '${switchedBranch.branch}'`;

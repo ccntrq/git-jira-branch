@@ -6,19 +6,19 @@ import * as Span from '@effect/cli/HelpDoc/Span';
 import type * as CommandExecutor from '@effect/platform/CommandExecutor';
 import {Console, Effect, pipe} from 'effect';
 
-import * as packageJson from '../package.json';
-import {create} from './commands/create/create.command';
-import {deleteCommand} from './commands/delete/delete.command';
-import {info} from './commands/info/info.command';
-import {list} from './commands/list/list.command';
-import {open} from './commands/open/open.command';
-import {switchCommand} from './commands/switch/switch.command';
-import {tidy} from './commands/tidy/tidy.command';
-import type {NoAssociatedBranch} from './schema/no-associated-branch';
-import type {AppConfigService} from './services/app-config';
-import type {GitClient} from './services/git-client';
-import type {JiraClient} from './services/jira-client';
-import type {GitJiraBranchError} from './types';
+import packageJson from '../package.json' with {type: 'json'};
+import {create} from './commands/create/create.command.js';
+import {deleteCommand} from './commands/delete/delete.command.js';
+import {info} from './commands/info/info.command.js';
+import {list} from './commands/list/list.command.js';
+import {open} from './commands/open/open.command.js';
+import {switchCommand} from './commands/switch/switch.command.js';
+import {tidy} from './commands/tidy/tidy.command.js';
+import type {NoAssociatedBranch} from './schema/no-associated-branch.js';
+import type {AppConfigService} from './services/app-config.js';
+import type {GitClient} from './services/git-client.js';
+import type {JiraClient} from './services/jira-client.js';
+import type {GitJiraBranchError} from './types.js';
 
 // for version and help
 const gitJiraBranch = pipe(Command.make('git-jira-branch', {}));

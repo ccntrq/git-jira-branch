@@ -2,7 +2,7 @@ import {Doc} from '@effect/printer';
 import {bold, underlined} from '@effect/printer-ansi/Ansi';
 import {render} from '@effect/printer-ansi/AnsiDoc';
 import {pipe} from 'effect';
-import type {JiraIssue} from '../types';
+import type {JiraIssue} from '../types.js';
 
 export const formatIssue = (issue: JiraIssue): string => {
   const heading = pipe(

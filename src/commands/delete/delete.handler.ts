@@ -1,16 +1,16 @@
 import {Effect, pipe} from 'effect';
 import {isNoSuchElementException} from 'effect/Cause';
-import type {BranchNotMerged} from '../../schema/branch-not-merged';
-import {NoAssociatedBranch} from '../../schema/no-associated-branch';
-import type {AppConfigService} from '../../services/app-config';
-import {GitClient} from '../../services/git-client';
+import type {BranchNotMerged} from '../../schema/branch-not-merged.js';
+import {NoAssociatedBranch} from '../../schema/no-associated-branch.js';
+import type {AppConfigService} from '../../services/app-config.js';
+import {GitClient} from '../../services/git-client.js';
 import {
   type AppConfigError,
   DeletedBranch,
   type GitExecError,
-} from '../../types';
-import {getAssociatedBranch} from '../../utils/associated-branch';
-import {fullJiraKey} from '../../utils/jira-key';
+} from '../../types.js';
+import {getAssociatedBranch} from '../../utils/associated-branch.js';
+import {fullJiraKey} from '../../utils/jira-key.js';
 
 export const deleteBranch = (
   jiraKey: string,

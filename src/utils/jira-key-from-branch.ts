@@ -1,6 +1,6 @@
 import {Effect, Option, pipe} from 'effect';
-import {GitClient} from '../services/git-client';
-import {type GitExecError, UsageError} from '../types';
+import {GitClient} from '../services/git-client.js';
+import {type GitExecError, UsageError} from '../types.js';
 
 export const jiraKeyFromCurrentBranch = (): Effect.Effect<
   string,

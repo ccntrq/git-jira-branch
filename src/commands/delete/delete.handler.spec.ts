@@ -1,14 +1,14 @@
 import {live} from '@effect/vitest';
 import {Chunk, Effect, Either, Option} from 'effect';
 import {beforeEach, describe, expect, vi} from 'vitest';
-import {BranchNotMerged} from '../../schema/branch-not-merged';
+import {BranchNotMerged} from '../../schema/branch-not-merged.js';
 import {
   mockAppConfigService,
   mockGitClient,
   testLayer,
-} from '../../test/mock-implementations';
-import {GitBranch} from '../../types';
-import {deleteBranch} from './delete.handler';
+} from '../../test/mock-implementations.js';
+import {GitBranch} from '../../types.js';
+import {deleteBranch} from './delete.handler.js';
 
 describe('deleteBranch', () => {
   beforeEach(() => {

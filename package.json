@@ -3,6 +3,7 @@
   "version": "2.3.2",
   "description": "Manage branches for your Jira tickets",
   "license": "MIT",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ccntrq/git-jira-branch.git"

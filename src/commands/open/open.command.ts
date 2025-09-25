@@ -1,6 +1,6 @@
 import {Args, Command} from '@effect/cli';
 import {pipe} from 'effect';
-import {openTicket} from './open.handler';
+import {openTicket} from './open.handler.js';
 
 export const open = pipe(
   Command.make(

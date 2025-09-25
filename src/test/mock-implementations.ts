@@ -4,11 +4,11 @@ import * as NodePath from '@effect/platform-node/NodePath';
 import * as NodeTerminal from '@effect/platform-node/NodeTerminal';
 import {Chunk, Effect, Layer} from 'effect';
 
-import {AppConfigService} from '../services/app-config';
-import {GitClient} from '../services/git-client';
-import {JiraClient} from '../services/jira-client';
-import type {GitBranch} from '../types';
-import {curriedEffectMock2, effectMock} from './util';
+import {AppConfigService} from '../services/app-config.js';
+import {GitClient} from '../services/git-client.js';
+import {JiraClient} from '../services/jira-client.js';
+import type {GitBranch} from '../types.js';
+import {curriedEffectMock2, effectMock} from './util.js';
 
 export const mockGitClient = {
   listBranches: effectMock(() => Effect.succeed(Chunk.empty<GitBranch>())),

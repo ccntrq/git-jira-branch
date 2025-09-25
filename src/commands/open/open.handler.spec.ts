@@ -5,8 +5,8 @@ import {
   mockAppConfigService,
   mockGitClient,
   testLayer,
-} from '../../test/mock-implementations';
-import {ticketUrl, ticketUrlForCurrentBranch} from './open.handler';
+} from '../../test/mock-implementations.js';
+import {ticketUrl, ticketUrlForCurrentBranch} from './open.handler.js';
 
 describe('ticketUrl', () => {
   beforeEach(() => {

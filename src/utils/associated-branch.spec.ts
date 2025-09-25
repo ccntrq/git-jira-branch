@@ -1,9 +1,9 @@
 import {live} from '@effect/vitest';
 import {Chunk, Effect} from 'effect';
 import {describe, expect} from 'vitest';
-import {mockGitClient, testLayer} from '../test/mock-implementations';
-import {GitBranch} from '../types';
-import {getAssociatedBranches} from './associated-branch';
+import {mockGitClient, testLayer} from '../test/mock-implementations.js';
+import {GitBranch} from '../types.js';
+import {getAssociatedBranches} from './associated-branch.js';
 
 describe('getAssociatedBranches', () => {
   live('should list branches possibly associated with a jira ticket', () =>

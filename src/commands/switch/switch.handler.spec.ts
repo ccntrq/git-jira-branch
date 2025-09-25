@@ -5,9 +5,9 @@ import {
   mockAppConfigService,
   mockGitClient,
   testLayer,
-} from '../../test/mock-implementations';
-import {GitBranch} from '../../types';
-import {switchBranch} from './switch.handler';
+} from '../../test/mock-implementations.js';
+import {GitBranch} from '../../types.js';
+import {switchBranch} from './switch.handler.js';
 
 describe('switchBranch', () => {
   beforeEach(() => {

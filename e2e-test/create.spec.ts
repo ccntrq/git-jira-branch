@@ -7,7 +7,7 @@ import {
   type Directory,
   runApp,
   setupTmpDir,
-} from './util';
+} from './util.js';
 
 describe('git-jira-branch create', () => {
   let tmpDir: Directory;

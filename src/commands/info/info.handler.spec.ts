@@ -1,14 +1,14 @@
 import {live} from '@effect/vitest';
 import {Effect, Option} from 'effect';
 import {beforeEach, describe, expect, vi} from 'vitest';
-import {dummyJiraIssue} from '../../test/dummies/dummyJiraIssue';
+import {dummyJiraIssue} from '../../test/dummies/dummyJiraIssue.js';
 import {
   mockAppConfigService,
   mockGitClient,
   mockJiraClient,
   testLayer,
-} from '../../test/mock-implementations';
-import {ticketInfo, ticketInfoForCurrentBranch} from './info.handler';
+} from '../../test/mock-implementations.js';
+import {ticketInfo, ticketInfoForCurrentBranch} from './info.handler.js';
 
 describe('ticketInfo', () => {
   beforeEach(() => {

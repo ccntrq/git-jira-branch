@@ -1,6 +1,6 @@
 import {Command, Options} from '@effect/cli';
 import {Console, Array as EArray, Effect, pipe} from 'effect';
-import {tidyUpBranches} from './tidy.handler';
+import {tidyUpBranches} from './tidy.handler.js';
 
 export const tidy = pipe(
   Command.make(

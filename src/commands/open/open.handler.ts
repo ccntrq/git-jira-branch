@@ -1,10 +1,10 @@
 import {Console, Effect, Option, pipe} from 'effect';
-import {AppConfigService} from '../../services/app-config';
-import type {GitClient} from '../../services/git-client';
-import type {AppConfigError, GitJiraBranchError} from '../../types';
-import {fullJiraKey} from '../../utils/jira-key';
-import {jiraKeyFromCurrentBranch} from '../../utils/jira-key-from-branch';
-import {openUrl} from '../../utils/url-opener';
+import {AppConfigService} from '../../services/app-config.js';
+import type {GitClient} from '../../services/git-client.js';
+import type {AppConfigError, GitJiraBranchError} from '../../types.js';
+import {fullJiraKey} from '../../utils/jira-key.js';
+import {jiraKeyFromCurrentBranch} from '../../utils/jira-key-from-branch.js';
+import {openUrl} from '../../utils/url-opener.js';
 
 export const openTicket = (jiraKey: Option.Option<string>) =>
   pipe(

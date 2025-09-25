@@ -8,8 +8,8 @@ import {
   JiraDataCenterAuth,
   JiraPat,
   JiraUserEmail,
-} from '../types';
-import {AppConfigService} from './app-config';
+} from '../types.js';
+import {AppConfigService} from './app-config.js';
 
 const testProg = AppConfigService.pipe(Effect.flatMap((_) => _.getAppConfig));
 

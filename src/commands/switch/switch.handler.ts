@@ -1,11 +1,11 @@
 import {Effect, pipe} from 'effect';
 import {isNoSuchElementException} from 'effect/Cause';
-import {NoAssociatedBranch} from '../../schema/no-associated-branch';
-import type {AppConfigService} from '../../services/app-config';
-import {GitClient} from '../../services/git-client';
-import {type GitJiraBranchError, SwitchedBranch} from '../../types';
-import {getAssociatedBranch} from '../../utils/associated-branch';
-import {fullJiraKey} from '../../utils/jira-key';
+import {NoAssociatedBranch} from '../../schema/no-associated-branch.js';
+import type {AppConfigService} from '../../services/app-config.js';
+import {GitClient} from '../../services/git-client.js';
+import {type GitJiraBranchError, SwitchedBranch} from '../../types.js';
+import {getAssociatedBranch} from '../../utils/associated-branch.js';
+import {fullJiraKey} from '../../utils/jira-key.js';
 
 export const switchBranch = (
   jiraKey: string,

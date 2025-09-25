@@ -1,16 +1,16 @@
 import {Args, Command, Options} from '@effect/cli';
 import {Console, Effect, pipe} from 'effect';
-import type {NoAssociatedBranch} from '../../schema/no-associated-branch';
-import type {AppConfigService} from '../../services/app-config';
-import type {GitClient} from '../../services/git-client';
+import type {NoAssociatedBranch} from '../../schema/no-associated-branch.js';
+import type {AppConfigService} from '../../services/app-config.js';
+import type {GitClient} from '../../services/git-client.js';
 import {
   type AppConfigError,
   type DeletedBranch,
   type GitExecError,
   UsageError,
-} from '../../types';
-import {formatDeletedBranch} from '../../utils/result-formatter';
-import {deleteBranch} from './delete.handler';
+} from '../../types.js';
+import {formatDeletedBranch} from '../../utils/result-formatter.js';
+import {deleteBranch} from './delete.handler.js';
 
 export const deleteCommand: Command.Command<
   'delete',
