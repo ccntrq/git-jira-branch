@@ -43,7 +43,7 @@
     "pretest": "pnpm test:type-check",
     "e2e-test": "pnpm e2e-test:local",
     "e2e-test:local": "pnpm e2e-test:type-check && pnpm build && vitest run --exclude=src",
-    "e2e-test:ci": "pnpm e2e-test:type-check && GIT_JB_BIN=${GIT_JB_BIN:-git-jira-branch} vitest run --exclude=src",
+    "e2e-test:ci": "pnpm e2e-test:type-check && vitest run --exclude=src",
     "e2e-test:type-check": "tsc -p e2e-test/tsconfig.e2e-test.json",
     "lint": "biome check .",
     "lint:fix": "biome check . --write"

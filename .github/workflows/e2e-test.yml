@@ -36,4 +36,5 @@ jobs:
           JIRA_USER_EMAIL: ${{ secrets.GCJB_USER_EMAIL }}
           JIRA_API_URL: ${{ vars.GCJB_JIRA_API_URL }}
           JIRA_KEY_PREFIX: ${{ vars.GCJB_JIRA_KEY_PREFIX }}
+          GIT_JB_BIN: 'git-jira-branch'
         run: pnpm e2e-test:ci
