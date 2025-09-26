@@ -9,6 +9,13 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [2.4.0](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v2.3.2...git-jira-branch-v2.4.0) (2025-09-26)
+
+
+### Features
+
+* migrate codebase to native esm ([#695](https://github.com/ccntrq/git-jira-branch/issues/695)) ([e4121fb](https://github.com/ccntrq/git-jira-branch/commit/e4121fb416e9c1dd8b3bcf5cabc80c77b06a96e5))
+
 ## [2.3.2](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v2.3.1...git-jira-branch-v2.3.2) (2025-09-25)
 
 
