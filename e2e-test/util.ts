@@ -1,9 +1,4 @@
-import {
-  execFileSync,
-  execSync,
-  type SpawnSyncReturns,
-  spawnSync,
-} from 'node:child_process';
+import {execSync, type SpawnSyncReturns, spawnSync} from 'node:child_process';
 import {rmSync} from 'node:fs';
 import {mkdtemp} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
@@ -57,7 +52,7 @@ const resolveBinarySpec = (): {
   if (override && override.length > 0) {
     const [command, ...rest] = tokenize(override);
     if (command) {
-      return {command, args: rest, display: override};
+      return {command, args: rest, display: 'git-jira-branch'};
     }
   }
   return {
@@ -70,7 +65,7 @@ const resolveBinarySpec = (): {
 const binarySpec = resolveBinarySpec();
 
 export const runApp = (dir: Directory, ...args: Array<string>): string =>
-  execFileSyncWithFriendlyMessage(binarySpec, dir, args).toString();
+  execSyncWithFriendlyMessage(binarySpec, dir, args).toString();
 
 export const spawnApp = (
   dir: Directory,
@@ -78,9 +73,10 @@ export const spawnApp = (
 ): SpawnSyncReturns<Buffer> =>
   spawnSync(binarySpec.command, [...binarySpec.args, ...args], {
     cwd: dir,
+    shell: true,
   });
 
-const execFileSyncWithFriendlyMessage = (
+const execSyncWithFriendlyMessage = (
   spec: {command: string; args: Array<string>; display: string},
   cwd: Directory,
   args: Array<string>,
@@ -89,7 +85,7 @@ const execFileSyncWithFriendlyMessage = (
   const actualCommand = [spec.command, ...commandArgs].join(' ');
   const displayCommand = [spec.display, ...args].join(' ').trim();
   try {
-    return execFileSync(spec.command, commandArgs, {cwd});
+    return execSync(actualCommand, {cwd});
   } catch (error) {
     if (error instanceof Error && actualCommand.length > 0 && displayCommand) {
       error.message = error.message.replace(actualCommand, displayCommand);
