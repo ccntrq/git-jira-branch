@@ -39,5 +39,5 @@ const openCommand = (
     Effect.mapError(() =>
       UsageError({message: 'Browser could not be opened.'}),
     ),
-    Effect.map(() => void 0),
+    Effect.asVoid,
   );
