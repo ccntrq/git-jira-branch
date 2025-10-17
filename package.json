@@ -64,10 +64,10 @@
   },
   "dependencies": {
     "@effect/cli": "0.71.0",
-    "@effect/platform": "0.92.0",
-    "@effect/platform-node": "0.98.0",
+    "@effect/platform": "0.92.1",
+    "@effect/platform-node": "0.98.4",
     "@effect/printer": "0.46.0",
     "@effect/printer-ansi": "0.46.0",
-    "effect": "3.18.0"
+    "effect": "3.18.4"
   }
 }
