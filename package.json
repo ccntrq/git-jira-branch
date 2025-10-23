@@ -49,18 +49,18 @@
     "lint:fix": "biome check . --write"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.4",
-    "@commitlint/cli": "^20.0.0",
+    "@biomejs/biome": "2.2.7",
+    "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
-    "@effect/vitest": "0.25.1",
+    "@effect/vitest": "0.26.0",
     "@tsconfig/node22": "^22.0.2",
-    "@types/node": "^24.5.2",
-    "@vitest/coverage-v8": "^3.2.4",
-    "@vitest/ui": "^3.2.4",
-    "lefthook": "^1.13.4",
+    "@types/node": "^24.9.1",
+    "@vitest/coverage-v8": "^4.0.1",
+    "@vitest/ui": "^4.0.1",
+    "lefthook": "^2.0.0",
     "rimraf": "^6.0.1",
-    "typescript": "^5.9.2",
-    "vitest": "^3.2.4"
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.1"
   },
   "dependencies": {
     "@effect/cli": "0.71.0",
