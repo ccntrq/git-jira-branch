@@ -23,7 +23,8 @@ jobs:
       - id: setup-node-and-pnpm
         if: ${{ steps.release.outputs.release_created }}
         uses: ./.github/actions/setup-node-and-pnpm-dependencies
-      - run: pnpm publish
+      - run: |
+        # Ensure npm 11.5.1 or later is installed
+        npm install -g npm@latest
+        npm publish
         if: ${{ steps.release.outputs.release_created }}
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_DEPLOY_TOKEN}}
