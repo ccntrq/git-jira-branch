@@ -4,7 +4,7 @@ import {Chunk, Context, Effect, Layer, pipe, Sink, Stream} from 'effect';
 
 import {catchIf} from 'effect/Effect';
 import {BranchNotMerged} from '../schema/branch-not-merged.js';
-import {GitBranch, GitExecError} from '../types.js';
+import {GitBranch, GitExecError, GitRemote} from '../types.js';
 
 type GitClientEffect<A, B = never> = Effect.Effect<A, B | GitExecError, never>;
 
@@ -13,6 +13,7 @@ export class GitClient extends Context.Tag('GitClient')<
   {
     readonly listBranches: () => GitClientEffect<Chunk.Chunk<GitBranch>>;
     readonly getCurrentBranch: () => GitClientEffect<string>;
+    readonly listRemotes: () => GitClientEffect<ReadonlyArray<GitRemote>>;
     readonly createGitBranch: (
       branchName: string,
       reset: boolean,
@@ -30,7 +31,10 @@ export class GitClient extends Context.Tag('GitClient')<
 
 const runGitCommand =
   (commandExecutor: CommandExecutor.CommandExecutor) =>
-  (cmd: Command.Command) =>
+  (
+    cmd: Command.Command,
+    options?: {readonly allowedExitCodes?: ReadonlyArray<number>},
+  ) =>
     pipe(
       cmd,
       commandExecutor.start,
@@ -42,7 +46,7 @@ const runGitCommand =
         }),
       ),
       Effect.flatMap(({stderr, exitCode, stdout}) =>
-        exitCode === 0
+        (options?.allowedExitCodes ?? [0]).includes(exitCode)
           ? Effect.succeed(stdout)
           : Effect.fail(
               GitExecError({
@@ -75,7 +79,7 @@ const listBranches =
   (): GitClientEffect<Chunk.Chunk<GitBranch>> =>
     pipe(
       Command.make('git', 'branch'),
-      runGitCommand(commandExecutor),
+      (command) => runGitCommand(commandExecutor)(command),
       Effect.map((stdout) =>
         Chunk.fromIterable(
           stdout
@@ -97,8 +101,31 @@ const getCurrentBranch =
   (): GitClientEffect<string> =>
     pipe(
       Command.make('git', 'branch', '--show-current'),
-      runGitCommand(commandExecutor),
+      (command) => runGitCommand(commandExecutor)(command),
       Effect.map((stdout) => stdout.trim()),
+      Effect.scoped,
+    );
+
+const listRemotes =
+  (commandExecutor: CommandExecutor.CommandExecutor) =>
+  (): GitClientEffect<ReadonlyArray<GitRemote>> =>
+    pipe(
+      Command.make('git', 'config', '--get-regexp', '^remote\\..*\\.url$'),
+      (command) =>
+        runGitCommand(commandExecutor)(command, {allowedExitCodes: [0, 1]}),
+      Effect.map((stdout) =>
+        stdout
+          .trim()
+          .split('\n')
+          .filter((line) => line.trim().length > 0)
+          .map((line) => line.trim().split(/\s+/, 2))
+          .map(([key, url]) => {
+            const match = key?.match(/^remote\.(.+)\.url$/);
+            const name = match?.[1];
+            return name && url ? GitRemote({name, url}) : null;
+          })
+          .filter((remote): remote is GitRemote => remote !== null),
+      ),
       Effect.scoped,
     );
 
@@ -115,7 +142,7 @@ const createGitBranchFrom =
         '--no-track',
         baseBranch,
       ),
-      runGitCommand(commandExecutor),
+      (command) => runGitCommand(commandExecutor)(command),
       Effect.flatMap(() => Effect.void),
       Effect.scoped,
     );
@@ -125,7 +152,7 @@ const createGitBranch =
   (branchName: string, reset: boolean): GitClientEffect<void> =>
     pipe(
       Command.make('git', 'checkout', reset ? '-B' : '-b', branchName),
-      runGitCommand(commandExecutor),
+      (command) => runGitCommand(commandExecutor)(command),
       Effect.flatMap(() => Effect.void),
       Effect.scoped,
     );
@@ -135,7 +162,7 @@ const switchBranch =
   (branchName: string): GitClientEffect<void> =>
     pipe(
       Command.make('git', 'checkout', branchName),
-      runGitCommand(commandExecutor),
+      (command) => runGitCommand(commandExecutor)(command),
       Effect.flatMap(() => Effect.void),
       Effect.scoped,
     );
@@ -148,7 +175,7 @@ const deleteBranch =
   ): GitClientEffect<void, BranchNotMerged> =>
     pipe(
       Command.make('git', 'branch', force ? '-D' : '-d', branchName),
-      runGitCommand(commandExecutor),
+      (command) => runGitCommand(commandExecutor)(command),
       catchIf(
         (e) => !!e.message.match(/is not fully merged/),
         (e) =>
@@ -169,6 +196,7 @@ export const GitClientLive = Layer.effect(
     GitClient.of({
       listBranches: listBranches(commandExecutor),
       getCurrentBranch: getCurrentBranch(commandExecutor),
+      listRemotes: listRemotes(commandExecutor),
       createGitBranchFrom: createGitBranchFrom(commandExecutor),
       createGitBranch: createGitBranch(commandExecutor),
       switchBranch: switchBranch(commandExecutor),

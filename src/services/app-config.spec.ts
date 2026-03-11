@@ -3,6 +3,7 @@ import {ConfigProvider, Effect, Either, Layer, pipe} from 'effect';
 import * as Option from 'effect/Option';
 import {describe, expect} from 'vitest';
 import {
+  GitHubToken,
   JiraApiToken,
   JiraCloudAuth,
   JiraDataCenterAuth,
@@ -12,6 +13,12 @@ import {
 import {AppConfigService} from './app-config.js';
 
 const testProg = AppConfigService.pipe(Effect.flatMap((_) => _.getAppConfig));
+const githubTokenProg = AppConfigService.pipe(
+  Effect.flatMap((_) => _.githubToken),
+);
+const linkPrScanLimitProg = AppConfigService.pipe(
+  Effect.flatMap((_) => _.linkPrScanLimit),
+);
 
 const mkTestLayer = (
   configProvider: ConfigProvider.ConfigProvider,
@@ -88,6 +95,87 @@ describe('AppConfigService', () => {
     }),
   );
 
+  live('should prefer GITHUB_TOKEN over GH_TOKEN', () =>
+    Effect.gen(function* () {
+      const configProvider = ConfigProvider.fromMap(
+        new Map([
+          ['JIRA_PAT', 'dummy-jira-pat'],
+          ['JIRA_API_URL', 'https://dummy-jira-instance.com'],
+          ['GITHUB_TOKEN', 'preferred-token'],
+          ['GH_TOKEN', 'fallback-token'],
+        ]),
+      );
+
+      const token = yield* Effect.provide(
+        githubTokenProg,
+        mkTestLayer(configProvider),
+      );
+
+      expect(token).toEqual(GitHubToken('preferred-token'));
+    }),
+  );
+
+  live('should fall back to GH_TOKEN', () =>
+    Effect.gen(function* () {
+      const configProvider = ConfigProvider.fromMap(
+        new Map([
+          ['JIRA_PAT', 'dummy-jira-pat'],
+          ['JIRA_API_URL', 'https://dummy-jira-instance.com'],
+          ['GH_TOKEN', 'fallback-token'],
+        ]),
+      );
+
+      const token = yield* Effect.provide(
+        githubTokenProg,
+        mkTestLayer(configProvider),
+      );
+
+      expect(token).toEqual(GitHubToken('fallback-token'));
+    }),
+  );
+
+  live('should read LINK_PR_SCAN_LIMIT when configured', () =>
+    Effect.gen(function* () {
+      const configProvider = ConfigProvider.fromMap(
+        new Map([
+          ['JIRA_PAT', 'dummy-jira-pat'],
+          ['JIRA_API_URL', 'https://dummy-jira-instance.com'],
+          ['LINK_PR_SCAN_LIMIT', '1000'],
+        ]),
+      );
+
+      const env = yield* Effect.provide(
+        linkPrScanLimitProg,
+        mkTestLayer(configProvider),
+      );
+
+      expect(env).toBe(1000);
+    }),
+  );
+
+  live('should ignore invalid link-pr-only env vars in getAppConfig', () =>
+    Effect.gen(function* () {
+      const configProvider = ConfigProvider.fromMap(
+        new Map([
+          ['JIRA_PAT', 'dummy-jira-pat'],
+          ['JIRA_API_URL', 'https://dummy-jira-instance.com'],
+          ['GITHUB_TOKEN', ''],
+          ['LINK_PR_SCAN_LIMIT', '0'],
+        ]),
+      );
+
+      const env = yield* Effect.provide(testProg, mkTestLayer(configProvider));
+
+      expect(env).toEqual({
+        defaultJiraKeyPrefix: Option.none(),
+        jiraApiUrl: 'https://dummy-jira-instance.com',
+        jiraAuth: JiraDataCenterAuth({
+          jiraPat: JiraPat('dummy-jira-pat'),
+        }),
+      });
+    }),
+  );
+
   live('should report missing configuration values', () =>
     Effect.gen(function* () {
       const configProvider = ConfigProvider.fromMap(
@@ -144,6 +232,31 @@ describe('AppConfigService', () => {
         Effect.match({
           onSuccess: () => expect.unreachable('Should have returned an error'),
           onFailure: (e) => expect(e).toMatchSnapshot(),
+        }),
+      );
+    }),
+  );
+
+  live('should reject non-positive LINK_PR_SCAN_LIMIT values', () =>
+    Effect.gen(function* () {
+      const configProvider = ConfigProvider.fromMap(
+        new Map([
+          ['JIRA_PAT', 'dummy-jira-pat'],
+          ['JIRA_API_URL', 'https://dummy-jira-instance.com'],
+          ['LINK_PR_SCAN_LIMIT', '0'],
+        ]),
+      );
+
+      yield* pipe(
+        Effect.provide(linkPrScanLimitProg, mkTestLayer(configProvider)),
+        Effect.match({
+          onSuccess: () => expect.unreachable('Should have returned an error'),
+          onFailure: (e) =>
+            expect(e).toEqual({
+              _tag: 'AppConfigError',
+              message:
+                'Expected valid input for LINK_PR_SCAN_LIMIT (must be a positive integer)',
+            }),
         }),
       );
     }),

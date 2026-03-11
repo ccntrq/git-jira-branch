@@ -350,4 +350,55 @@ describe('GitClient', () => {
       });
     }),
   );
+
+  live('listRemotes should run appropriate git command and parse output', () =>
+    Effect.gen(function* () {
+      executorMock.mockSuccessValueOnce(
+        mkTestProcess(
+          0,
+          `remote.origin.url git@github.com:ccntrq/git-jira-branch.git
+remote.upstream.url https://github.com/example/project.git
+remote.local.url git@gitlab.com:example/project.git
+`,
+        ),
+      );
+
+      const result = yield* Effect.provide(
+        Effect.flatMap(GitClient, (gc) => gc.listRemotes()),
+        testLayer,
+      );
+
+      expect(result).toEqual([
+        {name: 'origin', url: 'git@github.com:ccntrq/git-jira-branch.git'},
+        {name: 'upstream', url: 'https://github.com/example/project.git'},
+        {name: 'local', url: 'git@gitlab.com:example/project.git'},
+      ]);
+
+      expect(executorMock.mock.calls[0]?.[0]).toMatchObject({
+        _tag: 'StandardCommand',
+        args: ['config', '--get-regexp', '^remote\\..*\\.url$'],
+        command: 'git',
+      });
+    }),
+  );
+
+  live(
+    'listRemotes should return an empty array when no remotes are configured',
+    () =>
+      Effect.gen(function* () {
+        executorMock.mockSuccessValueOnce(mkTestProcess(1));
+
+        const result = yield* Effect.provide(
+          Effect.flatMap(GitClient, (gc) => gc.listRemotes()),
+          testLayer,
+        );
+
+        expect(result).toEqual([]);
+        expect(executorMock.mock.calls[0]?.[0]).toMatchObject({
+          _tag: 'StandardCommand',
+          args: ['config', '--get-regexp', '^remote\\..*\\.url$'],
+          command: 'git',
+        });
+      }),
+  );
 });

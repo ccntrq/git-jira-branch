@@ -1,7 +1,8 @@
 import {HttpClient, HttpClientResponse} from '@effect/platform';
+import type * as HttpClientRequest from '@effect/platform/HttpClientRequest';
 import {live} from '@effect/vitest';
 import {ConfigProvider, Effect, Either, Layer} from 'effect';
-import {describe, expect} from 'vitest';
+import {describe, expect, vi} from 'vitest';
 import {dummyJiraIssue} from '../test/dummies/dummyJiraIssue.js';
 import {JiraApiError, type JiraIssue} from '../types.js';
 import {AppConfigService} from './app-config.js';
@@ -123,6 +124,72 @@ describe('JiraClient', () => {
           ),
         onRight: (_) => expect.unreachable('Should have returned an error.'),
       });
+    }),
+  );
+
+  live('should list remote links', () =>
+    Effect.gen(function* () {
+      const response = Response.json([
+        {
+          object: {
+            url: 'https://github.com/owner/repo/pull/1',
+            title: 'repo PR',
+          },
+        },
+      ]);
+
+      const result = yield* Effect.provide(
+        Effect.flatMap(JiraClient, (client) =>
+          client.listRemoteLinks('DUMMYAPP-123'),
+        ),
+        mkTestLayer(response),
+      );
+
+      expect(result).toEqual([
+        {
+          url: 'https://github.com/owner/repo/pull/1',
+          title: 'repo PR',
+        },
+      ]);
+    }),
+  );
+
+  live('should create remote links', () =>
+    Effect.gen(function* () {
+      const execute = vi.fn((request: HttpClientRequest.HttpClientRequest) =>
+        Effect.succeed(HttpClientResponse.fromWeb(request, new Response('{}'))),
+      );
+
+      const httpMock = Layer.succeed(
+        HttpClient.HttpClient,
+        HttpClient.make((request) => execute(request)),
+      );
+      const baseLayer = Layer.merge(appConfigTest, httpMock);
+      const layer = Layer.merge(
+        baseLayer,
+        JiraClientLive.pipe(Layer.provide(baseLayer)),
+      );
+
+      yield* Effect.provide(
+        Effect.flatMap(JiraClient, (client) =>
+          client.createRemoteLink('DUMMYAPP-123', {
+            url: 'https://github.com/owner/repo/pull/1',
+            title: 'repo PR',
+          }),
+        ),
+        layer,
+      );
+
+      expect(execute).toHaveBeenCalledTimes(1);
+      const request = execute.mock.calls[0]?.[0];
+      expect(request).toBeDefined();
+      if (!request) {
+        expect.unreachable('request should be defined');
+      }
+      expect(request.method).toBe('POST');
+      expect(request.url).toBe(
+        'https://dummy-jira-instance.com/rest/api/latest/issue/DUMMYAPP-123/remotelink',
+      );
     }),
   );
 });

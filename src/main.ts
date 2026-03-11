@@ -9,6 +9,7 @@ import {Cause, Console, Effect, Exit, Layer, pipe} from 'effect';
 import {cliEffect} from './cli.js';
 import {AppConfigService} from './services/app-config.js';
 import {GitClientLive} from './services/git-client.js';
+import {GitHubClientLive} from './services/github-client.js';
 import {JiraClientLive} from './services/jira-client.js';
 
 const fileSystemLayer = NodeFileSystem.layer;
@@ -24,6 +25,11 @@ const jiraClientLayer = JiraClientLive.pipe(
   Layer.provide(AppConfigService.Live),
 );
 
+const githubClientLayer = GitHubClientLive.pipe(
+  Layer.provide(FetchHttpClient.layer),
+  Layer.provide(AppConfigService.Live),
+);
+
 const mainLive = Layer.mergeAll(
   fileSystemLayer,
   commandExecutorLayer,
@@ -31,6 +37,7 @@ const mainLive = Layer.mergeAll(
   NodeTerminal.layer,
   AppConfigService.Live,
   gitClientLayer,
+  githubClientLayer,
   jiraClientLayer,
 );
 

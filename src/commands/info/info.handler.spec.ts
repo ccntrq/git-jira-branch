@@ -21,6 +21,7 @@ describe('ticketInfo', () => {
     Effect.gen(function* () {
       mockAppConfigService.getAppConfig.mockSuccessValue({
         defaultJiraKeyPrefix: Option.some('DUMMYAPP'),
+        githubToken: Option.none(),
       });
 
       mockJiraClient.getJiraIssue.mockSuccessValue(dummyJiraIssue);
@@ -44,6 +45,7 @@ describe('ticketInfoForCurrentBranch', () => {
     Effect.gen(function* () {
       mockAppConfigService.getAppConfig.mockSuccessValue({
         defaultJiraKeyPrefix: Option.some('DUMMYAPP'),
+        githubToken: Option.none(),
       });
 
       mockJiraClient.getJiraIssue.mockSuccessValue(dummyJiraIssue);

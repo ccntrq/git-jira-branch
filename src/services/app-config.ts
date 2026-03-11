@@ -16,6 +16,7 @@ import {InvalidData} from 'effect/ConfigError';
 import {
   type AppConfig,
   AppConfigError,
+  GitHubToken,
   JiraApiToken,
   JiraApiUrl,
   JiraCloudAuth,
@@ -54,6 +55,26 @@ const jiraDataCenterAuthConfig = Config.all({
 
 const defaultJiraKeyPrefix = Config.option(
   Config.string('JIRA_KEY_PREFIX').pipe(mapBrandOrFail(JiraKeyPrefix)),
+);
+
+const githubToken = Config.option(
+  Config.orElse(Config.string('GITHUB_TOKEN'), () =>
+    Config.string('GH_TOKEN'),
+  ).pipe(mapBrandOrFail(GitHubToken)),
+);
+
+const linkPrScanLimit = Config.option(
+  Config.integer('LINK_PR_SCAN_LIMIT'),
+).pipe(
+  Config.mapOrFail((value) =>
+    value._tag === 'None'
+      ? Either.right(500)
+      : value.value > 0
+        ? Either.right(value.value)
+        : Either.left(
+            InvalidData(['LINK_PR_SCAN_LIMIT'], 'must be a positive integer'),
+          ),
+  ),
 );
 
 const appConfig = Config.all({
@@ -101,6 +122,8 @@ export class AppConfigService extends Context.Tag('AppConfigService')<
       AppConfigError,
       never
     >;
+    readonly linkPrScanLimit: Effect.Effect<number, AppConfigError, never>;
+    readonly githubToken: Effect.Effect<GitHubToken, AppConfigError, never>;
   }
 >() {
   public static readonly Live = Layer.succeed(
@@ -120,6 +143,22 @@ export class AppConfigService extends Context.Tag('AppConfigService')<
       ),
       defaultJiraKeyPrefix: defaultJiraKeyPrefix.pipe(
         Effect.mapError(configErrorToAppConfigError),
+      ),
+      linkPrScanLimit: linkPrScanLimit.pipe(
+        Effect.mapError(configErrorToAppConfigError),
+      ),
+      githubToken: githubToken.pipe(
+        Effect.mapError(configErrorToAppConfigError),
+        Effect.flatMap((token) =>
+          token._tag === 'Some'
+            ? Effect.succeed(token.value)
+            : Effect.fail(
+                AppConfigError({
+                  message:
+                    'Missing GitHub token. Set GITHUB_TOKEN or GH_TOKEN.',
+                }),
+              ),
+        ),
       ),
     }),
   );

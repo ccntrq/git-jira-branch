@@ -18,6 +18,7 @@ describe('ticketUrl', () => {
     Effect.gen(function* () {
       mockAppConfigService.getAppConfig.mockSuccessValue({
         defaultJiraKeyPrefix: Option.some('MYAPP'),
+        githubToken: Option.none(),
         jiraApiUrl: 'https://gcjb.atlassian.com',
       });
 
@@ -39,6 +40,7 @@ describe('ticketUrlForCurrentBranch', () => {
     Effect.gen(function* () {
       mockAppConfigService.getAppConfig.mockSuccessValue({
         defaultJiraKeyPrefix: Option.some('MYAPP'),
+        githubToken: Option.none(),
         jiraApiUrl: 'https://gcjb.atlassian.com',
       });
 

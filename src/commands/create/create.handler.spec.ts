@@ -21,7 +21,10 @@ describe('gitCreateJiraBranch', () => {
   live('should create feature branch', () =>
     Effect.gen(function* () {
       mockAppConfigService.getAppConfig.mockReturnValue(
-        Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
+        Effect.succeed({
+          defaultJiraKeyPrefix: Option.none(),
+          githubToken: Option.none(),
+        }),
       );
       mockGitClient.createGitBranch.mockReturnValue(Effect.succeed(undefined));
       mockJiraClient.getJiraIssue.mockReturnValue(
@@ -68,7 +71,10 @@ describe('gitCreateJiraBranch', () => {
   live('should create bugfix branch', () =>
     Effect.gen(function* () {
       mockAppConfigService.getAppConfig.mockReturnValue(
-        Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
+        Effect.succeed({
+          defaultJiraKeyPrefix: Option.none(),
+          githubToken: Option.none(),
+        }),
       );
       mockGitClient.createGitBranch.mockReturnValue(Effect.succeed(undefined));
       mockJiraClient.getJiraIssue.mockReturnValue(
@@ -124,7 +130,10 @@ describe('gitCreateJiraBranch', () => {
   live('should use custom type', () =>
     Effect.gen(function* () {
       mockAppConfigService.getAppConfig.mockReturnValue(
-        Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
+        Effect.succeed({
+          defaultJiraKeyPrefix: Option.none(),
+          githubToken: Option.none(),
+        }),
       );
       mockGitClient.createGitBranch.mockReturnValue(Effect.succeed(undefined));
       mockJiraClient.getJiraIssue.mockReturnValue(
@@ -160,7 +169,10 @@ describe('gitCreateJiraBranch', () => {
   live('should create feature branch from base branch', () =>
     Effect.gen(function* () {
       mockAppConfigService.getAppConfig.mockReturnValue(
-        Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
+        Effect.succeed({
+          defaultJiraKeyPrefix: Option.none(),
+          githubToken: Option.none(),
+        }),
       );
       mockGitClient.createGitBranchFrom.innerMock.mockSuccessValue(undefined);
       mockJiraClient.getJiraIssue.mockReturnValue(
@@ -211,7 +223,10 @@ describe('gitCreateJiraBranch', () => {
   live('should reset existing branch', () =>
     Effect.gen(function* () {
       mockAppConfigService.getAppConfig.mockReturnValue(
-        Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
+        Effect.succeed({
+          defaultJiraKeyPrefix: Option.none(),
+          githubToken: Option.none(),
+        }),
       );
       mockGitClient.createGitBranchFrom.innerMock.mockSuccessValue(undefined);
       mockJiraClient.getJiraIssue.mockReturnValue(
@@ -251,7 +266,10 @@ describe('gitCreateJiraBranch', () => {
   live('should create branch with reset for non existing branch', () =>
     Effect.gen(function* () {
       mockAppConfigService.getAppConfig.mockReturnValue(
-        Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
+        Effect.succeed({
+          defaultJiraKeyPrefix: Option.none(),
+          githubToken: Option.none(),
+        }),
       );
       mockGitClient.createGitBranchFrom.innerMock.mockSuccessValue(undefined);
       mockJiraClient.getJiraIssue.mockReturnValue(
@@ -292,6 +310,7 @@ describe('gitCreateJiraBranch', () => {
     Effect.gen(function* () {
       mockAppConfigService.getAppConfig.mockSuccessValue({
         defaultJiraKeyPrefix: Option.none(),
+        githubToken: Option.none(),
       });
       mockJiraClient.getJiraIssue.mockSuccessValue(dummyJiraIssue);
       mockGitClient.listBranches.mockSuccessValue(
@@ -328,7 +347,10 @@ describe('gitCreateJiraBranch', () => {
   live('should consider defaultJiraKeyPrefix', () =>
     Effect.gen(function* () {
       mockAppConfigService.getAppConfig.mockReturnValue(
-        Effect.succeed({defaultJiraKeyPrefix: Option.some('DUMMYAPP')}),
+        Effect.succeed({
+          defaultJiraKeyPrefix: Option.some('DUMMYAPP'),
+          githubToken: Option.none(),
+        }),
       );
       mockGitClient.createGitBranch.mockReturnValue(Effect.succeed(undefined));
       mockJiraClient.getJiraIssue.mockReturnValue(
@@ -373,7 +395,10 @@ describe('gitCreateJiraBranch', () => {
   live('should allow overriding defaultJiraKeyPrefix', () =>
     Effect.gen(function* () {
       mockAppConfigService.getAppConfig.mockReturnValue(
-        Effect.succeed({defaultJiraKeyPrefix: Option.some('OTHERAPP')}),
+        Effect.succeed({
+          defaultJiraKeyPrefix: Option.some('OTHERAPP'),
+          githubToken: Option.none(),
+        }),
       );
       mockGitClient.createGitBranch.mockReturnValue(Effect.succeed(undefined));
       mockJiraClient.getJiraIssue.mockReturnValue(
@@ -421,7 +446,10 @@ describe('gitCreateJiraBranch', () => {
   live('should handle umlauts and other chars in summary', () =>
     Effect.gen(function* () {
       mockAppConfigService.getAppConfig.mockReturnValue(
-        Effect.succeed({defaultJiraKeyPrefix: Option.some('OTHERAPP')}),
+        Effect.succeed({
+          defaultJiraKeyPrefix: Option.some('OTHERAPP'),
+          githubToken: Option.none(),
+        }),
       );
       mockGitClient.createGitBranch.mockReturnValue(Effect.succeed(undefined));
       mockJiraClient.getJiraIssue.mockReturnValue(
@@ -475,7 +503,10 @@ describe('gitCreateJiraBranch', () => {
   live('should create branch with no type', () =>
     Effect.gen(function* () {
       mockAppConfigService.getAppConfig.mockReturnValue(
-        Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
+        Effect.succeed({
+          defaultJiraKeyPrefix: Option.none(),
+          githubToken: Option.none(),
+        }),
       );
       mockGitClient.createGitBranch.mockReturnValue(Effect.succeed(undefined));
       mockJiraClient.getJiraIssue.mockReturnValue(
