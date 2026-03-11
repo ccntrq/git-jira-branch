@@ -6,13 +6,15 @@ import {
   mockAppConfigService,
   mockGitClient,
   mockJiraClient,
+  resetTestMocks,
   testLayer,
 } from '../../test/mock-implementations.js';
 import {ticketInfo, ticketInfoForCurrentBranch} from './info.handler.js';
 
 describe('ticketInfo', () => {
   beforeEach(() => {
-    vi.restoreAllMocks();
+    resetTestMocks();
+    vi.clearAllMocks();
   });
 
   live('should return info for a given ticket', () =>
@@ -35,7 +37,8 @@ describe('ticketInfo', () => {
 
 describe('ticketInfoForCurrentBranch', () => {
   beforeEach(() => {
-    vi.restoreAllMocks();
+    resetTestMocks();
+    vi.clearAllMocks();
   });
   live('should extract ticket from branch and return issue info', () =>
     Effect.gen(function* () {

@@ -4,13 +4,15 @@ import {beforeEach, describe, expect, vi} from 'vitest';
 import {
   mockAppConfigService,
   mockGitClient,
+  resetTestMocks,
   testLayer,
 } from '../../test/mock-implementations.js';
 import {ticketUrl, ticketUrlForCurrentBranch} from './open.handler.js';
 
 describe('ticketUrl', () => {
   beforeEach(() => {
-    vi.restoreAllMocks();
+    resetTestMocks();
+    vi.clearAllMocks();
   });
   live('should return appropriate url for given ticket key', () =>
     Effect.gen(function* () {
@@ -30,7 +32,8 @@ describe('ticketUrl', () => {
 
 describe('ticketUrlForCurrentBranch', () => {
   beforeEach(() => {
-    vi.restoreAllMocks();
+    resetTestMocks();
+    vi.clearAllMocks();
   });
   live('should extract ticket from branch an return appropriate url', () =>
     Effect.gen(function* () {

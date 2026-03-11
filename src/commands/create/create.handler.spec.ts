@@ -6,6 +6,7 @@ import {
   mockAppConfigService,
   mockGitClient,
   mockJiraClient,
+  resetTestMocks,
   testLayer,
 } from '../../test/mock-implementations.js';
 import {GitBranch} from '../../types.js';
@@ -13,7 +14,8 @@ import {gitCreateJiraBranch} from './create.handler.js';
 
 describe('gitCreateJiraBranch', () => {
   beforeEach(() => {
-    vi.restoreAllMocks();
+    resetTestMocks();
+    vi.clearAllMocks();
   });
 
   live('should create feature branch', () =>

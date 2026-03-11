@@ -32,7 +32,7 @@ type ToEffectMock = {
 
 export const toEffectMock: ToEffectMock = (
   // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
-  fn: Mock<(args: any) => Effect.Effect<any, any>>,
+  fn: Mock<any>,
   // biome-ignore lint/suspicious/noExplicitAny: any okay in tests
 ): EffectMock<any, any, any> => {
   const mock = Object.assign(fn, {

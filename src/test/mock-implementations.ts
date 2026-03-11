@@ -2,7 +2,7 @@ import * as CommandExecutor from '@effect/platform/CommandExecutor';
 import * as NodeFileSystem from '@effect/platform-node/NodeFileSystem';
 import * as NodePath from '@effect/platform-node/NodePath';
 import * as NodeTerminal from '@effect/platform-node/NodeTerminal';
-import {Chunk, Effect, Layer} from 'effect';
+import {Chunk, Effect, Layer, Option} from 'effect';
 
 import {AppConfigService} from '../services/app-config.js';
 import {GitClient} from '../services/git-client.js';
@@ -21,6 +21,38 @@ export const mockGitClient = {
 
 export const mockAppConfigService = {getAppConfig: effectMock()};
 export const mockJiraClient = {getJiraIssue: effectMock()};
+
+export const resetTestMocks = (): void => {
+  mockGitClient.listBranches
+    .mockReset()
+    .mockImplementation(() => Effect.succeed(Chunk.empty<GitBranch>()));
+  mockGitClient.getCurrentBranch
+    .mockReset()
+    .mockImplementation(() => Effect.succeed(undefined));
+  mockGitClient.createGitBranch
+    .mockReset()
+    .mockImplementation(() => Effect.succeed(undefined));
+  mockGitClient.deleteBranch
+    .mockReset()
+    .mockImplementation(() => Effect.succeed(undefined));
+  mockGitClient.createGitBranchFrom.innerMock
+    .mockReset()
+    .mockImplementation(() => Effect.succeed(undefined));
+  mockGitClient.createGitBranchFrom
+    .mockReset()
+    .mockImplementation(() => mockGitClient.createGitBranchFrom.innerMock);
+  mockGitClient.switchBranch
+    .mockReset()
+    .mockImplementation(() => Effect.succeed(undefined));
+  mockAppConfigService.getAppConfig
+    .mockReset()
+    .mockImplementation(() =>
+      Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
+    );
+  mockJiraClient.getJiraIssue
+    .mockReset()
+    .mockImplementation(() => Effect.succeed(undefined));
+};
 
 const noopCommandExecutor = CommandExecutor.makeExecutor(() =>
   Effect.dieMessage('CommandExecutor should not be used in tests'),
