@@ -4,6 +4,7 @@ import {beforeEach, describe, expect, vi} from 'vitest';
 import {
   mockAppConfigService,
   mockGitClient,
+  resetTestMocks,
   testLayer,
 } from '../../test/mock-implementations.js';
 import {GitBranch} from '../../types.js';
@@ -11,7 +12,8 @@ import {switchBranch} from './switch.handler.js';
 
 describe('switchBranch', () => {
   beforeEach(() => {
-    vi.restoreAllMocks();
+    resetTestMocks();
+    vi.clearAllMocks();
   });
   live('should switch to existing branch', () =>
     Effect.gen(function* () {

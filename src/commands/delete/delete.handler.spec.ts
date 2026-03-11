@@ -5,6 +5,7 @@ import {BranchNotMerged} from '../../schema/branch-not-merged.js';
 import {
   mockAppConfigService,
   mockGitClient,
+  resetTestMocks,
   testLayer,
 } from '../../test/mock-implementations.js';
 import {GitBranch} from '../../types.js';
@@ -12,7 +13,8 @@ import {deleteBranch} from './delete.handler.js';
 
 describe('deleteBranch', () => {
   beforeEach(() => {
-    vi.restoreAllMocks();
+    resetTestMocks();
+    vi.clearAllMocks();
   });
 
   live('should delete branch', () =>
