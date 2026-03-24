@@ -1,5 +1,6 @@
 permissions:
   contents: write
+  id-token: write
   pull-requests: write
 
 on:
@@ -24,7 +25,7 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
         uses: ./.github/actions/setup-node-and-pnpm-dependencies
       - run: |
-        # Ensure npm 11.5.1 or later is installed
-        npm install -g npm@latest
-        npm publish
+          # Ensure npm 11.5.1 or later is installed
+          npm install -g npm@latest
+          npm publish
         if: ${{ steps.release.outputs.release_created }}
