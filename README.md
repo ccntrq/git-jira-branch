@@ -23,6 +23,7 @@ $ git jira-branch create MYAPP-1234
   - [Reset an already existing branch](#Resetanalreadyexistingbranch)
   - [Open tickets in your browser](#Openticketsinyourbrowser)
   - [Show ticket info on your terminal](#Showticketinfoonyourterminal)
+  - [Attach GitHub PR links to the current branch ticket](#AttachGitHubPRlinkstothecurrentbranchticket)
   - [List branches associated with jira tickets](#Listbranchesassociatedwithjiratickets)
   - [`wizard` mode](#wizardmode)
 - [Setup](#Setup)
@@ -126,6 +127,45 @@ Will create output like this:
 > Long lines in the description of the ticket are wrapped to fit a line width of<br>
 > 80 characters to make it easier to read.
 
+### <a name='AttachGitHubPRlinkstothecurrentbranchticket'></a>Attach GitHub PR links to the current branch ticket
+
+The `link-pr` command resolves the Jira ticket from the current branch, or uses
+an explicit Jira key if provided, detects the GitHub repository from your git
+remotes, finds pull requests in that repository whose head branch contains the
+Jira key, and adds missing Jira remote links for those pull requests.
+
+It prefers a GitHub `upstream` remote, then `origin`, and otherwise uses the
+first GitHub remote. You can override that with `--remote <name>` or bypass
+remote detection entirely with `--repo <owner/repo>`. Supported remote formats
+include SSH (`git@github.com:...`, `ssh://git@github.com/...`) and HTTPS
+(`https://github.com/...`).
+
+By default, `link-pr` scans the newest `500` pull requests. Override that with
+`--scan-limit` or `LINK_PR_SCAN_LIMIT`, or use `all` to scan full history. The
+search currently scans pull requests across all GitHub PR states and matches on
+the head branch name.
+
+```bash
+$ git jira-branch link-pr
+> Linked 1, skipped 1.
+> linked #42 https://github.com/my-org/my-repo/pull/42
+> skipped #40 https://github.com/my-org/my-repo/pull/40
+```
+
+```bash
+$ git jira-branch link-pr FOOX-1234
+```
+
+Examples:
+
+```bash
+git-jira-branch link-pr --scan-limit 1000 FOOX-1234
+git-jira-branch link-pr --scan-limit all FOOX-1234
+git-jira-branch link-pr --remote upstream FOOX-1234
+git-jira-branch link-pr --repo my-org/my-repo FOOX-1234
+git-jira-branch link-pr --provider github FOOX-1234
+```
+
 ### <a name='Listbranchesassociatedwithjiratickets'></a>List branches associated with jira tickets
 
 ```bash
@@ -183,6 +223,25 @@ npm i -g git-jira-branch
    export JIRA_API_URL="https://jira.mycompany.com"
    export JIRA_KEY_PREFIX="MYAPP"
    ```
+
+For `link-pr` only, set one GitHub token:
+
+```bash
+export GITHUB_TOKEN="YOUR_GITHUB_TOKEN"
+# or
+export GH_TOKEN="YOUR_GITHUB_TOKEN"
+```
+
+If both are present, `GITHUB_TOKEN` takes precedence.
+
+Optional default scan window for `link-pr`:
+
+```bash
+export LINK_PR_SCAN_LIMIT="500"
+```
+
+`LINK_PR_SCAN_LIMIT` must be a positive integer. It only affects `link-pr` and
+can be overridden per invocation with `--scan-limit`.
 
 ### <a name='Setupshellcompletions'></a>Setup shell completions
 

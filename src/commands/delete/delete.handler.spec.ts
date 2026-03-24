@@ -20,7 +20,10 @@ describe('deleteBranch', () => {
   live('should delete branch', () =>
     Effect.gen(function* () {
       mockAppConfigService.getAppConfig.mockReturnValue(
-        Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
+        Effect.succeed({
+          defaultJiraKeyPrefix: Option.none(),
+          githubToken: Option.none(),
+        }),
       );
       mockGitClient.deleteBranch.mockReturnValue(Effect.succeed(undefined));
       mockGitClient.listBranches.mockSuccessValue(
@@ -54,7 +57,10 @@ describe('deleteBranch', () => {
   live('should error on non merged branch', () =>
     Effect.gen(function* () {
       mockAppConfigService.getAppConfig.mockReturnValue(
-        Effect.succeed({defaultJiraKeyPrefix: Option.none()}),
+        Effect.succeed({
+          defaultJiraKeyPrefix: Option.none(),
+          githubToken: Option.none(),
+        }),
       );
       mockGitClient.deleteBranch.mockFailValue(
         new BranchNotMerged({

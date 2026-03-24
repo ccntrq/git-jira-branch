@@ -10,6 +10,7 @@ import packageJson from '../package.json' with {type: 'json'};
 import {create} from './commands/create/create.command.js';
 import {deleteCommand} from './commands/delete/delete.command.js';
 import {info} from './commands/info/info.command.js';
+import {linkPr} from './commands/link-pr/link-pr.command.js';
 import {list} from './commands/list/list.command.js';
 import {open} from './commands/open/open.command.js';
 import {switchCommand} from './commands/switch/switch.command.js';
@@ -17,6 +18,7 @@ import {tidy} from './commands/tidy/tidy.command.js';
 import type {NoAssociatedBranch} from './schema/no-associated-branch.js';
 import type {AppConfigService} from './services/app-config.js';
 import type {GitClient} from './services/git-client.js';
+import type {GitHubClient} from './services/github-client.js';
 import type {JiraClient} from './services/jira-client.js';
 import type {GitJiraBranchError} from './types.js';
 
@@ -30,6 +32,7 @@ const mainCommand = gitJiraBranch.pipe(
     deleteCommand,
     open,
     info,
+    linkPr,
     list,
     tidy,
   ]),
@@ -48,6 +51,7 @@ export const cliEffect = (
   GitJiraBranchError | ValidationError.ValidationError | NoAssociatedBranch,
   | CliApp.Environment
   | GitClient
+  | GitHubClient
   | AppConfigService
   | JiraClient
   | CommandExecutor.CommandExecutor
@@ -61,9 +65,16 @@ export const cliEffect = (
         // handled and printed by the cli library already
         return Effect.void;
       }
-      return printErrors(HelpDoc.p(Span.error(e.message)));
+      return printErrors(HelpDoc.p(Span.error(errorMessage(e))));
     }),
   );
 
 const printErrors = (doc: HelpDoc.HelpDoc): Effect.Effect<void> =>
   Console.error(HelpDoc.toAnsiText(doc));
+
+const errorMessage = (error: unknown): string =>
+  error instanceof Object &&
+  'message' in error &&
+  typeof error.message === 'string'
+    ? error.message
+    : String(error);

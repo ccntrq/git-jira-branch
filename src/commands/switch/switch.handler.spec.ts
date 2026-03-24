@@ -19,6 +19,7 @@ describe('switchBranch', () => {
     Effect.gen(function* () {
       mockAppConfigService.getAppConfig.mockSuccessValue({
         defaultJiraKeyPrefix: Option.none(),
+        githubToken: Option.none(),
       });
       mockGitClient.listBranches.mockSuccessValue(
         Chunk.fromIterable(
@@ -50,6 +51,7 @@ describe('switchBranch', () => {
     Effect.gen(function* () {
       mockAppConfigService.getAppConfig.mockSuccessValue({
         defaultJiraKeyPrefix: Option.none(),
+        githubToken: Option.none(),
       });
       mockGitClient.listBranches.mockSuccessValue(
         Chunk.fromIterable(

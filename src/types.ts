@@ -16,6 +16,11 @@ export const JiraApiToken = Brand.refined<JiraApiToken>(
   (s: string) => s.length > 0,
   () => Brand.error('Provided value is not a valid Jira API token'),
 );
+export type GitHubToken = string & Brand.Brand<'GitHubToken'>;
+export const GitHubToken = Brand.refined<GitHubToken>(
+  (s: string) => s.length > 0,
+  () => Brand.error('Provided value is not a valid GitHub token'),
+);
 export type JiraUserEmail = string & Brand.Brand<'JiraUserEmail'>;
 export const JiraUserEmail = Brand.refined<JiraUserEmail>(
   // NOTE: This validation does not strictly adhere to the email RFC 2822. It is
@@ -42,6 +47,48 @@ export type AppConfig = {
   defaultJiraKeyPrefix: Option.Option<JiraKeyPrefix>;
   jiraAuth: JiraAuth;
 };
+
+export interface GitRemote {
+  name: string;
+  url: string;
+}
+
+export const GitRemote = Data.case<GitRemote>();
+
+export interface GitHubRepository {
+  owner: string;
+  repo: string;
+  displayName: string;
+  remoteName: string;
+}
+
+export const GitHubRepository = Data.case<GitHubRepository>();
+
+export interface GitHubPullRequestLink {
+  number: number;
+  htmlUrl: string;
+  displayRepoName: string;
+}
+
+export const GitHubPullRequestLink = Data.case<GitHubPullRequestLink>();
+
+export interface JiraRemoteLink {
+  url: string;
+  title: string;
+}
+
+export const JiraRemoteLink = Data.case<JiraRemoteLink>();
+
+export const JiraRemoteLinkSchema = Schema.Struct({
+  object: Schema.Struct({
+    url: Schema.String,
+    title: Schema.String,
+  }),
+});
+
+export type JiraRemoteLinkResponse = Schema.Schema.Type<
+  typeof JiraRemoteLinkSchema
+>;
 
 export interface GitBranch {
   name: string;
@@ -141,7 +188,8 @@ export type GitJiraBranchError =
   | AppConfigError
   | UsageError
   | GitExecError
-  | JiraApiError;
+  | JiraApiError
+  | GitHubApiError;
 
 export declare namespace GitJiraBranchError {
   export interface Proto {
@@ -184,3 +232,8 @@ export interface JiraApiError extends GitJiraBranchError.Proto {
   readonly _tag: 'JiraApiError';
 }
 export const JiraApiError = makeError<JiraApiError>('JiraApiError');
+
+export interface GitHubApiError extends GitJiraBranchError.Proto {
+  readonly _tag: 'GitHubApiError';
+}
+export const GitHubApiError = makeError<GitHubApiError>('GitHubApiError');
