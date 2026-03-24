@@ -1,6 +1,6 @@
 import {Chunk} from 'effect';
 import {describe, expect, it} from 'vitest';
-import {GitBranch} from '../types.js';
+import {LocalGitBranch} from '../types.js';
 import {formatBranches} from './branch-formatter.js';
 
 describe('branch-formatter', () => {
@@ -9,11 +9,11 @@ describe('branch-formatter', () => {
       expect(
         formatBranches(
           Chunk.fromIterable([
-            GitBranch({
+            LocalGitBranch({
               name: 'feat/DUMMYAPP-123-dummy-issue-summary',
               isCurrent: true,
             }),
-            GitBranch({
+            LocalGitBranch({
               name: 'feat/DUMMYAPP-124-another-issue-summary',
               isCurrent: false,
             }),
@@ -26,11 +26,11 @@ describe('branch-formatter', () => {
     expect(
       formatBranches(
         Chunk.fromIterable([
-          GitBranch({
+          LocalGitBranch({
             name: 'feat/DUMMYAPP-123-dummy-issue-summary',
             isCurrent: false,
           }),
-          GitBranch({
+          LocalGitBranch({
             name: 'feat/DUMMYAPP-124-another-issue-summary',
             isCurrent: false,
           }),

@@ -7,7 +7,7 @@ import {
   resetTestMocks,
   testLayer,
 } from '../../test/mock-implementations.js';
-import {GitBranch} from '../../types.js';
+import {LocalGitBranch, RemoteGitBranch} from '../../types.js';
 import {switchBranch} from './switch.handler.js';
 
 describe('switchBranch', () => {
@@ -24,7 +24,7 @@ describe('switchBranch', () => {
       mockGitClient.listBranches.mockSuccessValue(
         Chunk.fromIterable(
           ['feat/DUMMYAPP-123-dummy-isssue-summary', 'master'].map((name) =>
-            GitBranch({name, isCurrent: false}),
+            LocalGitBranch({name, isCurrent: false}),
           ),
         ),
       );
@@ -38,12 +38,56 @@ describe('switchBranch', () => {
           {
             "_tag": "SwitchedBranch",
             "branch": "feat/DUMMYAPP-123-dummy-isssue-summary",
+            "trackingSetup": false,
           }
         `);
 
       expect(mockGitClient.switchBranch).toHaveBeenCalledWith(
         'feat/DUMMYAPP-123-dummy-isssue-summary',
       );
+    }),
+  );
+
+  live('should switch to remote branch when not present locally', () =>
+    Effect.gen(function* () {
+      mockAppConfigService.getAppConfig.mockSuccessValue({
+        defaultJiraKeyPrefix: Option.none(),
+      });
+      mockGitClient.listBranches.mockSuccessValue(
+        Chunk.fromIterable(
+          ['master'].map((name) => LocalGitBranch({name, isCurrent: false})),
+        ),
+      );
+      mockGitClient.listRemoteBranches.mockSuccessValue(
+        Chunk.fromIterable(
+          ['origin/feat/DUMMYAPP-123-dummy-isssue-summary'].map(() =>
+            RemoteGitBranch({
+              name: 'feat/DUMMYAPP-123-dummy-isssue-summary',
+              remote: 'origin',
+            }),
+          ),
+        ),
+      );
+      mockGitClient.checkoutRemoteTrackingBranch.mockSuccessValue(undefined);
+
+      const result = yield* Effect.provide(
+        switchBranch('DUMMYAPP-123'),
+        testLayer,
+      );
+
+      expect(result).toMatchInlineSnapshot(`
+        {
+          "_tag": "SwitchedBranch",
+          "branch": "feat/DUMMYAPP-123-dummy-isssue-summary",
+          "trackingSetup": true,
+        }
+      `);
+
+      expect(mockGitClient.checkoutRemoteTrackingBranch).toHaveBeenCalledWith(
+        'feat/DUMMYAPP-123-dummy-isssue-summary',
+        'origin/feat/DUMMYAPP-123-dummy-isssue-summary',
+      );
+      expect(mockGitClient.switchBranch).not.toHaveBeenCalled();
     }),
   );
 
@@ -55,7 +99,7 @@ describe('switchBranch', () => {
       });
       mockGitClient.listBranches.mockSuccessValue(
         Chunk.fromIterable(
-          ['master'].map((name) => GitBranch({name, isCurrent: false})),
+          ['master'].map((name) => LocalGitBranch({name, isCurrent: false})),
         ),
       );
 

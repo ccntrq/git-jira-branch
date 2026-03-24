@@ -10,23 +10,28 @@ import {GitHubClient} from '../services/github-client.js';
 import {JiraClient} from '../services/jira-client.js';
 import {
   AppConfigError,
-  type GitBranch,
   type GitHubApiError,
   type GitHubPullRequestLink,
   type GitRemote,
   type JiraApiError,
   type JiraRemoteLink,
+  type LocalGitBranch,
+  type RemoteGitBranch,
 } from '../types.js';
 import {curriedEffectMock2, effectMock} from './util.js';
 
 export const mockGitClient = {
-  listBranches: effectMock(() => Effect.succeed(Chunk.empty<GitBranch>())),
+  listBranches: effectMock(() => Effect.succeed(Chunk.empty<LocalGitBranch>())),
+  listRemoteBranches: effectMock(() =>
+    Effect.succeed(Chunk.empty<RemoteGitBranch>()),
+  ),
   getCurrentBranch: effectMock(),
   listRemotes: effectMock(() => Effect.succeed([] as ReadonlyArray<GitRemote>)),
   createGitBranch: effectMock(),
   deleteBranch: effectMock(),
   createGitBranchFrom: curriedEffectMock2(),
   switchBranch: effectMock(),
+  checkoutRemoteTrackingBranch: effectMock(),
 };
 
 export const mockAppConfigService = {getAppConfig: effectMock()};
@@ -78,7 +83,10 @@ export const mockGitHubClient = {
 export const resetTestMocks = (): void => {
   mockGitClient.listBranches
     .mockReset()
-    .mockImplementation(() => Effect.succeed(Chunk.empty<GitBranch>()));
+    .mockImplementation(() => Effect.succeed(Chunk.empty<LocalGitBranch>()));
+  mockGitClient.listRemoteBranches
+    .mockReset()
+    .mockImplementation(() => Effect.succeed(Chunk.empty<RemoteGitBranch>()));
   mockGitClient.getCurrentBranch
     .mockReset()
     .mockImplementation(() => Effect.succeed(undefined));
@@ -98,6 +106,9 @@ export const resetTestMocks = (): void => {
     .mockReset()
     .mockImplementation(() => mockGitClient.createGitBranchFrom.innerMock);
   mockGitClient.switchBranch
+    .mockReset()
+    .mockImplementation(() => Effect.succeed(undefined));
+  mockGitClient.checkoutRemoteTrackingBranch
     .mockReset()
     .mockImplementation(() => Effect.succeed(undefined));
   mockAppConfigService.getAppConfig.mockReset().mockImplementation(() =>

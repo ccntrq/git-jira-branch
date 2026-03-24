@@ -1,3 +1,5 @@
+import {execSync} from 'node:child_process';
+import {join} from 'node:path';
 import {beforeEach, describe, expect, it} from 'vitest';
 import {
   createBranch,
@@ -50,5 +52,30 @@ describe('git-jira-branch switch', () => {
       `);
       return;
     }
+  });
+
+  it('switches to branch that only exists on remote (after fetch)', async () => {
+    const defaultBranch = currentBranch(tmpDir);
+    const remotePath = join(tmpDir, 'remote.git');
+    execSync(`git init --bare ${remotePath}`);
+    execSync(`git remote add origin ${remotePath}`, {cwd: tmpDir});
+
+    const remoteBranch = 'feat/GCJB-2-remote-only-branch';
+    createBranch(tmpDir, remoteBranch);
+    execSync(`git push origin -u ${remoteBranch}`, {cwd: tmpDir});
+    execSync(`git checkout ${defaultBranch}`, {cwd: tmpDir});
+    execSync(`git branch -D ${remoteBranch}`, {cwd: tmpDir});
+    execSync('git fetch', {cwd: tmpDir});
+
+    const res = switchCommand('GCJB-2');
+
+    expect(res).toMatchInlineSnapshot(`
+      "Branch 'feat/GCJB-2-remote-only-branch' set up to track remote branch.
+      Switched to a new branch 'feat/GCJB-2-remote-only-branch'.
+      "
+    `);
+    expect(currentBranch(tmpDir)).toMatchInlineSnapshot(
+      '"feat/GCJB-2-remote-only-branch"',
+    );
   });
 });

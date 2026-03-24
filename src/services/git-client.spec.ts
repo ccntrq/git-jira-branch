@@ -188,26 +188,32 @@ describe('GitClient', () => {
           "_id": "Chunk",
           "values": [
             {
+              "_tag": "LocalGitBranch",
               "isCurrent": true,
               "name": "7-switch-to-existing-branches",
             },
             {
+              "_tag": "LocalGitBranch",
               "isCurrent": false,
               "name": "chore/enforce-conventional-commits",
             },
             {
+              "_tag": "LocalGitBranch",
               "isCurrent": false,
               "name": "develop",
             },
             {
+              "_tag": "LocalGitBranch",
               "isCurrent": false,
               "name": "feat/MYAPP-1235-add-some-feature",
             },
             {
+              "_tag": "LocalGitBranch",
               "isCurrent": false,
               "name": "fix/MYAPP-1234-errorhandling",
             },
             {
+              "_tag": "LocalGitBranch",
               "isCurrent": false,
               "name": "master",
             },
@@ -255,6 +261,88 @@ describe('GitClient', () => {
       expect(executorMock.mock.calls[0]?.[0]).toMatchObject({
         _tag: 'StandardCommand',
         args: ['branch', '--show-current'],
+        command: 'git',
+      });
+    }),
+  );
+
+  live('listRemoteBranches should run git command and parse output', () =>
+    Effect.gen(function* () {
+      const commandOutput = `
+        origin/HEAD -> origin/main
+        upstream/feat/OTHER-1
+        origin/feat/MYAPP-1235-add-some-feature
+        origin/fix/MYAPP-1234-errorhandling
+        origin/main
+      `;
+      executorMock.mockSuccessValueOnce(mkTestProcess(0, commandOutput));
+
+      const result = yield* Effect.provide(
+        Effect.flatMap(GitClient, (gc) => gc.listRemoteBranches()),
+        testLayer,
+      );
+
+      expect(result).toMatchInlineSnapshot(`
+        {
+          "_id": "Chunk",
+          "values": [
+            {
+              "_tag": "RemoteGitBranch",
+              "name": "feat/MYAPP-1235-add-some-feature",
+              "remote": "origin",
+            },
+            {
+              "_tag": "RemoteGitBranch",
+              "name": "fix/MYAPP-1234-errorhandling",
+              "remote": "origin",
+            },
+            {
+              "_tag": "RemoteGitBranch",
+              "name": "main",
+              "remote": "origin",
+            },
+            {
+              "_tag": "RemoteGitBranch",
+              "name": "feat/OTHER-1",
+              "remote": "upstream",
+            },
+          ],
+        }
+      `);
+
+      expect(executorMock).toHaveBeenCalledTimes(1);
+      expect(executorMock.mock.calls[0]?.[0]).toMatchObject({
+        _tag: 'StandardCommand',
+        args: ['branch', '-r'],
+        command: 'git',
+      });
+    }),
+  );
+
+  live('checkoutRemoteTrackingBranch should run appropriate git command', () =>
+    Effect.gen(function* () {
+      executorMock.mockSuccessValueOnce(mkTestProcess(0));
+
+      yield* Effect.provide(
+        Effect.flatMap(GitClient, (gc) =>
+          gc.checkoutRemoteTrackingBranch(
+            'feat/dummy-branch',
+            'origin/feat/dummy-branch',
+          ),
+        ),
+        testLayer,
+      );
+
+      expect(executorMock).toHaveBeenCalledTimes(1);
+      expect(executorMock.mock.calls[0]?.[0]).toMatchObject({
+        _tag: 'StandardCommand',
+        args: [
+          'checkout',
+          '-b',
+          'feat/dummy-branch',
+          '--track',
+          'origin/feat/dummy-branch',
+        ],
         command: 'git',
       });
     }),
