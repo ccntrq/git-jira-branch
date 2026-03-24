@@ -8,7 +8,7 @@ import {
   resetTestMocks,
   testLayer,
 } from '../../test/mock-implementations.js';
-import {GitBranch} from '../../types.js';
+import {LocalGitBranch} from '../../types.js';
 import {deleteBranch} from './delete.handler.js';
 
 describe('deleteBranch', () => {
@@ -29,7 +29,7 @@ describe('deleteBranch', () => {
       mockGitClient.listBranches.mockSuccessValue(
         Chunk.fromIterable(
           ['feat/DUMMYAPP-123-dummy-isssue-summary', 'master'].map((name) =>
-            GitBranch({name, isCurrent: false}),
+            LocalGitBranch({name, isCurrent: false}),
           ),
         ),
       );
@@ -71,7 +71,7 @@ describe('deleteBranch', () => {
       mockGitClient.listBranches.mockSuccessValue(
         Chunk.fromIterable(
           ['feat/DUMMYAPP-123-dummy-isssue-summary', 'master'].map((name) =>
-            GitBranch({name, isCurrent: false}),
+            LocalGitBranch({name, isCurrent: false}),
           ),
         ),
       );

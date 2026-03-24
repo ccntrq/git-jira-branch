@@ -1,17 +1,37 @@
 import * as Command from '@effect/platform/Command';
 import * as CommandExecutor from '@effect/platform/CommandExecutor';
-import {Chunk, Context, Effect, Layer, pipe, Sink, Stream} from 'effect';
+import {
+  Chunk,
+  Context,
+  Effect,
+  Layer,
+  Option,
+  pipe,
+  Sink,
+  Stream,
+} from 'effect';
 
 import {catchIf} from 'effect/Effect';
 import {BranchNotMerged} from '../schema/branch-not-merged.js';
-import {GitBranch, GitExecError, GitRemote} from '../types.js';
+import {
+  GitExecError,
+  GitRemote,
+  LocalGitBranch,
+  RemoteGitBranch,
+} from '../types.js';
 
 type GitClientEffect<A, B = never> = Effect.Effect<A, B | GitExecError, never>;
 
 export class GitClient extends Context.Tag('GitClient')<
   GitClient,
   {
-    readonly listBranches: () => GitClientEffect<Chunk.Chunk<GitBranch>>;
+    readonly listBranches: () => GitClientEffect<Chunk.Chunk<LocalGitBranch>>;
+    readonly listRemoteBranches: () => GitClientEffect<
+      Chunk.Chunk<RemoteGitBranch>
+    >;
+    readonly getCheckoutDefaultRemote: () => GitClientEffect<
+      Option.Option<string>
+    >;
     readonly getCurrentBranch: () => GitClientEffect<string>;
     readonly listRemotes: () => GitClientEffect<ReadonlyArray<GitRemote>>;
     readonly createGitBranch: (
@@ -22,6 +42,10 @@ export class GitClient extends Context.Tag('GitClient')<
       baseBranch: string,
     ) => (branchName: string, reset: boolean) => GitClientEffect<void>;
     readonly switchBranch: (branchName: string) => GitClientEffect<void>;
+    readonly checkoutRemoteTrackingBranch: (
+      branchName: string,
+      remoteBranchName: string,
+    ) => GitClientEffect<void>;
     readonly deleteBranch: (
       branchName: string,
       force: boolean,
@@ -76,7 +100,7 @@ const runGitCommand =
 
 const listBranches =
   (commandExecutor: CommandExecutor.CommandExecutor) =>
-  (): GitClientEffect<Chunk.Chunk<GitBranch>> =>
+  (): GitClientEffect<Chunk.Chunk<LocalGitBranch>> =>
     pipe(
       Command.make('git', 'branch'),
       (command) => runGitCommand(commandExecutor)(command),
@@ -88,11 +112,100 @@ const listBranches =
             .map((x) => x.trim())
             .map((x) =>
               x.startsWith('*')
-                ? GitBranch({name: x.replace(/^\*\s+/, ''), isCurrent: true})
-                : GitBranch({name: x, isCurrent: false}),
+                ? LocalGitBranch({
+                    name: x.replace(/^\*\s+/, ''),
+                    isCurrent: true,
+                  })
+                : LocalGitBranch({
+                    name: x,
+                    isCurrent: false,
+                  }),
             ),
         ),
       ),
+      Effect.scoped,
+    );
+
+const trimLines = (stdout: string): Array<string> =>
+  stdout
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
+
+const takeRemote = (line: string): string | undefined => {
+  const [remote] = line.split('/');
+  return remote?.length ? remote : undefined;
+};
+
+const findDefaultRemote = (lines: Array<string>): string => {
+  const headLine = lines.find((line) => line.includes('HEAD ->'));
+  const headRemote = headLine ? takeRemote(headLine) : undefined;
+  if (headRemote) {
+    return headRemote;
+  }
+  const fallbackLine = lines.find((line) => !line.includes('->'));
+  const fallbackRemote = fallbackLine ? takeRemote(fallbackLine) : undefined;
+  return fallbackRemote ?? 'origin';
+};
+
+const parseRemoteBranch = (line: string): Option.Option<RemoteGitBranch> => {
+  if (line.includes('->')) {
+    return Option.none();
+  }
+  const [remote, ...rest] = line.split('/');
+  if (!remote || rest.length === 0) {
+    return Option.none();
+  }
+  return Option.some(
+    RemoteGitBranch({
+      remote,
+      name: rest.join('/'),
+    }),
+  );
+};
+
+const reorderByDefaultRemote = (
+  branches: Chunk.Chunk<RemoteGitBranch>,
+  defaultRemote: string,
+): Chunk.Chunk<RemoteGitBranch> => {
+  const prioritized = pipe(
+    branches,
+    Chunk.filter((branch) => branch.remote === defaultRemote),
+    Chunk.toReadonlyArray,
+  );
+  const others = pipe(
+    branches,
+    Chunk.filter((branch) => branch.remote !== defaultRemote),
+    Chunk.toReadonlyArray,
+  );
+  return Chunk.fromIterable([...prioritized, ...others]);
+};
+
+const listRemoteBranches =
+  (commandExecutor: CommandExecutor.CommandExecutor) =>
+  (): GitClientEffect<Chunk.Chunk<RemoteGitBranch>> =>
+    Effect.gen(function* () {
+      const stdout = yield* runGitCommand(commandExecutor)(
+        Command.make('git', 'branch', '-r'),
+      );
+      const lines = trimLines(stdout);
+      const defaultRemote = findDefaultRemote(lines);
+      const branches = pipe(
+        lines,
+        Chunk.fromIterable,
+        Chunk.filterMap(parseRemoteBranch),
+      );
+      return reorderByDefaultRemote(branches, defaultRemote);
+    });
+
+const getCheckoutDefaultRemote =
+  (commandExecutor: CommandExecutor.CommandExecutor) =>
+  (): GitClientEffect<Option.Option<string>> =>
+    pipe(
+      Command.make('git', 'config', '--get', 'checkout.defaultRemote'),
+      (command) =>
+        runGitCommand(commandExecutor)(command, {allowedExitCodes: [0, 1]}),
+      Effect.map((stdout) => Option.fromNullable(stdout.trim() || null)),
       Effect.scoped,
     );
 
@@ -167,6 +280,23 @@ const switchBranch =
       Effect.scoped,
     );
 
+const checkoutRemoteTrackingBranch =
+  (commandExecutor: CommandExecutor.CommandExecutor) =>
+  (branchName: string, remoteBranchName: string): GitClientEffect<void> =>
+    pipe(
+      Command.make(
+        'git',
+        'checkout',
+        '-b',
+        branchName,
+        '--track',
+        remoteBranchName,
+      ),
+      runGitCommand(commandExecutor),
+      Effect.flatMap(() => Effect.void),
+      Effect.scoped,
+    );
+
 const deleteBranch =
   (commandExecutor: CommandExecutor.CommandExecutor) =>
   (
@@ -195,11 +325,15 @@ export const GitClientLive = Layer.effect(
   Effect.map(CommandExecutor.CommandExecutor, (commandExecutor) =>
     GitClient.of({
       listBranches: listBranches(commandExecutor),
+      listRemoteBranches: listRemoteBranches(commandExecutor),
+      getCheckoutDefaultRemote: getCheckoutDefaultRemote(commandExecutor),
       getCurrentBranch: getCurrentBranch(commandExecutor),
       listRemotes: listRemotes(commandExecutor),
       createGitBranchFrom: createGitBranchFrom(commandExecutor),
       createGitBranch: createGitBranch(commandExecutor),
       switchBranch: switchBranch(commandExecutor),
+      checkoutRemoteTrackingBranch:
+        checkoutRemoteTrackingBranch(commandExecutor),
       deleteBranch: deleteBranch(commandExecutor),
     }),
   ),

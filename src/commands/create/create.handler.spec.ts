@@ -9,7 +9,7 @@ import {
   resetTestMocks,
   testLayer,
 } from '../../test/mock-implementations.js';
-import {GitBranch} from '../../types.js';
+import {LocalGitBranch} from '../../types.js';
 import {gitCreateJiraBranch} from './create.handler.js';
 
 describe('gitCreateJiraBranch', () => {
@@ -235,7 +235,7 @@ describe('gitCreateJiraBranch', () => {
       mockGitClient.listBranches.mockSuccessValue(
         Chunk.fromIterable(
           ['feat/DUMMYAPP-123-dummy-isssue-summary', 'master'].map((name) =>
-            GitBranch({name, isCurrent: false}),
+            LocalGitBranch({name, isCurrent: false}),
           ),
         ),
       );
@@ -277,7 +277,7 @@ describe('gitCreateJiraBranch', () => {
       );
       mockGitClient.listBranches.mockSuccessValue(
         Chunk.fromIterable(
-          ['master'].map((name) => GitBranch({name, isCurrent: false})),
+          ['master'].map((name) => LocalGitBranch({name, isCurrent: false})),
         ),
       );
 
@@ -316,7 +316,7 @@ describe('gitCreateJiraBranch', () => {
       mockGitClient.listBranches.mockSuccessValue(
         Chunk.fromIterable(
           ['feat/DUMMYAPP-123-dummy-isssue-summary', 'master'].map((name) =>
-            GitBranch({name, isCurrent: false}),
+            LocalGitBranch({name, isCurrent: false}),
           ),
         ),
       );

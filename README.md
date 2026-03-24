@@ -93,6 +93,10 @@ you can use the `switch` command.
 git-jira-branch switch MYAPP-1234
 ```
 
+If the branch only exists on the remote (e.g. created by a teammate), run
+`git fetch` first. The `switch` command will then create a local branch that
+tracks the remote branch and check it out.
+
 ### <a name='Openticketsinyourbrowser'></a>Open tickets in your browser
 
 1. For the current branch:
