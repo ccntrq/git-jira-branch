@@ -9,6 +9,21 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [2.4.0](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v2.3.2...git-jira-branch-v2.4.0) (2026-03-24)
+
+
+### Features
+
+* add link pr command that links open github prs with the jira issue ([#717](https://github.com/ccntrq/git-jira-branch/issues/717)) ([f3ea8e6](https://github.com/ccntrq/git-jira-branch/commit/f3ea8e6d0cb81f22f6c992295d66396ed82ce3ea))
+* migrate codebase to native esm ([#695](https://github.com/ccntrq/git-jira-branch/issues/695)) ([e4121fb](https://github.com/ccntrq/git-jira-branch/commit/e4121fb416e9c1dd8b3bcf5cabc80c77b06a96e5))
+
+
+### Bug Fixes
+
+* **deps:** bump effect from 3.19.19 to 3.20.0 ([#719](https://github.com/ccntrq/git-jira-branch/issues/719)) ([b932c21](https://github.com/ccntrq/git-jira-branch/commit/b932c210d81b6c66328bbfb360a7f4cd9334382e))
+* **deps:** bump the production-dependencies group with 6 updates ([#700](https://github.com/ccntrq/git-jira-branch/issues/700)) ([86ccfd9](https://github.com/ccntrq/git-jira-branch/commit/86ccfd9109f5b72f4c7836f0144bd40aa478c519))
+* **deps:** update all deps to their latest version ([#716](https://github.com/ccntrq/git-jira-branch/issues/716)) ([c699c54](https://github.com/ccntrq/git-jira-branch/commit/c699c54c70cde0dcf35810ab67c85342b17b686d))
+
 ## [2.3.2](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v2.3.1...git-jira-branch-v2.3.2) (2025-09-25)
 
 
