@@ -1,5 +1,5 @@
 {
-  "extends": ["@tsconfig/node22/tsconfig"],
+  "extends": ["@tsconfig/node20/tsconfig"],
   "compilerOptions": {
     "rootDir": ".",
     "outDir": ".",
