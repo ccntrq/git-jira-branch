@@ -3,7 +3,7 @@ import type {Command} from '@effect/platform/Command';
 import * as CommandExecutor from '@effect/platform/CommandExecutor';
 import type * as PlatformError from '@effect/platform/Error';
 import {live} from '@effect/vitest';
-import {Effect, Either, Layer, Sink, Stream} from 'effect';
+import {Effect, Either, Layer, Option, Sink, Stream} from 'effect';
 import {NodeInspectSymbol} from 'effect/Inspectable';
 import {afterEach, beforeEach, describe, expect, vi} from 'vitest';
 import {type EffectMock, effectMock} from '../test/util.js';
@@ -343,6 +343,44 @@ describe('GitClient', () => {
           '--track',
           'origin/feat/dummy-branch',
         ],
+        command: 'git',
+      });
+    }),
+  );
+
+  live('getCheckoutDefaultRemote should read checkout.defaultRemote', () =>
+    Effect.gen(function* () {
+      executorMock.mockSuccessValueOnce(mkTestProcess(0, 'origin\n'));
+
+      const result = yield* Effect.provide(
+        Effect.flatMap(GitClient, (gc) => gc.getCheckoutDefaultRemote()),
+        testLayer,
+      );
+
+      expect(result).toEqual(Option.some('origin'));
+      expect(executorMock).toHaveBeenCalledTimes(1);
+      expect(executorMock.mock.calls[0]?.[0]).toMatchObject({
+        _tag: 'StandardCommand',
+        args: ['config', '--get', 'checkout.defaultRemote'],
+        command: 'git',
+      });
+    }),
+  );
+
+  live('getCheckoutDefaultRemote should return none when config is unset', () =>
+    Effect.gen(function* () {
+      executorMock.mockSuccessValueOnce(mkTestProcess(1));
+
+      const result = yield* Effect.provide(
+        Effect.flatMap(GitClient, (gc) => gc.getCheckoutDefaultRemote()),
+        testLayer,
+      );
+
+      expect(result).toEqual(Option.none());
+      expect(executorMock).toHaveBeenCalledTimes(1);
+      expect(executorMock.mock.calls[0]?.[0]).toMatchObject({
+        _tag: 'StandardCommand',
+        args: ['config', '--get', 'checkout.defaultRemote'],
         command: 'git',
       });
     }),

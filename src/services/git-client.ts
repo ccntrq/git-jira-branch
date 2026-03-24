@@ -29,6 +29,9 @@ export class GitClient extends Context.Tag('GitClient')<
     readonly listRemoteBranches: () => GitClientEffect<
       Chunk.Chunk<RemoteGitBranch>
     >;
+    readonly getCheckoutDefaultRemote: () => GitClientEffect<
+      Option.Option<string>
+    >;
     readonly getCurrentBranch: () => GitClientEffect<string>;
     readonly listRemotes: () => GitClientEffect<ReadonlyArray<GitRemote>>;
     readonly createGitBranch: (
@@ -195,6 +198,17 @@ const listRemoteBranches =
       return reorderByDefaultRemote(branches, defaultRemote);
     });
 
+const getCheckoutDefaultRemote =
+  (commandExecutor: CommandExecutor.CommandExecutor) =>
+  (): GitClientEffect<Option.Option<string>> =>
+    pipe(
+      Command.make('git', 'config', '--get', 'checkout.defaultRemote'),
+      (command) =>
+        runGitCommand(commandExecutor)(command, {allowedExitCodes: [0, 1]}),
+      Effect.map((stdout) => Option.fromNullable(stdout.trim() || null)),
+      Effect.scoped,
+    );
+
 const getCurrentBranch =
   (commandExecutor: CommandExecutor.CommandExecutor) =>
   (): GitClientEffect<string> =>
@@ -312,6 +326,7 @@ export const GitClientLive = Layer.effect(
     GitClient.of({
       listBranches: listBranches(commandExecutor),
       listRemoteBranches: listRemoteBranches(commandExecutor),
+      getCheckoutDefaultRemote: getCheckoutDefaultRemote(commandExecutor),
       getCurrentBranch: getCurrentBranch(commandExecutor),
       listRemotes: listRemotes(commandExecutor),
       createGitBranchFrom: createGitBranchFrom(commandExecutor),

@@ -25,6 +25,7 @@ export const mockGitClient = {
   listRemoteBranches: effectMock(() =>
     Effect.succeed(Chunk.empty<RemoteGitBranch>()),
   ),
+  getCheckoutDefaultRemote: effectMock(() => Effect.succeed(Option.none())),
   getCurrentBranch: effectMock(),
   listRemotes: effectMock(() => Effect.succeed([] as ReadonlyArray<GitRemote>)),
   createGitBranch: effectMock(),
@@ -87,6 +88,9 @@ export const resetTestMocks = (): void => {
   mockGitClient.listRemoteBranches
     .mockReset()
     .mockImplementation(() => Effect.succeed(Chunk.empty<RemoteGitBranch>()));
+  mockGitClient.getCheckoutDefaultRemote
+    .mockReset()
+    .mockImplementation(() => Effect.succeed(Option.none()));
   mockGitClient.getCurrentBranch
     .mockReset()
     .mockImplementation(() => Effect.succeed(undefined));
