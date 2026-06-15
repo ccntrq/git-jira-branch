@@ -1,6 +1,7 @@
 import {Args, Command, Options} from '@effect/cli';
 import {Console, Effect, pipe} from 'effect';
 import {compose} from 'effect/Function';
+import {resolveTicketSelection} from '../../services/ticket-selector.js';
 import {formatGitCreateJiraBranchResult} from '../../utils/result-formatter.js';
 import {gitCreateJiraBranch} from './create.handler.js';
 
@@ -23,21 +24,27 @@ export const create = pipe(
         ),
       }),
       jiraKey: Args.withDescription(
-        Args.text({name: 'jira-key'}),
+        Args.optional(Args.text({name: 'jira-key'})),
         'The Jira ticket key to create a branch for (e.g. FOOX-1234)',
       ),
     },
-    ({options, jiraKey}) => {
-      return Effect.flatMap(
-        gitCreateJiraBranch(
-          jiraKey,
-          options.type,
-          options.baseBranch,
-          options.reset,
+    ({options, jiraKey}) =>
+      resolveTicketSelection(jiraKey, {
+        command: 'create',
+        type: options.type,
+        reset: options.reset,
+      }).pipe(
+        Effect.flatMap((selection) =>
+          gitCreateJiraBranch(
+            selection.key,
+            options.type,
+            options.baseBranch,
+            options.reset,
+            selection.associatedBranch,
+          ),
         ),
-        compose(formatGitCreateJiraBranchResult, Console.log),
-      );
-    },
+        Effect.flatMap(compose(formatGitCreateJiraBranchResult, Console.log)),
+      ),
   ),
   Command.withDescription(
     `

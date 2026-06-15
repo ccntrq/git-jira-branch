@@ -50,16 +50,16 @@ $ git-jira-branch
 
 [0;1mCOMMANDS[0m
 
-  - create [(-b, --base text)] [(-t, --type text)] [(-r, --reset)] <jira-key>                 
+  - create [(-b, --base text)] [(-t, --type text)] [(-r, --reset)] [<jira-key>]               
 Fetches the given Jira ticket and creates an aproriately named branch for it.
 The branch type (bug or feat) is determined by the ticket type. The branch name
 is based on the ticket summary.
 
-  - switch <jira-key>                                                                         
+  - switch [<jira-key>]                                                                       
 Switches to an already existing branch that is associated with the given Jira
 ticket.
 
-  - delete [--force] <jira-key>                                                               
+  - delete [--force] [<jira-key>]                                                             
 Deletes the branch associated with the given Jira Ticket.
 
   - open [<jira-key>]                                                                         

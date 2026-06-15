@@ -1,20 +1,31 @@
 import {Args, Command} from '@effect/cli';
-import {Console, Effect, pipe} from 'effect';
+import {Console, Effect, Option, pipe} from 'effect';
 import {compose} from 'effect/Function';
+import {resolveTicketSelection} from '../../services/ticket-selector.js';
 import {formatSwitchedBranch} from '../../utils/result-formatter.js';
-import {switchBranch} from './switch.handler.js';
+import {switchBranch, switchBranchByName} from './switch.handler.js';
 
 export const switchCommand = pipe(
   Command.make(
     'switch',
     {
       jiraKey: Args.withDescription(
-        Args.text({name: 'jira-key'}),
+        Args.optional(Args.text({name: 'jira-key'})),
         'The Jira ticket key associated with the branch to switch to (e.g. FOOX-1234)',
       ),
     },
     ({jiraKey}) =>
-      switchBranch(jiraKey).pipe(
+      resolveTicketSelection(jiraKey, {
+        command: 'switch',
+        type: Option.none(),
+        reset: false,
+      }).pipe(
+        Effect.flatMap((selection) =>
+          Option.match(selection.associatedBranch, {
+            onSome: (branch) => switchBranchByName(branch.name),
+            onNone: () => switchBranch(selection.key),
+          }),
+        ),
         Effect.flatMap(compose(formatSwitchedBranch, Console.log)),
       ),
   ),

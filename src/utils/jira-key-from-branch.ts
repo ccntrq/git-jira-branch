@@ -25,6 +25,6 @@ export const jiraKeyFromCurrentBranch = (): Effect.Effect<
 export const jiraKeyFromBranch = (
   branchName: string,
 ): Option.Option<string> => {
-  const res = branchName.match(/^(?:\w+\/)?([A-Z]+-\d+)/);
+  const res = branchName.match(/^(?:\w+\/)?([A-Z][A-Z0-9]*-\d+)/);
   return Option.fromNullable(res?.[1]);
 };

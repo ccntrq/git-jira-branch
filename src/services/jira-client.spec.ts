@@ -192,4 +192,110 @@ describe('JiraClient', () => {
       );
     }),
   );
+
+  live('should search issues with JQL using the cloud enhanced endpoint', () =>
+    Effect.gen(function* () {
+      const adfIssue = {
+        ...dummyJiraIssue,
+        fields: {
+          ...dummyJiraIssue.fields,
+          description: {
+            type: 'doc',
+            version: 1,
+            content: [
+              {
+                type: 'paragraph',
+                content: [{type: 'text', text: 'ADF description'}],
+              },
+            ],
+          },
+        },
+      };
+      const execute = vi.fn((request: HttpClientRequest.HttpClientRequest) =>
+        Effect.succeed(
+          HttpClientResponse.fromWeb(
+            request,
+            Response.json({issues: [adfIssue]}),
+          ),
+        ),
+      );
+
+      const httpMock = Layer.succeed(
+        HttpClient.HttpClient,
+        HttpClient.make((request) => execute(request)),
+      );
+      const baseLayer = Layer.merge(appConfigTest, httpMock);
+      const layer = Layer.merge(
+        baseLayer,
+        JiraClientLive.pipe(Layer.provide(baseLayer)),
+      );
+
+      const result = yield* Effect.provide(
+        Effect.flatMap(JiraClient, (client) =>
+          client.searchJiraIssues({
+            jql: 'project = DUMMYAPP ORDER BY updated DESC',
+            maxResults: 10,
+          }),
+        ),
+        layer,
+      );
+
+      expect(result).toEqual([adfIssue]);
+      expect(execute).toHaveBeenCalledTimes(1);
+      const request = execute.mock.calls[0]?.[0];
+      expect(request?.method).toBe('POST');
+      expect(request?.url).toBe(
+        'https://dummy-jira-instance.com/rest/api/3/search/jql',
+      );
+    }),
+  );
+
+  live(
+    'should fall back to the legacy search endpoint when enhanced search is unavailable',
+    () =>
+      Effect.gen(function* () {
+        let requestCount = 0;
+        const execute = vi.fn(
+          (request: HttpClientRequest.HttpClientRequest) => {
+            const response =
+              requestCount === 0
+                ? new Response(null, {status: 404})
+                : Response.json({issues: [dummyJiraIssue]});
+            requestCount += 1;
+            return Effect.succeed(
+              HttpClientResponse.fromWeb(request, response),
+            );
+          },
+        );
+
+        const httpMock = Layer.succeed(
+          HttpClient.HttpClient,
+          HttpClient.make((request) => execute(request)),
+        );
+        const baseLayer = Layer.merge(appConfigTest, httpMock);
+        const layer = Layer.merge(
+          baseLayer,
+          JiraClientLive.pipe(Layer.provide(baseLayer)),
+        );
+
+        const result = yield* Effect.provide(
+          Effect.flatMap(JiraClient, (client) =>
+            client.searchJiraIssues({
+              jql: 'project = DUMMYAPP ORDER BY updated DESC',
+              maxResults: 10,
+            }),
+          ),
+          layer,
+        );
+
+        expect(result).toEqual([dummyJiraIssue]);
+        expect(execute).toHaveBeenCalledTimes(2);
+        expect(execute.mock.calls[0]?.[0].url).toBe(
+          'https://dummy-jira-instance.com/rest/api/3/search/jql',
+        );
+        expect(execute.mock.calls[1]?.[0].url).toBe(
+          'https://dummy-jira-instance.com/rest/api/latest/search',
+        );
+      }),
+  );
 });
