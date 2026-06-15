@@ -4,6 +4,7 @@ export const dummyJiraIssue: JiraIssue = {
   key: 'DUMMYAPP-123',
   fields: {
     summary: 'Dummy isssue summary',
+    updated: '2026-06-15T10:00:00.000+0000',
     issuetype: {
       name: 'Feature',
     },

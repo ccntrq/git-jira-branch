@@ -9,7 +9,7 @@ export const fullJiraKey = (
   AppConfigService.pipe(
     Effect.flatMap((_) => _.defaultJiraKeyPrefix),
     Effect.map((defaultJiraKeyPrefix) =>
-      jiraKey.match(/^([a-z]+)-(\d+)$/i) || isNone(defaultJiraKeyPrefix)
+      jiraKey.match(/^([a-z][a-z0-9]*)-(\d+)$/i) || isNone(defaultJiraKeyPrefix)
         ? jiraKey
         : `${defaultJiraKeyPrefix.value}-${jiraKey}`,
     ),

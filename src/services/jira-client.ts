@@ -13,6 +13,7 @@ import {
   type JiraAuth,
   type JiraIssue,
   JiraIssueSchema,
+  JiraIssueSearchResponseSchema,
   JiraRemoteLink,
   JiraRemoteLinkSchema,
   type JiraRemoteLink as JiraRemoteLinkType,
@@ -25,6 +26,13 @@ export class JiraClient extends Context.Tag('JiraClient')<
     readonly getJiraIssue: (
       issueKey: string,
     ) => Effect.Effect<JiraIssue, AppConfigError | JiraApiError>;
+    readonly searchJiraIssues: (params: {
+      readonly jql: string;
+      readonly maxResults: number;
+    }) => Effect.Effect<
+      ReadonlyArray<JiraIssue>,
+      AppConfigError | JiraApiError
+    >;
     readonly listRemoteLinks: (
       issueKey: string,
     ) => Effect.Effect<
@@ -64,6 +72,38 @@ export const JiraClientLive = Layer.effect(
               Effect.scoped,
               handleJiraIssueErrors(issueId),
             );
+          }),
+        searchJiraIssues: ({jql, maxResults}) =>
+          Effect.gen(function* () {
+            const {jiraAuth, jiraApiUrl} = yield* env.getAppConfig;
+
+            const filteredClient = HttpClient.filterStatusOk(httpClient);
+
+            const response = yield* pipe(
+              executeJiraIssueSearch(
+                filteredClient,
+                jiraApiUrl,
+                jiraAuth,
+                '/rest/api/3/search/jql',
+                jql,
+                maxResults,
+              ),
+              Effect.catchTag('ResponseError', (e) =>
+                e.response.status === 404 || e.response.status === 410
+                  ? executeJiraIssueSearch(
+                      filteredClient,
+                      jiraApiUrl,
+                      jiraAuth,
+                      '/rest/api/latest/search',
+                      jql,
+                      maxResults,
+                    )
+                  : Effect.fail(e),
+              ),
+              handleJiraSearchErrors,
+            );
+
+            return response.issues;
           }),
         listRemoteLinks: (issueId: string) =>
           Effect.gen(function* () {
@@ -128,6 +168,42 @@ export const JiraClientLive = Layer.effect(
   ),
 );
 
+const executeJiraIssueSearch = (
+  httpClient: HttpClient.HttpClient,
+  jiraApiUrl: string,
+  jiraAuth: JiraAuth,
+  endPoint: string,
+  jql: string,
+  maxResults: number,
+) =>
+  pipe(
+    HttpClientRequest.post(jiraApiUrl + endPoint, {
+      headers: {
+        Authorization: buildJiraAuthorizationHeader(jiraAuth),
+        Accept: 'application/json',
+      },
+    }).pipe(
+      HttpClientRequest.bodyUnsafeJson({
+        jql,
+        maxResults,
+        fields: [
+          'summary',
+          'description',
+          'issuetype',
+          'status',
+          'assignee',
+          'creator',
+          'updated',
+        ],
+      }),
+    ),
+    httpClient.execute,
+    Effect.flatMap(
+      HttpClientResponse.schemaBodyJson(JiraIssueSearchResponseSchema),
+    ),
+    Effect.scoped,
+  );
+
 const buildJiraAuthorizationHeader = (jiraAuth: JiraAuth): string => {
   switch (jiraAuth._tag) {
     case 'JiraCloudAuth':
@@ -178,6 +254,44 @@ const handleJiraIssueErrors =
         ),
       ),
     );
+
+const handleJiraSearchErrors = (
+  eff: Effect.Effect<
+    {readonly issues: ReadonlyArray<JiraIssue>},
+    AppConfigError | ParseResult.ParseError | HttpClientError.HttpClientError
+  >,
+): Effect.Effect<
+  {readonly issues: ReadonlyArray<JiraIssue>},
+  AppConfigError | JiraApiError
+> =>
+  eff.pipe(
+    Effect.catchTag('ParseError', (e) =>
+      Effect.fail(
+        JiraApiError({
+          message: [
+            'Failed to parse ticket search response from Jira:',
+            ...ArrayFormatter.formatErrorSync(e).map(
+              (issue) => `'${issue.path.join(' ')}': '${issue.message}'`,
+            ),
+          ].join('\n'),
+        }),
+      ),
+    ),
+    Effect.catchTag('RequestError', (e) =>
+      Effect.fail(
+        JiraApiError({
+          message: `Failed to make ticket search request to Jira: ${e.message}`,
+        }),
+      ),
+    ),
+    Effect.catchTag('ResponseError', (e) =>
+      Effect.fail(
+        JiraApiError({
+          message: `Jira Ticket search failed: ${e.message}`,
+        }),
+      ),
+    ),
+  );
 
 const handleJiraRemoteLinksErrors =
   (issueId: string) =>

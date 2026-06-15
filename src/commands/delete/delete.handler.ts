@@ -12,6 +12,14 @@ import {
 import {getAssociatedBranch} from '../../utils/associated-branch.js';
 import {fullJiraKey} from '../../utils/jira-key.js';
 
+export const deleteBranchByName = (
+  branchName: string,
+  force: boolean,
+): Effect.Effect<DeletedBranch, GitExecError | BranchNotMerged, GitClient> =>
+  Effect.flatMap(GitClient, (_) => _.deleteBranch(branchName, force)).pipe(
+    Effect.map(() => DeletedBranch({branch: branchName})),
+  );
+
 export const deleteBranch = (
   jiraKey: string,
   force: boolean,
@@ -28,11 +36,7 @@ export const deleteBranch = (
         jiraKey,
         getAssociatedBranch,
         Effect.flatten,
-        Effect.flatMap((branch) =>
-          Effect.flatMap(GitClient, (_) =>
-            _.deleteBranch(branch.name, force),
-          ).pipe(Effect.map((_) => DeletedBranch({branch: branch.name}))),
-        ),
+        Effect.flatMap((branch) => deleteBranchByName(branch.name, force)),
         Effect.catchIf(isNoSuchElementException, () =>
           Effect.fail(
             new NoAssociatedBranch({

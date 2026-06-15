@@ -4,23 +4,23 @@ import type {AppConfigService} from '../../services/app-config.js';
 import {GitClient} from '../../services/git-client.js';
 import {JiraClient} from '../../services/jira-client.js';
 import {
+  type AssociatedBranch,
   CreatedBranch,
   type GitCreateJiraBranchResult,
   type GitJiraBranchError,
-  type JiraIssue,
-  type JiraIssuetype,
   ResetBranch,
   UsageError,
 } from '../../types.js';
 import {getAssociatedBranch} from '../../utils/associated-branch.js';
+import {jiraIssueToBranchName} from '../../utils/jira-issue-branch-name.js';
 import {fullJiraKey} from '../../utils/jira-key.js';
-import {slugify} from '../../utils/slugger.js';
 
 export const gitCreateJiraBranch = (
   jiraKey: string,
   type: Option.Option<string>,
   baseBranch: Option.Option<string>,
   reset: boolean,
+  preResolvedBranch: Option.Option<AssociatedBranch> = Option.none(),
 ): Effect.Effect<
   GitCreateJiraBranchResult,
   GitJiraBranchError,
@@ -30,7 +30,9 @@ export const gitCreateJiraBranch = (
     const [gitClient, jiraClient] = yield* Effect.all([GitClient, JiraClient]);
 
     const fullKey = yield* fullJiraKey(jiraKey);
-    const associatedBranch = yield* getAssociatedBranch(fullKey);
+    const associatedBranch = Option.isSome(preResolvedBranch)
+      ? preResolvedBranch
+      : yield* getAssociatedBranch(fullKey);
 
     if (!reset && Option.isSome(associatedBranch)) {
       yield* Effect.fail(
@@ -59,26 +61,3 @@ export const gitCreateJiraBranch = (
 
     return (resetBranch ? ResetBranch : CreatedBranch)({branch: branchName});
   });
-
-const jiraIssueToBranchName = (
-  issue: JiraIssue,
-  type: Option.Option<string>,
-): string => {
-  const branchtype = Option.getOrElse(type, () =>
-    jiraIssuetypeBranchtype(issue.fields.issuetype),
-  );
-  const prefix = branchtype.length === 0 ? '' : `${branchtype}/`;
-  return `${prefix}${issue.key}-${slugify(issue.fields.summary)}`;
-};
-
-const jiraIssuetypeBranchtype = (issuetype: JiraIssuetype): string => {
-  if (issuetype.name.match(/bug/i)) {
-    return 'fix';
-  }
-
-  if (issuetype.name.match(/task|aufgabe/i)) {
-    return 'task';
-  }
-
-  return 'feat';
-};
