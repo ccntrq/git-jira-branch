@@ -3,6 +3,7 @@ import {bold, underlined} from '@effect/printer-ansi/Ansi';
 import {render} from '@effect/printer-ansi/AnsiDoc';
 import {pipe} from 'effect';
 import type {JiraIssue} from '../types.js';
+import {jiraDescriptionToText} from './jira-description.js';
 
 export const formatIssue = (issue: JiraIssue): string => {
   const heading = pipe(
@@ -45,9 +46,10 @@ export const formatIssue = (issue: JiraIssue): string => {
     underline,
   );
 
-  const description = issue.fields.description
+  const descriptionText = jiraDescriptionToText(issue.fields.description);
+  const description = descriptionText
     ? pipe(
-        issue.fields.description.split(/\n|\r\n/),
+        descriptionText.split(/\n|\r\n/),
         (lines) => lines.map((l) => Doc.reflow(l)),
         Doc.vcat,
       )

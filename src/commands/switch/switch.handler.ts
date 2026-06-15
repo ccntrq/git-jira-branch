@@ -7,6 +7,13 @@ import {type GitJiraBranchError, SwitchedBranch} from '../../types.js';
 import {getAssociatedBranch} from '../../utils/associated-branch.js';
 import {fullJiraKey} from '../../utils/jira-key.js';
 
+export const switchBranchByName = (
+  branchName: string,
+): Effect.Effect<SwitchedBranch, GitJiraBranchError, GitClient> =>
+  Effect.flatMap(GitClient, (_) => _.switchBranch(branchName)).pipe(
+    Effect.map(() => SwitchedBranch({branch: branchName})),
+  );
+
 export const switchBranch = (
   jiraKey: string,
 ): Effect.Effect<
@@ -22,11 +29,7 @@ export const switchBranch = (
         fullJiraKey,
         getAssociatedBranch,
         Effect.flatten,
-        Effect.flatMap((branch) =>
-          Effect.flatMap(GitClient, (_) => _.switchBranch(branch.name)).pipe(
-            Effect.map((_) => SwitchedBranch({branch: branch.name})),
-          ),
-        ),
+        Effect.flatMap((branch) => switchBranchByName(branch.name)),
         Effect.catchIf(isNoSuchElementException, () =>
           Effect.fail(
             new NoAssociatedBranch({

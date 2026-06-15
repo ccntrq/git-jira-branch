@@ -1,28 +1,16 @@
 import {Args, Command, Options} from '@effect/cli';
-import {Console, Effect, pipe} from 'effect';
-import type {NoAssociatedBranch} from '../../schema/no-associated-branch.js';
-import type {AppConfigService} from '../../services/app-config.js';
-import type {GitClient} from '../../services/git-client.js';
-import {
-  type AppConfigError,
-  type DeletedBranch,
-  type GitExecError,
-  UsageError,
-} from '../../types.js';
+import {Console, Effect, Option, pipe} from 'effect';
+import {resolveTicketSelection} from '../../services/ticket-selector.js';
+import {type DeletedBranch, UsageError} from '../../types.js';
 import {formatDeletedBranch} from '../../utils/result-formatter.js';
-import {deleteBranch} from './delete.handler.js';
+import {deleteBranch, deleteBranchByName} from './delete.handler.js';
 
-export const deleteCommand: Command.Command<
-  'delete',
-  AppConfigService | GitClient,
-  AppConfigError | UsageError | GitExecError | NoAssociatedBranch,
-  {readonly jiraKey: string; readonly force: boolean}
-> = pipe(
+export const deleteCommand = pipe(
   Command.make(
     'delete',
     {
       jiraKey: Args.withDescription(
-        Args.text({name: 'jira-key'}),
+        Args.optional(Args.text({name: 'jira-key'})),
         'The Jira ticket key associated with the branch to delete (e.g. FOOX-1234)',
       ),
       force: Options.withDescription(
@@ -31,7 +19,17 @@ export const deleteCommand: Command.Command<
       ),
     },
     ({jiraKey, force}) =>
-      deleteBranch(jiraKey, force).pipe(
+      resolveTicketSelection(jiraKey, {
+        command: 'delete',
+        type: Option.none(),
+        reset: false,
+      }).pipe(
+        Effect.flatMap((selection) =>
+          Option.match(selection.associatedBranch, {
+            onSome: (branch) => deleteBranchByName(branch.name, force),
+            onNone: () => deleteBranch(selection.key, force),
+          }),
+        ),
         Effect.flatMap((res: DeletedBranch) =>
           pipe(res, formatDeletedBranch, Console.log),
         ),

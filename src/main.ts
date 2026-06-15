@@ -11,6 +11,7 @@ import {AppConfigService} from './services/app-config.js';
 import {GitClientLive} from './services/git-client.js';
 import {GitHubClientLive} from './services/github-client.js';
 import {JiraClientLive} from './services/jira-client.js';
+import {TicketSelectorLive} from './services/ticket-selector.js';
 
 const fileSystemLayer = NodeFileSystem.layer;
 
@@ -30,6 +31,10 @@ const githubClientLayer = GitHubClientLive.pipe(
   Layer.provide(AppConfigService.Live),
 );
 
+const ticketSelectorLayer = TicketSelectorLive.pipe(
+  Layer.provide(NodeTerminal.layer),
+);
+
 const mainLive = Layer.mergeAll(
   fileSystemLayer,
   commandExecutorLayer,
@@ -39,6 +44,7 @@ const mainLive = Layer.mergeAll(
   gitClientLayer,
   githubClientLayer,
   jiraClientLayer,
+  ticketSelectorLayer,
 );
 
 const mainEffect = pipe(

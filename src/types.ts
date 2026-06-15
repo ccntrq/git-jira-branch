@@ -114,11 +114,15 @@ export const JiraIssueSchema = Schema.Struct({
   key: Schema.String,
   fields: Schema.Struct({
     summary: Schema.String,
+    updated: Schema.optional(Schema.String),
     issuetype: JiraIssuetypeSchema,
     status: Schema.Struct({
       name: Schema.String,
     }),
-    description: Schema.NullOr(Schema.String),
+    // String for legacy plain-text descriptions, object for the Atlassian
+    // Document Format payloads returned by the v3 API; both are flattened to
+    // text via jiraDescriptionToText.
+    description: Schema.NullOr(Schema.Union(Schema.String, Schema.Object)),
     assignee: Schema.NullOr(
       Schema.Struct({
         displayName: Schema.String,
@@ -131,6 +135,14 @@ export const JiraIssueSchema = Schema.Struct({
 });
 
 export type JiraIssue = Schema.Schema.Type<typeof JiraIssueSchema>;
+
+export const JiraIssueSearchResponseSchema = Schema.Struct({
+  issues: Schema.Array(JiraIssueSchema),
+});
+
+export type JiraIssueSearchResponse = Schema.Schema.Type<
+  typeof JiraIssueSearchResponseSchema
+>;
 
 export type GitCreateJiraBranchResult = Data.TaggedEnum<{
   CreatedBranch: {branch: string};

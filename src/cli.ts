@@ -20,6 +20,7 @@ import type {AppConfigService} from './services/app-config.js';
 import type {GitClient} from './services/git-client.js';
 import type {GitHubClient} from './services/github-client.js';
 import type {JiraClient} from './services/jira-client.js';
+import type {TicketSelector} from './services/ticket-selector.js';
 import type {GitJiraBranchError} from './types.js';
 
 // for version and help
@@ -54,6 +55,7 @@ export const cliEffect = (
   | GitHubClient
   | AppConfigService
   | JiraClient
+  | TicketSelector
   | CommandExecutor.CommandExecutor
 > =>
   Command.run(

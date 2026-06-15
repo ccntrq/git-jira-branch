@@ -9,12 +9,17 @@ import {GitClient} from '../services/git-client.js';
 import {GitHubClient} from '../services/github-client.js';
 import {JiraClient} from '../services/jira-client.js';
 import {
+  TicketSelector,
+  ticketSelectionFromKey,
+} from '../services/ticket-selector.js';
+import {
   AppConfigError,
   type GitBranch,
   type GitHubApiError,
   type GitHubPullRequestLink,
   type GitRemote,
   type JiraApiError,
+  type JiraIssue,
   type JiraRemoteLink,
 } from '../types.js';
 import {curriedEffectMock2, effectMock} from './util.js';
@@ -32,6 +37,11 @@ export const mockGitClient = {
 export const mockAppConfigService = {getAppConfig: effectMock()};
 export const mockJiraClient = {
   getJiraIssue: effectMock(),
+  searchJiraIssues: effectMock<
+    [{readonly jql: string; readonly maxResults: number}],
+    ReadonlyArray<JiraIssue>,
+    AppConfigError | JiraApiError
+  >(() => Effect.succeed([])),
   listRemoteLinks: effectMock<
     [string],
     ReadonlyArray<JiraRemoteLink>,
@@ -42,6 +52,9 @@ export const mockJiraClient = {
     void,
     AppConfigError | JiraApiError
   >(() => Effect.succeed(undefined)),
+};
+export const mockTicketSelector = {
+  selectTicket: effectMock(),
 };
 export const mockGitHubClient = {
   getRepoPulls: effectMock<
@@ -110,6 +123,9 @@ export const resetTestMocks = (): void => {
   mockJiraClient.getJiraIssue
     .mockReset()
     .mockImplementation(() => Effect.succeed(undefined));
+  mockJiraClient.searchJiraIssues
+    .mockReset()
+    .mockImplementation(() => Effect.succeed([]));
   mockJiraClient.listRemoteLinks
     .mockReset()
     .mockImplementation(() => Effect.succeed([]));
@@ -122,6 +138,11 @@ export const resetTestMocks = (): void => {
   mockGitHubClient.getRepoPulls
     .mockReset()
     .mockImplementation(() => Effect.succeed([]));
+  mockTicketSelector.selectTicket
+    .mockReset()
+    .mockImplementation(() =>
+      Effect.succeed(ticketSelectionFromKey('DUMMYAPP-123')),
+    );
 };
 
 const noopCommandExecutor = CommandExecutor.makeExecutor(() =>
@@ -162,6 +183,7 @@ export const testLayer = Layer.mergeAll(
   ),
   Layer.succeed(JiraClient, JiraClient.of(mockJiraClient)),
   Layer.succeed(GitHubClient, GitHubClient.of(mockGitHubClient)),
+  Layer.succeed(TicketSelector, TicketSelector.of(mockTicketSelector)),
   Layer.succeed(CommandExecutor.CommandExecutor, noopCommandExecutor),
 );
 

@@ -12,6 +12,7 @@ describe('getAssociatedBranches', () => {
         Chunk.fromIterable([
           ...[
             'feat/DUMMYAPP-123-dummy-isssue-summary',
+            'feat/APP1-124-project-key-with-number',
             'DUMMYAPP-121-asociated',
             'master',
             '123-not-asociated',
@@ -34,6 +35,11 @@ describe('getAssociatedBranches', () => {
               "isCurrent": false,
               "jiraKey": "DUMMYAPP-123",
               "name": "feat/DUMMYAPP-123-dummy-isssue-summary",
+            },
+            {
+              "isCurrent": false,
+              "jiraKey": "APP1-124",
+              "name": "feat/APP1-124-project-key-with-number",
             },
             {
               "isCurrent": false,

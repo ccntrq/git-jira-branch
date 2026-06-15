@@ -18,6 +18,7 @@ $ git jira-branch create MYAPP-1234
 <!-- vscode-markdown-toc -->
 
 - [Usage](#Usage)
+  - [Pick a Jira ticket interactively](#PickaJiraticketinteractively)
   - [Create a new branch from your current `HEAD`](#CreateanewbranchfromyourcurrentHEAD)
   - [Create a new branch based on some other revision](#Createanewbranchbasedonsomeotherrevision)
   - [Reset an already existing branch](#Resetanalreadyexistingbranch)
@@ -52,6 +53,23 @@ Since this command starts with `git-` all commands can be run via
 Due to a limitation in the awesome [cli
 library](https://github.com/Effect-TS/cli) used, all options must be passed
 before the jira ticket key argument.
+
+### <a name='PickaJiraticketinteractively'></a>Pick a Jira ticket interactively
+
+For `create`, `switch`, and `delete`, the Jira ticket key is optional. If you
+leave it out, git-jira-branch opens an interactive ticket picker that searches
+Jira as you type and includes matching local branches.
+
+```bash
+git-jira-branch create
+git-jira-branch switch
+git-jira-branch delete
+```
+
+The picker lets you search with a full key like `MYAPP-1234` or, when
+`JIRA_KEY_PREFIX` is configured, just the issue number. It also makes branch
+state visible: `create` shows whether a branch already exists, while `switch`
+and `delete` only allow tickets that have an associated local branch.
 
 ### <a name='CreateanewbranchfromyourcurrentHEAD'></a>Create a new branch from your current `HEAD`
 
