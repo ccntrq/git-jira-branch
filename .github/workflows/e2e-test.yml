@@ -12,7 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        version: [24, 22, 20]
+        version: [26, 24, 22]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -27,6 +27,13 @@ jobs:
         run: pnpm build
       - name: Pack
         run: pnpm pack
+      - name: Setup pnpm global bin
+        run: |
+          mkdir -p "$RUNNER_TEMP/pnpm-global/bin"
+          echo "PNPM_HOME=$RUNNER_TEMP/pnpm-global" >> "$GITHUB_ENV"
+          echo "$RUNNER_TEMP/pnpm-global" >> "$GITHUB_PATH"
+          echo "$RUNNER_TEMP/pnpm-global/bin" >> "$GITHUB_PATH"
+        shell: bash
       - name: Install
         run: pnpm install -g $(pwd)/git-jira-branch-*.tgz
         shell: bash
