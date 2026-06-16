@@ -8,6 +8,7 @@
     "moduleResolution": "NodeNext",
     "composite": true,
     "resolveJsonModule": true,
+    "types": ["node"],
 
     "strict": true,
     "exactOptionalPropertyTypes": true,
