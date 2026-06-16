@@ -9,6 +9,24 @@ This project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [3.0.0](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v2.4.0...git-jira-branch-v3.0.0) (2026-06-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop support for node<22, support node 26 and use pnpm 11
+* drop support for node<22 and add support for node 26 ([#732](https://github.com/ccntrq/git-jira-branch/issues/732))
+
+### Bug Fixes
+
+* **deps:** bump the production-dependencies group across 1 directory with 6 updates ([#723](https://github.com/ccntrq/git-jira-branch/issues/723)) ([291ddce](https://github.com/ccntrq/git-jira-branch/commit/291ddce040e2bccb7ac216422382c6509630e211))
+
+
+### Miscellaneous Chores
+
+* drop support for node&lt;22 and add support for node 26 ([#732](https://github.com/ccntrq/git-jira-branch/issues/732)) ([1445ea9](https://github.com/ccntrq/git-jira-branch/commit/1445ea901e10965eeb278bae282ad60dcd333969))
+* drop support for node&lt;22, support node 26 and use pnpm 11 ([1445ea9](https://github.com/ccntrq/git-jira-branch/commit/1445ea901e10965eeb278bae282ad60dcd333969))
+
 ## [2.4.0](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v2.3.2...git-jira-branch-v2.4.0) (2026-03-24)
 
 
