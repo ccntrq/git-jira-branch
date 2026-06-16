@@ -213,6 +213,10 @@ npm i -g git-jira-branch
 
 #### <a name='ForJiraDataCenter'></a>For Jira Data Center
 
+**Note: this project is tested against a Jira Cloud instance. Jira Data Center
+support is best effort: it is not covered by the E2E test suite and has not
+been tested by the author.**
+
 1. Create a Jira PAT (Personal Access Token) [See Jira
    Docs](https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html)
 1. Add the created Jira PAT, the base url of your Jira instance and optionally a
