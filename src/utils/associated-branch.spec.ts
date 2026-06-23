@@ -2,7 +2,7 @@ import {live} from '@effect/vitest';
 import {Chunk, Effect} from 'effect';
 import {describe, expect} from 'vitest';
 import {mockGitClient, testLayer} from '../test/mock-implementations.js';
-import {GitBranch} from '../types.js';
+import {LocalGitBranch} from '../types.js';
 import {getAssociatedBranches} from './associated-branch.js';
 
 describe('getAssociatedBranches', () => {
@@ -16,8 +16,8 @@ describe('getAssociatedBranches', () => {
             'master',
             '123-not-asociated',
             'dummyapp-121-also-not-asociated',
-          ].map((name) => GitBranch({name, isCurrent: false})),
-          GitBranch({
+          ].map((name) => LocalGitBranch({name, isCurrent: false})),
+          LocalGitBranch({
             name: 'fix/DUMMYAPP-122-another-isssue-summary',
             isCurrent: true,
           }),
@@ -31,16 +31,19 @@ describe('getAssociatedBranches', () => {
           "_id": "Chunk",
           "values": [
             {
+              "_tag": "LocalGitBranch",
               "isCurrent": false,
               "jiraKey": "DUMMYAPP-123",
               "name": "feat/DUMMYAPP-123-dummy-isssue-summary",
             },
             {
+              "_tag": "LocalGitBranch",
               "isCurrent": false,
               "jiraKey": "DUMMYAPP-121",
               "name": "DUMMYAPP-121-asociated",
             },
             {
+              "_tag": "LocalGitBranch",
               "isCurrent": true,
               "jiraKey": "DUMMYAPP-122",
               "name": "fix/DUMMYAPP-122-another-isssue-summary",

@@ -5,7 +5,10 @@ import {
 } from '../types.js';
 
 export const formatSwitchedBranch = (switchedBranch: SwitchedBranch): string =>
-  `Switched to already existing branch: '${switchedBranch.branch}'`;
+  switchedBranch.trackingSetup
+    ? `Branch '${switchedBranch.branch}' set up to track remote branch.
+Switched to a new branch '${switchedBranch.branch}'.`
+    : `Switched to already existing branch: '${switchedBranch.branch}'`;
 
 export const formatDeletedBranch = (deletedBranch: DeletedBranch): string =>
   `Deleted branch: '${deletedBranch.branch}'`;

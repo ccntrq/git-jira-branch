@@ -90,14 +90,24 @@ export type JiraRemoteLinkResponse = Schema.Schema.Type<
   typeof JiraRemoteLinkSchema
 >;
 
-export interface GitBranch {
-  name: string;
-  isCurrent: boolean;
+export interface LocalGitBranch {
+  readonly _tag: 'LocalGitBranch';
+  readonly name: string;
+  readonly isCurrent: boolean;
 }
 
-export const GitBranch = Data.case<GitBranch>();
+export interface RemoteGitBranch {
+  readonly _tag: 'RemoteGitBranch';
+  readonly name: string;
+  readonly remote: string;
+}
 
-export interface AssociatedBranch extends GitBranch {
+export type GitBranch = LocalGitBranch | RemoteGitBranch;
+
+export const LocalGitBranch = Data.tagged<LocalGitBranch>('LocalGitBranch');
+export const RemoteGitBranch = Data.tagged<RemoteGitBranch>('RemoteGitBranch');
+
+export interface AssociatedBranch extends LocalGitBranch {
   jiraKey: string;
 }
 
@@ -134,7 +144,7 @@ export type JiraIssue = Schema.Schema.Type<typeof JiraIssueSchema>;
 
 export type GitCreateJiraBranchResult = Data.TaggedEnum<{
   CreatedBranch: {branch: string};
-  SwitchedBranch: {branch: string};
+  SwitchedBranch: {branch: string; trackingSetup: boolean};
   DeletedBranch: {branch: string};
   ResetBranch: {branch: string};
 }>;
