@@ -1,5 +1,26 @@
 # Changelog
 
+## 3.0.0
+
+### Major Changes
+
+- [#749](https://github.com/ccntrq/git-jira-branch/pull/749) [`bb8702d`](https://github.com/ccntrq/git-jira-branch/commit/bb8702d09b906741578ceaf83935608459e8b2d7) Thanks [@ccntrq](https://github.com/ccntrq)! - Raise the officially supported Node.js baseline to version 22 and add support
+  for Node.js 26 ([#732](https://github.com/ccntrq/git-jira-branch/issues/732)).
+
+  The CLI is now tested and supported on Node.js 22, 24, and 26. Older Node.js
+  versions may continue to work, but they are no longer tested or officially
+  supported. Users on an older version should upgrade to Node.js 22 or newer for
+  a supported setup.
+
+### Minor Changes
+
+- [#744](https://github.com/ccntrq/git-jira-branch/pull/744) [`3416b88`](https://github.com/ccntrq/git-jira-branch/commit/3416b88f890b258526a9028589dce4cc892749f4) Thanks [@ccntrq](https://github.com/ccntrq)! - Add an interactive Jira ticket picker to `create`, `switch`, and `delete`.
+
+  No more looking up and copying Jira keys before running a command. Leave out
+  the key, search Jira as you type, and pick a ticket right from the terminal.
+  Local branch state is shown alongside each ticket, so you immediately know what
+  you can create, switch to, or delete.
+
 ## [2.4.0](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v2.3.2...git-jira-branch-v2.4.0) (2026-03-24)
 
 ### Features
