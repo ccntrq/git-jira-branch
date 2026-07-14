@@ -23,8 +23,10 @@ jobs:
           fetch-depth: 0
       - name: Setup Node, pnpm, and dependencies
         uses: ./.github/actions/setup-node-and-pnpm-dependencies
-      - name: Install an npm version that supports trusted publishing
-        run: npm install -g npm@latest
+      # Changesets 2.31 expects the npm 11 metadata shape from `npm info`.
+      # pnpm performs the actual publication using npm trusted publishing.
+      - name: Install npm for Changesets registry checks
+        run: npm install -g npm@11.16.0
       - name: Create release pull request or publish to npm
         id: changesets
         uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
