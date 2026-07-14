@@ -5,9 +5,9 @@ documented in this file. The changelog of the project before the rename from
 `git-create-jira-branch` to `git-jira-branch` can be found in the old
 [CHANGELOG_OLD.md](./CHANGELOG_OLD.md).
 
-This project adheres to [Semantic
-Versioning](https://semver.org/spec/v2.0.0.html). For commit guidelines see
-[Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
+This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+Release notes are written by contributors in Changesets and collected here when
+a release is prepared.
 
 ## [2.4.0](https://github.com/ccntrq/git-jira-branch/compare/git-jira-branch-v2.3.2...git-jira-branch-v2.4.0) (2026-03-24)
 

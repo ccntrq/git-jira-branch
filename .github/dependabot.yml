@@ -16,11 +16,6 @@ updates:
       interval: 'daily'
       time: '09:00'
       timezone: 'Europe/Berlin'
-    commit-message:
-      prefix: fix
-      prefix-development: chore
-      include: scope
-
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:

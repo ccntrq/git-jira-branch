@@ -34,6 +34,7 @@ $ git jira-branch create MYAPP-1234
   - [Setup shell completions](#Setupshellcompletions)
 - [Development](#Development)
   - [Run E2E tests against local sources](#RunE2Etestsagainstlocalsources)
+  - [Write release notes with Changesets](#WritereleasenoteswithChangesets)
 - [Contributors](#Contributors)
 - [Technologies used](#Technologiesused)
 - [License](#License)
@@ -279,6 +280,31 @@ In CI you can call `pnpm e2e-test:ci`, which defaults to
 `GIT_JB_BIN=git-jira-branch` unless you override the variable before invoking
 the command. This lets you choose whether the suite exercises the published
 package or a specific binary path.
+
+### <a name='WritereleasenoteswithChangesets'></a>Write release notes with Changesets
+
+Commits should be atomic and have clear, descriptive messages; no type or scope
+prefix is required. Versions and changelogs are controlled explicitly with
+[Changesets](https://github.com/changesets/changesets), not inferred from commit
+messages. Pull requests are rebase-merged so their individual commits remain in
+the project history.
+
+Every pull request that should change the published package needs a changeset:
+
+```bash
+pnpm changeset
+```
+
+Choose `patch`, `minor`, or `major`, then write a concise note for end users.
+The note is copied into `CHANGELOG.md` and the GitHub release, so describe the
+user-visible outcome rather than the implementation or commit mechanics. Commit
+the generated `.changeset/*.md` file alongside the change. Documentation,
+tests, CI changes, and internal refactors that do not affect the published
+package do not need a changeset.
+
+After changesets reach `master`, the release workflow collects them in the
+`Release package updates` pull request. Merging that pull request publishes the
+new version to npm and creates the corresponding GitHub release automatically.
 
 ## <a name='Contributors'></a>Contributors
 
