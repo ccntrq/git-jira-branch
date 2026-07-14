@@ -34,6 +34,7 @@
   "scripts": {
     "start": "pnpm build && node dist/main.js",
     "build": "tsc --build src",
+    "changeset": "changeset",
     "clean": "rimraf dist/",
     "prepack": "pnpm clean && pnpm build",
     "prepare": "lefthook install",
@@ -46,12 +47,14 @@
     "e2e-test:ci": "pnpm e2e-test:type-check && vitest run --exclude=src",
     "e2e-test:type-check": "tsc -p e2e-test/tsconfig.e2e-test.json",
     "lint": "biome check .",
-    "lint:fix": "biome check . --write"
+    "lint:fix": "biome check . --write",
+    "release": "changeset publish",
+    "version-packages": "changeset version"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.0",
-    "@commitlint/cli": "^21.0.2",
-    "@commitlint/config-conventional": "^21.0.2",
+    "@changesets/changelog-github": "^0.7.0",
+    "@changesets/cli": "^2.31.0",
     "@effect/vitest": "0.29.0",
     "@tsconfig/node22": "^22.0.5",
     "@types/node": "^22.19.21",

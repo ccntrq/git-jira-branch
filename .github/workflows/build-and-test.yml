@@ -17,22 +17,6 @@ jobs:
       - name: Lint code
         run: pnpm lint
 
-  lint-commits:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-        with:
-          fetch-depth: 0 # for commitlint
-      - id: setup-node-and-pnpm
-        uses: ./.github/actions/setup-node-and-pnpm-dependencies
-      - name: Lint commits (last commit)
-        if: github.event_name == 'push'
-        run: pnpm commitlint --from HEAD~1 --to HEAD --verbose
-      - name: Lint commits (pr)
-        if: github.event_name == 'pull_request'
-        run: pnpm commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
-
   build-and-test:
     strategy:
       matrix:
