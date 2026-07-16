@@ -97,8 +97,18 @@ export interface GitBranch {
 
 export const GitBranch = Data.case<GitBranch>();
 
+export interface GitRemoteBranch {
+  remoteName: string;
+  // short branch name with the remote prefix stripped: 'feat/FOO-123-desc'
+  name: string;
+}
+
+export const GitRemoteBranch = Data.case<GitRemoteBranch>();
+
 export interface AssociatedBranch extends GitBranch {
   jiraKey: string;
+  // remote name when the branch only exists on a remote, none for local ones
+  remote: Option.Option<string>;
 }
 
 export const AssociatedBranch = Data.case<AssociatedBranch>();

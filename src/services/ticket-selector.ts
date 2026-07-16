@@ -10,7 +10,10 @@ import {
   type JiraKeyPrefix,
   UsageError,
 } from '../types.js';
-import {getAssociatedBranches} from '../utils/associated-branch.js';
+import {
+  getAssociatedBranches,
+  getAssociatedBranchesIncludingRemote,
+} from '../utils/associated-branch.js';
 import {
   type AsyncSelectResult,
   type AsyncSelectView,
@@ -221,7 +224,11 @@ const ticketPicker = (
       [
         AppConfigService.pipe(Effect.flatMap((_) => _.defaultJiraKeyPrefix)),
         JiraClient,
-        getAssociatedBranches(),
+        // Only switch can act on remote-only branches (via git's checkout
+        // guessing); create/delete operate on local branches.
+        params.command === 'switch'
+          ? getAssociatedBranchesIncludingRemote()
+          : getAssociatedBranches(),
       ],
       {concurrency: 'unbounded'},
     );
@@ -399,10 +406,12 @@ const renderCandidate = (
 ): ReadonlyArray<string> => {
   const issue = Option.getOrUndefined(candidate.issue);
   const branch = Option.getOrUndefined(candidate.associatedBranch);
-  const summary = (issue?.fields.summary ?? 'local branch only').replace(
-    /\s+/g,
-    ' ',
-  );
+  const summary = (
+    issue?.fields.summary ??
+    (branch && Option.isSome(branch.remote)
+      ? 'remote branch only'
+      : 'local branch only')
+  ).replace(/\s+/g, ' ');
   const statusName = issue?.fields.status.name;
 
   if (candidate.disabled) {
@@ -427,7 +436,7 @@ const renderCandidate = (
   const head = `  ${accent('❯')} ${accentBold(candidate.key)}${status}  ${summaryText}`;
 
   const branchLine = branch
-    ? `      ${dim('↳')} ${accent(branch.name)}`
+    ? `      ${dim('↳')} ${accent(displayBranchName(branch))}`
     : `      ${dim('↳ new')} ${accent(candidate.branchPreview)}`;
   const lines = [head, branchLine];
 
@@ -460,11 +469,23 @@ const candidateForIssue = (
       ? Option.some(
           params.command === 'create'
             ? 'branch exists'
-            : 'no associated local branch',
+            : // switch also sees remote branches, so a miss there means no
+              // branch anywhere; delete only ever looks at local branches
+              params.command === 'switch'
+              ? 'no associated branch'
+              : 'no associated local branch',
         )
       : Option.none(),
   };
 };
+
+// Remote-only branches are rendered with their remote prefix (origin/feat/...)
+// to signal that no local branch exists yet.
+const displayBranchName = (branch: AssociatedBranch): string =>
+  Option.match(branch.remote, {
+    onNone: () => branch.name,
+    onSome: (remoteName) => `${remoteName}/${branch.name}`,
+  });
 
 const candidateForBranch = (
   params: TicketSelectorParams,

@@ -1,5 +1,6 @@
 import {beforeEach, describe, expect, it} from 'vitest';
 import {
+  addRemoteBranch,
   createBranch,
   currentBranch,
   type Directory,
@@ -34,6 +35,20 @@ describe('git-jira-branch switch', () => {
     `);
     expect(currentBranch(tmpDir)).toMatchInlineSnapshot(
       '"feat/GCJB-1-e2e-test-ticket-with-a-fancy-summary"',
+    );
+  });
+
+  it('switches to remote-only branch', async () => {
+    addRemoteBranch(tmpDir, 'feat/GCJB-2-remote-only-ticket');
+
+    const res = switchCommand('GCJB-2');
+
+    expect(res).toMatchInlineSnapshot(`
+      "Switched to already existing branch: 'feat/GCJB-2-remote-only-ticket'
+      "
+    `);
+    expect(currentBranch(tmpDir)).toMatchInlineSnapshot(
+      '"feat/GCJB-2-remote-only-ticket"',
     );
   });
 

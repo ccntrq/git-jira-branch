@@ -26,6 +26,7 @@ import {
   AppConfigError,
   AssociatedBranch,
   GitBranch,
+  GitRemoteBranch,
   JiraApiError,
   type JiraIssue,
   JiraKeyPrefix,
@@ -87,11 +88,13 @@ describe('ticket-selector', () => {
           jiraKey: 'DUMMYAPP-123',
           name: 'feat/DUMMYAPP-123-dummy-isssue-summary',
           isCurrent: false,
+          remote: Option.none(),
         }),
         AssociatedBranch({
           jiraKey: 'DUMMYAPP-124',
           name: 'feat/DUMMYAPP-124-local-only',
           isCurrent: false,
+          remote: Option.none(),
         }),
       ]),
       Option.some({project: 'DUMMYAPP', issueNumberPrefix: '12'}),
@@ -106,6 +109,36 @@ describe('ticket-selector', () => {
     );
   });
 
+  it('offers remote-only branches as selectable switch candidates', () => {
+    const candidates = buildTicketPickerCandidates(
+      {command: 'switch', type: Option.none(), reset: false},
+      [dummyJiraIssue],
+      Chunk.fromIterable([
+        AssociatedBranch({
+          jiraKey: 'DUMMYAPP-123',
+          name: 'feat/DUMMYAPP-123-dummy-isssue-summary',
+          isCurrent: false,
+          remote: Option.none(),
+        }),
+        AssociatedBranch({
+          jiraKey: 'DUMMYAPP-124',
+          name: 'feat/DUMMYAPP-124-remote-only',
+          isCurrent: false,
+          remote: Option.some('origin'),
+        }),
+      ]),
+      Option.some({project: 'DUMMYAPP', issueNumberPrefix: '12'}),
+      'DUMMYAPP-12',
+    );
+
+    expect(candidates.map((_) => [_.key, _.disabled, _.branchPreview])).toEqual(
+      [
+        ['DUMMYAPP-123', false, 'feat/DUMMYAPP-123-dummy-isssue-summary'],
+        ['DUMMYAPP-124', false, 'feat/DUMMYAPP-124-remote-only'],
+      ],
+    );
+  });
+
   it('uses the first associated branch when a ticket has multiple branches', () => {
     const candidates = buildTicketPickerCandidates(
       {command: 'switch', type: Option.none(), reset: false},
@@ -115,11 +148,13 @@ describe('ticket-selector', () => {
           jiraKey: 'DUMMYAPP-123',
           name: 'feat/DUMMYAPP-123-first',
           isCurrent: false,
+          remote: Option.none(),
         }),
         AssociatedBranch({
           jiraKey: 'DUMMYAPP-123',
           name: 'fix/DUMMYAPP-123-second',
           isCurrent: false,
+          remote: Option.none(),
         }),
       ]),
       Option.some({project: 'DUMMYAPP', issueNumberPrefix: '123'}),
@@ -143,6 +178,7 @@ describe('ticket-selector', () => {
           jiraKey: 'DUMMYAPP-123',
           name: 'feat/DUMMYAPP-123-dummy-isssue-summary',
           isCurrent: false,
+          remote: Option.none(),
         }),
       ),
       Option.none(),
@@ -161,11 +197,13 @@ describe('ticket-selector', () => {
         jiraKey: 'ACME-101',
         name: 'feat/ACME-101-first',
         isCurrent: false,
+        remote: Option.none(),
       }),
       AssociatedBranch({
         jiraKey: 'ACME-102',
         name: 'feat/ACME-102-second',
         isCurrent: false,
+        remote: Option.none(),
       }),
     ]);
 
@@ -202,11 +240,13 @@ describe('ticket-selector', () => {
         jiraKey: 'ACME-101',
         name: 'feat/ACME-101-first',
         isCurrent: false,
+        remote: Option.none(),
       }),
       AssociatedBranch({
         jiraKey: 'ACME-202',
         name: 'feat/ACME-202-second',
         isCurrent: false,
+        remote: Option.none(),
       }),
     ]);
 
@@ -229,6 +269,7 @@ describe('ticket-selector', () => {
       jiraKey: 'DUMMYAPP-123',
       name: 'feat/DUMMYAPP-123-dummy-isssue-summary',
       isCurrent: false,
+      remote: Option.none(),
     });
 
     const withoutReset = buildTicketPickerCandidates(
@@ -259,6 +300,7 @@ describe('ticket-selector', () => {
           jiraKey: 'DUMMYAPP-124',
           name: 'feat/DUMMYAPP-124-local-only',
           isCurrent: false,
+          remote: Option.none(),
         }),
       ),
       Option.some({project: 'DUMMYAPP', issueNumberPrefix: '124'}),
@@ -507,9 +549,106 @@ describe('ticket-selector', () => {
               name: 'feat/APP-123-local-branch',
               jiraKey: 'APP-123',
               isCurrent: false,
+              remote: Option.none(),
             }),
           ),
         });
+      }),
+    );
+
+    live('offers remote-only branches for switch', () =>
+      Effect.gen(function* () {
+        const mailbox = yield* Mailbox.make<Terminal.UserInput>();
+        mockGitClient.listBranches.mockSuccessValue(
+          Chunk.of(GitBranch({name: 'master', isCurrent: false})),
+        );
+        mockGitClient.listRemoteBranches.mockSuccessValue(
+          Chunk.of(
+            GitRemoteBranch({
+              remoteName: 'origin',
+              name: 'feat/APP-124-remote-branch',
+            }),
+          ),
+        );
+
+        const env = Layer.mergeAll(
+          TicketSelectorLive.pipe(Layer.provide(fakeTerminal(mailbox))),
+          fakeTerminal(mailbox),
+          servicesLayerWithDefaultPrefix(appProject),
+          NodeFileSystem.layer,
+          NodePath.layer,
+        );
+
+        const selection = yield* Effect.fork(
+          TicketSelector.pipe(
+            Effect.flatMap((_) =>
+              _.selectTicket({
+                command: 'switch',
+                type: Option.none(),
+                reset: false,
+              }),
+            ),
+            Effect.provide(env),
+          ),
+        );
+
+        yield* Effect.sleep('400 millis');
+        yield* mailbox.offer(keyPress('\r', 'return'));
+
+        const selected = yield* Fiber.join(selection);
+        expect(selected).toMatchObject({
+          key: 'APP-124',
+          associatedBranch: Option.some(
+            AssociatedBranch({
+              name: 'feat/APP-124-remote-branch',
+              jiraKey: 'APP-124',
+              isCurrent: false,
+              remote: Option.some('origin'),
+            }),
+          ),
+        });
+      }),
+    );
+
+    live('does not consult remote branches for delete', () =>
+      Effect.gen(function* () {
+        const mailbox = yield* Mailbox.make<Terminal.UserInput>();
+        mockGitClient.listBranches.mockSuccessValue(
+          Chunk.of(
+            GitBranch({
+              name: 'feat/APP-123-local-branch',
+              isCurrent: false,
+            }),
+          ),
+        );
+
+        const env = Layer.mergeAll(
+          TicketSelectorLive.pipe(Layer.provide(fakeTerminal(mailbox))),
+          fakeTerminal(mailbox),
+          servicesLayerWithDefaultPrefix(appProject),
+          NodeFileSystem.layer,
+          NodePath.layer,
+        );
+
+        const selection = yield* Effect.fork(
+          TicketSelector.pipe(
+            Effect.flatMap((_) =>
+              _.selectTicket({
+                command: 'delete',
+                type: Option.none(),
+                reset: false,
+              }),
+            ),
+            Effect.provide(env),
+          ),
+        );
+
+        yield* Effect.sleep('400 millis');
+        yield* mailbox.offer(keyPress('\r', 'return'));
+
+        const selected = yield* Fiber.join(selection);
+        expect(selected.key).toBe('APP-123');
+        expect(mockGitClient.listRemoteBranches).not.toHaveBeenCalled();
       }),
     );
 

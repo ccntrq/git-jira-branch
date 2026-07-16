@@ -4,7 +4,7 @@ import {Chunk, Context, Effect, Layer, pipe, Sink, Stream} from 'effect';
 
 import {catchIf} from 'effect/Effect';
 import {BranchNotMerged} from '../schema/branch-not-merged.js';
-import {GitBranch, GitExecError, GitRemote} from '../types.js';
+import {GitBranch, GitExecError, GitRemote, GitRemoteBranch} from '../types.js';
 
 type GitClientEffect<A, B = never> = Effect.Effect<A, B | GitExecError, never>;
 
@@ -12,6 +12,9 @@ export class GitClient extends Context.Tag('GitClient')<
   GitClient,
   {
     readonly listBranches: () => GitClientEffect<Chunk.Chunk<GitBranch>>;
+    readonly listRemoteBranches: () => GitClientEffect<
+      Chunk.Chunk<GitRemoteBranch>
+    >;
     readonly getCurrentBranch: () => GitClientEffect<string>;
     readonly listRemotes: () => GitClientEffect<ReadonlyArray<GitRemote>>;
     readonly createGitBranch: (
@@ -91,6 +94,39 @@ const listBranches =
                 ? GitBranch({name: x.replace(/^\*\s+/, ''), isCurrent: true})
                 : GitBranch({name: x, isCurrent: false}),
             ),
+        ),
+      ),
+      Effect.scoped,
+    );
+
+const listRemoteBranches =
+  (commandExecutor: CommandExecutor.CommandExecutor) =>
+  (): GitClientEffect<Chunk.Chunk<GitRemoteBranch>> =>
+    pipe(
+      Command.make('git', 'branch', '-r'),
+      (command) => runGitCommand(commandExecutor)(command),
+      Effect.map((stdout) =>
+        Chunk.fromIterable(
+          stdout
+            .split('\n')
+            .map((x) => x.trim())
+            // drop empty lines (no remotes yields empty output) and the
+            // 'origin/HEAD -> origin/main' symref line
+            .filter((x) => x.length > 0 && !x.includes(' -> '))
+            .flatMap((x) => {
+              // split at the first '/' only — remote names containing '/'
+              // mis-split here, matching how git's own checkout guessing
+              // treats 'branch -r' output
+              const separatorIndex = x.indexOf('/');
+              return separatorIndex > 0
+                ? [
+                    GitRemoteBranch({
+                      remoteName: x.slice(0, separatorIndex),
+                      name: x.slice(separatorIndex + 1),
+                    }),
+                  ]
+                : [];
+            }),
         ),
       ),
       Effect.scoped,
@@ -195,6 +231,7 @@ export const GitClientLive = Layer.effect(
   Effect.map(CommandExecutor.CommandExecutor, (commandExecutor) =>
     GitClient.of({
       listBranches: listBranches(commandExecutor),
+      listRemoteBranches: listRemoteBranches(commandExecutor),
       getCurrentBranch: getCurrentBranch(commandExecutor),
       listRemotes: listRemotes(commandExecutor),
       createGitBranchFrom: createGitBranchFrom(commandExecutor),

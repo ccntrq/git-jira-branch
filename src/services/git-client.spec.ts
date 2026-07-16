@@ -3,7 +3,7 @@ import type {Command} from '@effect/platform/Command';
 import * as CommandExecutor from '@effect/platform/CommandExecutor';
 import type * as PlatformError from '@effect/platform/Error';
 import {live} from '@effect/vitest';
-import {Effect, Either, Layer, Sink, Stream} from 'effect';
+import {Chunk, Effect, Either, Layer, Sink, Stream} from 'effect';
 import {NodeInspectSymbol} from 'effect/Inspectable';
 import {afterEach, beforeEach, describe, expect, vi} from 'vitest';
 import {type EffectMock, effectMock} from '../test/util.js';
@@ -222,6 +222,66 @@ describe('GitClient', () => {
         command: 'git',
       });
     }),
+  );
+
+  live(
+    'listRemoteBranches should run appropriate git command and parse output',
+    () =>
+      Effect.gen(function* () {
+        const commandOutput = `  origin/HEAD -> origin/master
+  origin/feat/MYAPP-1235-add-some-feature
+  origin/master
+  upstream/feat/MYAPP-1235-add-some-feature
+`;
+        executorMock.mockSuccessValueOnce(mkTestProcess(0, commandOutput));
+
+        const result = yield* Effect.provide(
+          Effect.flatMap(GitClient, (gc) => gc.listRemoteBranches()),
+          testLayer,
+        );
+
+        expect(result).toMatchInlineSnapshot(`
+          {
+            "_id": "Chunk",
+            "values": [
+              {
+                "name": "feat/MYAPP-1235-add-some-feature",
+                "remoteName": "origin",
+              },
+              {
+                "name": "master",
+                "remoteName": "origin",
+              },
+              {
+                "name": "feat/MYAPP-1235-add-some-feature",
+                "remoteName": "upstream",
+              },
+            ],
+          }
+        `);
+
+        expect(executorMock).toHaveBeenCalledTimes(1);
+        expect(executorMock.mock.calls[0]?.[0]).toMatchObject({
+          _tag: 'StandardCommand',
+          args: ['branch', '-r'],
+          command: 'git',
+        });
+      }),
+  );
+
+  live(
+    'listRemoteBranches should return an empty Chunk when there are no remote branches',
+    () =>
+      Effect.gen(function* () {
+        executorMock.mockSuccessValueOnce(mkTestProcess(0, ''));
+
+        const result = yield* Effect.provide(
+          Effect.flatMap(GitClient, (gc) => gc.listRemoteBranches()),
+          testLayer,
+        );
+
+        expect(Chunk.isEmpty(result)).toBe(true);
+      }),
   );
 
   live('switchBranch should run appropriate git command', () =>

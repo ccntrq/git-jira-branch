@@ -18,6 +18,7 @@ import {
   type GitHubApiError,
   type GitHubPullRequestLink,
   type GitRemote,
+  type GitRemoteBranch,
   type JiraApiError,
   type JiraIssue,
   type JiraRemoteLink,
@@ -26,6 +27,9 @@ import {curriedEffectMock2, effectMock} from './util.js';
 
 export const mockGitClient = {
   listBranches: effectMock(() => Effect.succeed(Chunk.empty<GitBranch>())),
+  listRemoteBranches: effectMock(() =>
+    Effect.succeed(Chunk.empty<GitRemoteBranch>()),
+  ),
   getCurrentBranch: effectMock(),
   listRemotes: effectMock(() => Effect.succeed([] as ReadonlyArray<GitRemote>)),
   createGitBranch: effectMock(),
@@ -92,6 +96,9 @@ export const resetTestMocks = (): void => {
   mockGitClient.listBranches
     .mockReset()
     .mockImplementation(() => Effect.succeed(Chunk.empty<GitBranch>()));
+  mockGitClient.listRemoteBranches
+    .mockReset()
+    .mockImplementation(() => Effect.succeed(Chunk.empty<GitRemoteBranch>()));
   mockGitClient.getCurrentBranch
     .mockReset()
     .mockImplementation(() => Effect.succeed(undefined));

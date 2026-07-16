@@ -99,6 +99,17 @@ export const currentBranch = (dir: Directory): string =>
     .toString()
     .trim();
 
+// Sets up an 'origin' remote (a bare repo nested inside dir, so it is removed
+// together with the e2e env) containing the given branch, and fetches it. The
+// branch only exists as a remote-tracking ref afterwards, not as a local one.
+export const addRemoteBranch = (dir: Directory, name: string): void => {
+  const remoteDir = join(dir, '.remote.git');
+  execSync(`git clone --bare . "${remoteDir}"`, {cwd: dir});
+  execSync(`git branch "${name}"`, {cwd: remoteDir});
+  execSync(`git remote add origin "${remoteDir}"`, {cwd: dir});
+  execSync('git fetch origin', {cwd: dir});
+};
+
 export const createBranch = (dir: Directory, name: string): string =>
   execSync(`git checkout -b ${name}`, {cwd: dir}) //
     .toString()

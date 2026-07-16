@@ -124,6 +124,7 @@ describe('cli', () => {
               jiraKey: 'DUMMYAPP-123',
               name: 'fix/DUMMYAPP-123-selected-duplicate',
               isCurrent: false,
+              remote: Option.none(),
             }),
           ),
         });
@@ -189,6 +190,7 @@ describe('cli', () => {
               jiraKey: 'DUMMYAPP-123',
               name: 'fix/DUMMYAPP-123-selected-duplicate',
               isCurrent: false,
+              remote: Option.none(),
             }),
           ),
         });
