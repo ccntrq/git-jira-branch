@@ -28,8 +28,8 @@ importers:
         version: 3.21.3
     devDependencies:
       '@biomejs/biome':
-        specifier: 2.5.0
-        version: 2.5.0
+        specifier: 2.5.3
+        version: 2.5.3
       '@changesets/changelog-github':
         specifier: ^0.7.0
         version: 0.7.0
@@ -37,8 +37,8 @@ importers:
         specifier: ^2.31.0
         version: 2.31.0(@types/node@22.20.1)
       '@effect/vitest':
-        specifier: 0.29.0
-        version: 0.29.0(effect@3.21.3)(vitest@4.1.10)
+        specifier: 0.30.0
+        version: 0.30.0(effect@3.21.3)(vitest@4.1.10)
       '@tsconfig/node22':
         specifier: ^22.0.5
         version: 22.0.5
@@ -67,59 +67,59 @@ packages:
     resolution: {integrity: sha512-Nq8OhGWiZIZGV6hLHoyAKLLcJihP/xFeBMGJoUrxTX2psI8dCifzLhZISFb+VWS3wFMRDmCGw5R+dOySCqPLhw==}
     engines: {node: '>=6.9.0'}
 
-  '@biomejs/biome@2.5.0':
-    resolution: {integrity: sha512-4kURkd9hAPrdDM3C9n82ycYgx8hvQcW6MjKTEejruj8rK0N8P3OPpdy8BvI8kt3KWY4ycF5XtDOrktetEfhfuw==}
+  '@biomejs/biome@2.5.3':
+    resolution: {integrity: sha512-MrJswFdei9EfDwwUy2tQrPDpK0AO+RmMFvBoaaJ6ayBc3sUbHdCE+XG5N8vp+5So41ZupZJQm0roHFFhMGVD7A==}
     engines: {node: '>=14.21.3'}
     hasBin: true
 
-  '@biomejs/cli-darwin-arm64@2.5.0':
-    resolution: {integrity: sha512-Mn3Fwi3SA5fgmfCPqmzpWF2DLZnms3BVAhM088nTnGrTZmHS3wwIjcoZPqpXeNgd3DrrLH6xp8vTLIBuJoZiXw==}
+  '@biomejs/cli-darwin-arm64@2.5.3':
+    resolution: {integrity: sha512-QhYP9muVQ0nUO5zztFuPbEwi4+94sJWVjaZds9aMi1l/KNZBiUjdiSUrGHsTaMGDXrYl+r4AS2sUKfgH3w+V3g==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [darwin]
 
-  '@biomejs/cli-darwin-x64@2.5.0':
-    resolution: {integrity: sha512-rg3VPL5P8mYro6pqlXYXuJWph21slVp3SZtAqWSrkZs40d2gTzYmHF8E/X1iTID25btmNKltNDJ926sqVBp7DQ==}
+  '@biomejs/cli-darwin-x64@2.5.3':
+    resolution: {integrity: sha512-NC1Ss13UaW7QZX+y8j44bF7AP0jSJdBl6iRhe0MAkvaSqZy+mWg3GaXsrb+eSoHoGDBtaXWEbMVV0iVN2cZ7cQ==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [darwin]
 
-  '@biomejs/cli-linux-arm64-musl@2.5.0':
-    resolution: {integrity: sha512-vQdM4oSGaf7ZNeGO9w5+Y8SBtyser9M6znxYbm7Ec8wInxJu1WiKxFYZW5Auj2d80bcVvefuGGRxoFOE0eee8g==}
+  '@biomejs/cli-linux-arm64-musl@2.5.3':
+    resolution: {integrity: sha512-fccix0w6xp6csCXgxeC0dU/3ecgRQal0y+cv2SP9ajNlhe7Yrk2Ug7UDe2j9AT9ZDYitkXpvUKgZjjuoYeP4Vg==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [linux]
     libc: [musl]
 
-  '@biomejs/cli-linux-arm64@2.5.0':
-    resolution: {integrity: sha512-tl+LW8fdD96/xdeWtWwc82LIOc5CoY7N2AsogLTp5R4ECErYt+8Jl/N68ezN9vzSiqPTxw6vjcihoLPYKZHrlw==}
+  '@biomejs/cli-linux-arm64@2.5.3':
+    resolution: {integrity: sha512-ksx1KWeyYW18ILL04msF/J4ZBtBDN33znYK8Z/aNv/vlBVxL9/g3mGP+omgHJKy4+KWbK87vcmmpmurfNjSgiA==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
 
-  '@biomejs/cli-linux-x64-musl@2.5.0':
-    resolution: {integrity: sha512-+9hIcMngJ+yGUahXqZuZ8CoWKJE9SAZsFsM3QDvXpNsLbXZ9lqVzgBhOk/jTSYkOA0GLP9eu3teukqpLUojHMg==}
+  '@biomejs/cli-linux-x64-musl@2.5.3':
+    resolution: {integrity: sha512-O/yU9YKRUiHhmcjF2f38PSjseVk3G4VLWYc0G2HWpzdBVREV6G8IGWIVEFf7MFPfWIzNUIvPsEjeAZQIOgnLcQ==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [linux]
     libc: [musl]
 
-  '@biomejs/cli-linux-x64@2.5.0':
-    resolution: {integrity: sha512-zpEGf4RQbFEh8Vt7OmavLyyOzRbtcE9osCqrS1kfvt8jDvxwhKXLSf7n0ebr/ov0RJ9ssP+lhs6C8a9WwFvrQA==}
+  '@biomejs/cli-linux-x64@2.5.3':
+    resolution: {integrity: sha512-yMkJtilsgvILDcVkh187aVLTb64xYsrxYajx5kym+r1ULkO5HUOfu9AYKLGQbOVLwJtT2utNw7hhFNg+17mUYA==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
 
-  '@biomejs/cli-win32-arm64@2.5.0':
-    resolution: {integrity: sha512-jB0wAvTLI4itx5VidqVUejPQFhRUxiZ9l9FvZ26D5fl6t3qme+ZB4PD3bTSeL1vZ8NI2Rx/zj6H9zcESuGHKGw==}
+  '@biomejs/cli-win32-arm64@2.5.3':
+    resolution: {integrity: sha512-cX5z+GYwRcqEok0AH3KSfQGgqYd0Nomfp6Fbe1uiTtELE38hdH2k842wQ9wLNaF/JJ7r4rjJQ4VR+ce+fRmQbw==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [win32]
 
-  '@biomejs/cli-win32-x64@2.5.0':
-    resolution: {integrity: sha512-VT/lF+GId+67j8aDfLkxdxNoVApsPSTbyAtB3jJq0IWTrY77WXfbPfpngxq0bA6JCEv/7k8C9qWjDRKRznDlyw==}
+  '@biomejs/cli-win32-x64@2.5.3':
+    resolution: {integrity: sha512-ExSaJWi4/u6+GXCszlSKpWSjKNbDseAYqqkCznsCsZ/4uidZ/BEqsCc5/3ctlq6dfIubdIIRSVLC/PG9xPl70Q==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [win32]
@@ -268,10 +268,10 @@ packages:
     peerDependencies:
       effect: ^3.21.0
 
-  '@effect/vitest@0.29.0':
-    resolution: {integrity: sha512-DvWr1aeEcaZ8mtu8hNVb4e3rEYvGEwQSr7wsNrW53t6nKYjkmjRICcvVEsXUhjoCblRHSxRsRV0TOt0+UmcvaQ==}
+  '@effect/vitest@0.30.0':
+    resolution: {integrity: sha512-2qcK7F4XSwOn7Ye9vgEkrndHiiHVf9Nl+U5jvvLBKeYx4+8++O5Y8RFezaQzs/rWx8GkdlStv/s+HYMHZ/2/AQ==}
     peerDependencies:
-      effect: ^3.21.0
+      effect: ^3.22.0
       vitest: ^3.2.0
 
   '@effect/workflow@0.18.2':
@@ -1122,8 +1122,8 @@ packages:
   multipasta@0.2.8:
     resolution: {integrity: sha512-ZPWuMKyv0cSO29f7hozp+k6+crZbQijV8ipMvxNxRf2SwtYGTX1ZX89Kd20VV4H9Znonx+EQn+iy1wGQsJ+b+Q==}
 
-  nanoid@3.3.15:
-    resolution: {integrity: sha512-y7Wygv/7mEOvxTuEQDB8StXdMRBWf1kR/tlhAzBRUFkB2jfcLOAxO/SHmOO2zgz1pVgK29/kyupn059/bCHdjA==}
+  nanoid@3.3.16:
+    resolution: {integrity: sha512-bzlKTyNJ7+LdGIIwy8ijFpIqEQIvafahV7eYykJ8Cvh42EdJeODoJ6gUJXpQJvej1BddH8OqTXZNE/KfbWAu8Q==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
@@ -1210,8 +1210,8 @@ packages:
     resolution: {integrity: sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g==}
     engines: {node: '>=6'}
 
-  postcss@8.5.16:
-    resolution: {integrity: sha512-vuwillviilfKZsg0VGj5R/YwwcHx4SLsIOI/7K6mQkWx+l5cUHTjj5g0AasTBcyXsbfTgrwsUNmVUb5xVwyPwg==}
+  postcss@8.5.19:
+    resolution: {integrity: sha512-Mz8SaolMd8nB+G13WkORcxQKHZ/NE4xXevtkJHVuG+guo9/wYKlIMTKAqGdEmYOXR2ijPjTYNHssizdaVSUNdQ==}
     engines: {node: ^10 || ^12 || >=14}
 
   prettier@2.8.8:
@@ -1485,39 +1485,39 @@ snapshots:
 
   '@babel/runtime@7.29.7': {}
 
-  '@biomejs/biome@2.5.0':
+  '@biomejs/biome@2.5.3':
     optionalDependencies:
-      '@biomejs/cli-darwin-arm64': 2.5.0
-      '@biomejs/cli-darwin-x64': 2.5.0
-      '@biomejs/cli-linux-arm64': 2.5.0
-      '@biomejs/cli-linux-arm64-musl': 2.5.0
-      '@biomejs/cli-linux-x64': 2.5.0
-      '@biomejs/cli-linux-x64-musl': 2.5.0
-      '@biomejs/cli-win32-arm64': 2.5.0
-      '@biomejs/cli-win32-x64': 2.5.0
+      '@biomejs/cli-darwin-arm64': 2.5.3
+      '@biomejs/cli-darwin-x64': 2.5.3
+      '@biomejs/cli-linux-arm64': 2.5.3
+      '@biomejs/cli-linux-arm64-musl': 2.5.3
+      '@biomejs/cli-linux-x64': 2.5.3
+      '@biomejs/cli-linux-x64-musl': 2.5.3
+      '@biomejs/cli-win32-arm64': 2.5.3
+      '@biomejs/cli-win32-x64': 2.5.3
 
-  '@biomejs/cli-darwin-arm64@2.5.0':
+  '@biomejs/cli-darwin-arm64@2.5.3':
     optional: true
 
-  '@biomejs/cli-darwin-x64@2.5.0':
+  '@biomejs/cli-darwin-x64@2.5.3':
     optional: true
 
-  '@biomejs/cli-linux-arm64-musl@2.5.0':
+  '@biomejs/cli-linux-arm64-musl@2.5.3':
     optional: true
 
-  '@biomejs/cli-linux-arm64@2.5.0':
+  '@biomejs/cli-linux-arm64@2.5.3':
     optional: true
 
-  '@biomejs/cli-linux-x64-musl@2.5.0':
+  '@biomejs/cli-linux-x64-musl@2.5.3':
     optional: true
 
-  '@biomejs/cli-linux-x64@2.5.0':
+  '@biomejs/cli-linux-x64@2.5.3':
     optional: true
 
-  '@biomejs/cli-win32-arm64@2.5.0':
+  '@biomejs/cli-win32-arm64@2.5.3':
     optional: true
 
-  '@biomejs/cli-win32-x64@2.5.0':
+  '@biomejs/cli-win32-x64@2.5.3':
     optional: true
 
   '@changesets/apply-release-plan@7.1.1':
@@ -1767,7 +1767,7 @@ snapshots:
     dependencies:
       effect: 3.21.3
 
-  '@effect/vitest@0.29.0(effect@3.21.3)(vitest@4.1.10)':
+  '@effect/vitest@0.30.0(effect@3.21.3)(vitest@4.1.10)':
     dependencies:
       effect: 3.21.3
       vitest: 4.1.10(@types/node@22.20.1)(@vitest/ui@4.1.10)(vite@8.1.4(@types/node@22.20.1)(yaml@2.9.0))
@@ -2435,7 +2435,7 @@ snapshots:
 
   multipasta@0.2.8: {}
 
-  nanoid@3.3.15: {}
+  nanoid@3.3.16: {}
 
   node-addon-api@7.1.1: {}
 
@@ -2495,9 +2495,9 @@ snapshots:
 
   pify@4.0.1: {}
 
-  postcss@8.5.16:
+  postcss@8.5.19:
     dependencies:
-      nanoid: 3.3.15
+      nanoid: 3.3.16
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
@@ -2652,7 +2652,7 @@ snapshots:
     dependencies:
       lightningcss: 1.32.0
       picomatch: 4.0.5
-      postcss: 8.5.16
+      postcss: 8.5.19
       rolldown: 1.1.5
       tinyglobby: 0.2.17
     optionalDependencies:
